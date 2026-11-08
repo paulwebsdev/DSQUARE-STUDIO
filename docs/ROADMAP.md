@@ -19,7 +19,7 @@
 - [x] Add starter template concepts across business, portfolio, e-commerce, blog, landing page, agency, restaurant, education and community categories.
 
 ## Phase 4 — Visual editor
-- [ ] Define versioned site/page/section/component schema.
+- [x] Define versioned site/page/section/component schema and starter document factory.
 - [ ] Build editor canvas and selection model.
 - [ ] Build component library and properties panel.
 - [ ] Add responsive modes, undo/redo and autosave.
@@ -45,4 +45,4 @@
 
 ## Current milestone
 
-The dashboard, browser-local project/client management and initial template library prototype are in place. Template previews are concept previews; full editable page layouts will be implemented with the visual editor. All service-dependent features remain clearly marked as planned until their backend integrations exist.
+The dashboard, browser-local project/client management, initial template library prototype and v1 provider-neutral site document schema are in place. Template previews are concept previews; full editable page layouts will be implemented with the visual editor. All service-dependent features remain clearly marked as planned until their backend integrations exist.
