@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
+import type { FormEvent, ReactNode } from 'react'
 import {
   Activity, ArrowDownRight, ArrowRight, Bell, Blocks, BriefcaseBusiness,
   ChevronDown, CircleHelp, Clock3, Command, Copy, FilePlus2, FolderKanban,
   Globe2, LayoutDashboard, Menu, Plus, Search, Settings2, Sparkles,
-  WandSparkles, X, Archive, Pencil, Trash2, Users, ExternalLink
+  WandSparkles, X, Archive, Pencil, Trash2, Users
 } from 'lucide-react'
 
 type NavItem = { label: string; icon: typeof LayoutDashboard }
@@ -50,7 +51,7 @@ function App() {
     const client = clients.find(c => c.id === p.clientId)
     return `${p.name} ${p.category} ${client?.name ?? ''}`.toLowerCase().includes(searchTerm.toLowerCase())
   }), [activeProjects, clients, searchTerm])
-  const createProject = (event: React.FormEvent) => {
+  const createProject = (event: FormEvent) => {
     event.preventDefault()
     if (!projectName.trim()) return
     const now = new Date().toISOString()
@@ -107,7 +108,7 @@ function App() {
   )
 }
 
-function PageTitle({ eyebrow, title, subtitle, action }: { eyebrow: string; title: string; subtitle: string; action?: React.ReactNode }) {
+function PageTitle({ eyebrow, title, subtitle, action }: { eyebrow: string; title: string; subtitle: string; action?: ReactNode }) {
   return <section className="welcome-row page-title-row"><div><div className="eyebrow"><span className="eyebrow-line" /> {eyebrow}</div><h1>{title}</h1><p className="welcome-subtitle">{subtitle}</p></div>{action}</section>
 }
 function EmptyProjects({ onCreate, archived = false }: { onCreate: () => void; archived?: boolean }) {
