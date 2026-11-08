@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
+import VisualEditor from './editor/VisualEditor'
 import {
   Activity, ArrowDownRight, ArrowRight, Bell, Blocks, BriefcaseBusiness,
   ChevronDown, CircleHelp, Clock3, Copy, FilePlus2, FolderKanban,
@@ -16,6 +17,7 @@ const mainNav: NavItem[] = [
   { label: 'Overview', icon: LayoutDashboard },
   { label: 'My projects', icon: FolderKanban },
   { label: 'Templates', icon: Blocks },
+  { label: 'Visual editor', icon: LayoutDashboard },
   { label: 'AI website builder', icon: WandSparkles },
 ]
 const quickStarts = [
@@ -109,7 +111,7 @@ function App() {
       <main className="main-area">
         <header className="topbar"><div className="topbar-left"><button className="icon-button mobile-menu" aria-label="Open navigation" onClick={() => setMenuOpen(true)}><Menu size={20} /></button><div className="breadcrumb">Workspace <span>/</span> <strong>{active}</strong></div></div><div className="topbar-actions"><label className="search-box"><Search size={16} /><input aria-label="Search projects and clients" placeholder="Search projects..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} /></label><button className="icon-button notification-button" aria-label="Notifications"><Bell size={18} /><i /></button><div className="top-avatar">D</div></div></header>
         <div className="page-content">
-          {active === 'Overview' ? <>
+          {active === 'Visual editor' ? <VisualEditor onExit={() => selectNav('Overview')} /> : active === 'Overview' ? <>
             <section className="welcome-row"><div><div className="eyebrow"><span className="eyebrow-line" /> YOUR PRIVATE CREATIVE SPACE</div><h1>Make something <em>remarkable.</em></h1><p className="welcome-subtitle">Your ideas, your clients, your websites. Everything starts here.</p></div><button className="primary-button create-button" onClick={() => setShowCreate(true)}><Plus size={17} /> Create a website</button></section>
             <section className="hero-panel"><div className="hero-copy"><div className="hero-kicker"><Sparkles size={14} /> THE STUDIO IS YOURS</div><h2>From first idea<br />to <span>live website.</span></h2><p>Build without limits. Start with a template, design every detail yourself, or let AI bring your vision to life.</p><button className="hero-button" onClick={() => setShowCreate(true)}>Start creating <ArrowRight size={16} /></button></div><div className="hero-art" aria-hidden="true"><div className="art-orbit orbit-one" /><div className="art-orbit orbit-two" /><div className="art-glow" /><div className="art-window"><div className="window-top"><span /><span /><span /><div>dsquare.studio</div></div><div className="window-content"><div className="window-side" /><div className="window-main"><div className="window-line short" /><div className="window-title" /><div className="window-line" /><div className="window-line tiny" /><div className="window-cta" /><div className="window-image" /></div></div></div><div className="floating-chip chip-top"><Sparkles size={13} /> AI assisted</div><div className="floating-chip chip-bottom"><Activity size={13} /> Your next big idea</div></div><div className="hero-grain" /></section>
             <section className="section-heading"><div><h3>Choose your starting point</h3><p>Three ways to bring your next website to life.</p></div><button className="text-button" onClick={() => selectNav('Templates')}>Explore all <ArrowRight size={14} /></button></section>
