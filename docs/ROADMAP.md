@@ -8,9 +8,10 @@
 - [ ] Run a production build and review responsive behavior.
 
 ## Phase 2 — Projects and clients
-- [ ] Define project and client types.
-- [ ] Build project list, create, rename, duplicate and archive flows.
-- [ ] Add local prototype state, then connect persistent storage when the backend is selected.
+- [x] Define project and client types.
+- [x] Build project list, create, rename, duplicate, archive and delete flows.
+- [x] Add client directory and link clients to projects.
+- [x] Add browser-local prototype persistence; replace with backend storage adapter when provider is selected.
 
 ## Phase 3 — Templates
 - [ ] Define template metadata and category system.
