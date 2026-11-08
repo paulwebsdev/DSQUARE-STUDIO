@@ -32,6 +32,7 @@
 
 ## Phase 6 — Export and publishing
 - [ ] Build static-site export and asset packaging.
+- [x] Add automated GitHub Pages preview deployment workflow (requires Pages source to be set to GitHub Actions).
 - [ ] Define hosting adapter contract.
 - [ ] Integrate the selected hosting platform when available.
 - [ ] Add publish status and deployment history.
