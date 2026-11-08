@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
 import {
   Activity, ArrowDownRight, ArrowRight, Bell, Blocks, BriefcaseBusiness,
-  ChevronDown, CircleHelp, Clock3, Command, Copy, FilePlus2, FolderKanban,
+  ChevronDown, CircleHelp, Clock3, Copy, FilePlus2, FolderKanban,
   Globe2, LayoutDashboard, Menu, Plus, Search, Settings2, Sparkles,
   WandSparkles, X, Archive, Pencil, Trash2, Users
 } from 'lucide-react'
