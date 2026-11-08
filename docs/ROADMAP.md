@@ -14,9 +14,9 @@
 - [x] Add browser-local prototype persistence; replace with backend storage adapter when provider is selected.
 
 ## Phase 3 — Templates
-- [ ] Define template metadata and category system.
-- [ ] Build template browsing, search and preview.
-- [ ] Add starter templates across several website categories.
+- [x] Define template metadata and category system.
+- [x] Build template browsing, category filters, search and preview.
+- [x] Add starter template concepts across business, portfolio, e-commerce, blog, landing page, agency, restaurant, education and community categories.
 
 ## Phase 4 — Visual editor
 - [ ] Define versioned site/page/section/component schema.
@@ -44,4 +44,4 @@
 
 ## Current milestone
 
-The immediate milestone is the first responsive dashboard interface. All service-dependent features will be clearly marked as planned until their backend integrations exist.
+The dashboard, browser-local project/client management and initial template library prototype are in place. Template previews are concept previews; full editable page layouts will be implemented with the visual editor. All service-dependent features remain clearly marked as planned until their backend integrations exist.
