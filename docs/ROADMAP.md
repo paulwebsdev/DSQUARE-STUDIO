@@ -20,9 +20,9 @@
 
 ## Phase 4 — Visual editor
 - [x] Define versioned site/page/section/component schema and starter document factory.
-- [ ] Build editor canvas and selection model.
-- [ ] Build component library and properties panel.
-- [ ] Add responsive modes, undo/redo and autosave.
+- [x] Build first responsive editor canvas and section selection model.
+- [x] Add starter section library and section properties panel.
+- [x] Add desktop/tablet/mobile preview modes, undo/redo and browser-local autosave.
 
 ## Phase 5 — AI website generation
 - [ ] Design prompt and requirements flow.
