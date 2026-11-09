@@ -459,6 +459,19 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
       ['contact','We would love to hear from you','Tell us a little about what you need and we will be in touch.','Contact our team'],
     ],
   ]
+  const businessLayoutProfiles = [
+    { order:[0,1,2,3,4], hero:'classic' },
+    { order:[0,1,3,2,4], hero:'centered' },
+    { order:[0,2,1,4,3], hero:'bold' },
+    { order:[0,2,1,3,4], hero:'editorial' },
+    { order:[0,1,2,4,3], hero:'classic' },
+    { order:[0,3,1,2,4], hero:'centered' },
+    { order:[0,1,2,3,4], hero:'bold' },
+    { order:[0,2,3,1,4], hero:'editorial' },
+    { order:[0,1,3,2,4], hero:'classic' },
+    { order:[0,2,1,3,4], hero:'centered' },
+  ]
+  const businessProfile = category === 'Business' ? businessLayoutProfiles[(variantNumber - 1) % businessLayoutProfiles.length] : undefined
   if (category === 'Business') sections.splice(0, sections.length, ...businessBlueprints[(variantNumber - 1) % businessBlueprints.length])
 
   if (!sections.some(([kind]) => kind === 'gallery')) {
@@ -471,10 +484,10 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     [0,1,2,3,4], [0,2,1,3,4], [0,3,1,2,4], [0,1,3,2,4], [0,2,3,1,4],
     [0,3,2,1,4], [0,1,2,4,3], [0,2,4,1,3], [0,3,1,4,2], [0,4,1,2,3],
   ]
-  const orderedSections = sectionOrders[layoutVariant].map(index => sections[index]).filter(Boolean)
-  const variantSections = category === 'Business' ? sections : orderedSections.length >= 3 ? orderedSections : sections
-  const heroTone = layoutVariant % 3 === 0 ? selectedTheme.primary : palette[baseTemplateId] ?? '#f3eee5'
-  const heroAlign = layoutVariant === 1 || layoutVariant === 4 || layoutVariant === 7 ? 'center' : 'left'
+  const orderedSections = (businessProfile?.order ?? sectionOrders[layoutVariant]).map(index => sections[index]).filter(Boolean)
+  const variantSections = orderedSections.length >= 3 ? orderedSections : sections
+  const heroTone = businessProfile?.hero === 'bold' || layoutVariant % 3 === 0 ? selectedTheme.primary : palette[baseTemplateId] ?? '#f3eee5'
+  const heroAlign = businessProfile?.hero === 'centered' || businessProfile?.hero === 'bold' || businessProfile?.hero === 'editorial' || layoutVariant === 1 || layoutVariant === 4 || layoutVariant === 7 ? 'center' : 'left'
   site.pages[0].sections = [
     { ...header, components: [{ ...component('heading', name.toUpperCase()), id: createId('brand'), styles: { ...component('heading', name.toUpperCase()).styles, fontSize: '1rem', letterSpacing: '0.16em', fontWeight: '800', color: selectedTheme.primary } }], styles: { ...header.styles, padding: layoutVariant === 8 ? '34px 9%' : '22px 7%', backgroundColor: selectedTheme.background, borderBottom: '1px solid #e8e5df' } },
     ...variantSections.map(([kind, title, body, button], index) => {
@@ -487,8 +500,14 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
         ...block,
         styles: {
           ...block.styles,
-          padding: isHero ? (layoutVariant === 8 ? '164px 10%' : '144px 8%') : layoutVariant === 9 ? '92px 9%' : '84px 8%',
+          padding: isHero ? (businessProfile?.hero === 'bold' ? '184px 10%' : businessProfile?.hero === 'editorial' ? '116px 15%' : layoutVariant === 8 ? '164px 10%' : '144px 8%') : layoutVariant === 9 ? '92px 9%' : '84px 8%',
           textAlign: (isHero ? heroAlign : 'left') as 'left' | 'center',
+          ...(isHero && category === 'Business' ? {
+            backgroundColor: businessProfile?.hero === 'bold' ? selectedTheme.primary : businessProfile?.hero === 'editorial' ? '#f4f0e8' : tone,
+            borderRadius: businessProfile?.hero === 'bold' ? '0' : businessProfile?.hero === 'editorial' ? '0 0 84px 0' : layoutVariant % 2 === 0 ? '0' : '22px',
+            minHeight: businessProfile?.hero === 'bold' ? '540px' : businessProfile?.hero === 'editorial' ? '390px' : '440px',
+            boxShadow: businessProfile?.hero === 'bold' ? 'inset 0 -1px 0 rgba(255,255,255,.16)' : 'none',
+          } : {}),
           layout: kind === 'gallery' || (kind === 'features' && (category === 'Business' || layoutVariant % 2 === 0)) ? 'grid' : 'stacked',
           gridColumns: kind === 'gallery' ? '3' : kind === 'features' && (category === 'Business' || layoutVariant % 2 === 0) ? (layoutVariant === 6 ? '4' : '3') : '2',
           borderTop: !isHero && index % 2 === 0 ? '1px solid #e9e4dc' : 'none',
