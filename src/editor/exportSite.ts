@@ -36,7 +36,7 @@ function renderComponent(component: SiteComponent, pageFiles: Map<string, string
   const href = component.linkTo ? safeHref(component.linkTo, pageFiles) : ''
   if (component.kind === 'heading') return '<h2 ' + attrs + '>' + content + '</h2>'
   if (component.kind === 'text') return '<p ' + attrs + '>' + content + '</p>'
-  if (component.kind === 'button') return href ? '<a ' + attrs + ' href="' + escapeHtml(href) + '">' + content + '</a>' : '<span ' + attrs + '>' + content + '</span>'
+  if (component.kind === 'button') return href ? '<a ' + attrs + ' href="' + escapeHtml(href) + '"' + (component.openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' + content + '</a>' : '<span ' + attrs + '>' + content + '</span>'
   if (component.kind === 'image') return '<img ' + attrs + ' src="' + escapeHtml(safeImageSource(component.content, assetPaths)) + '" alt="' + escapeHtml(assetAltTexts.has(component.content) ? (assetAltTexts.get(component.content) ?? '') : 'Website image') + '" loading="lazy" decoding="async">'
   if (component.kind === 'form') return '<form class="ds-contact-form"><label>Your name<input name="name" autocomplete="name" required></label><label>Email address<input name="email" type="email" autocomplete="email" required></label><label>Your message<textarea name="message" rows="5" required></textarea></label><button type="submit">Send message</button><p class="ds-form-note" aria-live="polite"></p></form>'
   if (component.kind === 'container') return '<div ' + attrs + '>' + content + '</div>'
