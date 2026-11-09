@@ -200,3 +200,10 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Catch browser storage quota or write errors and show a visible save-status warning instead of silently failing.
 - [x] Add Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z and Ctrl/Cmd+Y undo/redo shortcuts while protecting text fields and inline editing.
 - [ ] Add automated export regression tests and verify exported sites in desktop and mobile browsers.
+
+
+## Mobile editing and preview refinement — 2026-11-09
+- [x] Add touch drag handles to move sections on touchscreens without making the whole canvas a drag target.
+- [x] Keep section dragging visually indicated while a reorder is in progress.
+- [x] Allow button text to remain editable in the scrollable preview mode.
+- [ ] Validate touch reordering on physical Android and iOS devices and add automated editor interaction tests.
