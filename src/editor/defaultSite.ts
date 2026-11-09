@@ -406,6 +406,14 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
       ['testimonials','Stories from the stay','Discover what guests remember about the welcome, the setting and the little details.'],
       ['contact','Your next escape begins here','Check availability, ask a question or speak with our reservations team about your visit.','Enquire about a stay'],
     ],
+    Legal:[
+      ['hero','Clear counsel for important decisions.','Practical legal guidance, careful preparation and experienced representation for individuals and organisations.','Arrange a confidential consultation'],
+      ['features','Legal support, clearly explained','Explore business and commercial law, property, family matters, dispute resolution and ongoing counsel.'],
+      ['gallery','Experience grounded in preparation','Meet the people behind the advice and learn how research, communication and careful strategy shape our work.'],
+      ['testimonials','Professional relationships built on trust','Understand the values that guide our client relationships: discretion, clarity and thoughtful service.'],
+      ['custom','A clear path through the process','From an initial conversation to review, advice and next steps, know what to expect at each stage.'],
+      ['contact','Talk through your legal question','Share a brief outline of your matter and request a confidential conversation with the appropriate team.','Request a consultation'],
+    ],
     Automotive:[['hero','Find your next drive.','Explore carefully selected vehicles, expert guidance and a smoother way to get on the road.','Browse vehicles'],['gallery','Featured vehicles','Discover standout models, new arrivals and vehicles selected for quality.'],['features','A better way to buy and care for your car','Get clear information, helpful advice and support from first enquiry to aftercare.'],['testimonials','Drivers who trust us','Hear from customers who found the right vehicle and support with our team.'],['contact','Ready for your next drive?','Tell us what you are looking for and arrange a viewing or test drive.','Book a test drive']],
     'Fitness & Sports':[['hero','Make your next move count.','Build strength, confidence and consistency with coaching and programmes that meet you where you are.','Explore membership'],['features','Training for every goal','Discover coaching, classes and facilities designed to help you keep progressing.'],['gallery','Inside the community','Meet the coaches, explore the space and see the energy behind every session.'],['testimonials','Real people. Real progress.','Read stories from members who are building healthier habits and stronger performance.'],['contact','Start moving forward','Find the right membership or programme and take your first step.','Join us']],
     Wedding:[['hero','Your story. Beautifully celebrated.','Thoughtful details, meaningful moments and a celebration that feels unmistakably yours.','Explore our work'],['gallery','Celebrations to remember','Explore beautiful settings, thoughtful details and moments from recent celebrations.'],['features','A thoughtful planning experience','From the first conversation to the final detail, we make the process feel clear and personal.'],['testimonials','Kind words from couples','Hear from couples who trusted us with a day that mattered.'],['contact','Let’s make your day unforgettable','Share your date, ideas and plans to start a conversation.','Enquire about your date']],
@@ -861,6 +869,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
 
     Events:['Home','About the Event','Schedule','Speakers & Guests','Venue','Tickets & Registration','FAQs'],
     Construction:['Home','Services','Our Projects','Sectors','Our Process','About Us','Request a Quote'],
+    Legal:['Home','Practice Areas','Our Attorneys','Our Approach','Insights','FAQs','Request a Consultation'],
     Education:['Home','Courses','Learning Paths','Student Stories','Admissions','FAQs','Contact'],
     'Real Estate':['Home','Properties','Buy','Rent','Sell','Neighbourhoods','Our Agents','Contact'],
     Agency:['Home','Services','Selected Work','Our Process','Studio','Insights','Start a Project'],
@@ -904,6 +913,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
       ? ['Home','About','Academics','Admissions','Student Life','News','Contact']
       : (categoryPageLabels[category] ?? pageLabels[baseTemplateId] ?? ['Home','About','Services','Contact'])
   const innerPageHighlights: Record<string, [string, string, string, string]> = {
+    Legal:['Clear advice. Strong representation.','Explore our practice areas, understand how we work and meet the people who will guide your matter.','A considered next step','Arrange a confidential first conversation and learn what information may be useful to bring.'],
     Portfolio:['Selected projects','Explore a curated body of work, with the thinking, craft and outcomes behind each project.','Work together','Share your brief, timeline and ambitions to start a thoughtful creative collaboration.'],
     'E-commerce':['Shop the collection','Explore product ranges, useful details and carefully selected customer favourites.','Shopping with confidence','Find clear information about delivery, returns, payment options and customer support.'],
     Restaurant:['A menu made for the moment','Explore seasonal plates, signature favourites and carefully selected drinks.','Plan a memorable visit','Find our location, opening hours, private dining options and reservation details.'],
