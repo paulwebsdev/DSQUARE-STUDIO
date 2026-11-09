@@ -271,3 +271,15 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Generate collision-resistant IDs for every section and component when creating a page.
 - [x] Deep-copy section, component and per-device styles when duplicating a page so copied pages remain independent.
 - [ ] Verify add/duplicate/edit flows on desktop and Android, including device-specific style changes.
+
+
+## Editor accessibility and export safety batch — 2026-11-09
+- [x] Make page-layer selection clear stale component and inline-edit state.
+- [x] Reset stale selections and mobile drawers when adding, duplicating or deleting pages.
+- [x] Keep undo history bounded during redo and refresh document timestamps on history navigation.
+- [x] Add keyboard focus and Enter/Space selection to canvas sections.
+- [x] Add Alt+ArrowUp/Down section movement when a canvas section or its drag handle is focused.
+- [x] Report image file-reader failures instead of silently ignoring unreadable uploads.
+- [x] Restrict exported links to safe web, email, telephone, anchor and relative destinations.
+- [x] Strip control characters and markup delimiters from exported inline CSS values.
+- [ ] Run keyboard-only, screen-reader and exported-link security checks in a real browser.
