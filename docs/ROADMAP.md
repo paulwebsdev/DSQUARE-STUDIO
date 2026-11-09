@@ -82,3 +82,13 @@ The dashboard, browser-local project/client management, initial template library
 - [x] Edit selected text/component colour, font size, alignment and weight.
 - [x] Show page navigation links in the website header and switch between pages in the editor.
 - [ ] Add keyboard/touch-specific drag alternatives and move image assets to managed storage before production.
+
+
+## Professional website building — editor batch 2
+- [x] Add editable heading, text, button, form and shape/container elements.
+- [x] Duplicate and delete selected elements.
+- [x] Add per-device component style overrides for desktop, tablet and mobile previews.
+- [x] Add configurable element destinations and preview-mode link behavior.
+- [x] Add a contact-form layout preview with required name, email and message fields.
+- [ ] Connect forms to a secure submission service before production.
+- [ ] Add touch/keyboard drag alternatives and validate responsive controls on real devices.
