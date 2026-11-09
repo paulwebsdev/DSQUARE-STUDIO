@@ -641,7 +641,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     return () => { window.clearTimeout(timer); window.removeEventListener('keydown', onKeyDown) }
   }, [exportOpen, exportBusy])
 
-  const canvasClass = useMemo(() => `editor-canvas device-${device} ${site.category === 'Business' ? `business-template business-variant-${Math.max(1, Math.min(10, site.metadata.templateVariant ?? 1))}` : ''}`, [device, site.category, site.metadata.templateVariant])
+  const canvasClass = useMemo(() => { const variant = Math.max(1, Math.min(10, site.metadata.templateVariant ?? 1)); const specialtyClass = site.category === 'Business' ? `business-template business-variant-${variant}` : site.category === 'Portfolio' ? `portfolio-template portfolio-variant-${variant}` : site.category === 'E-commerce' ? `commerce-template commerce-variant-${variant}` : site.category === 'Blog / Magazine' ? `journal-template journal-variant-${variant}` : ''; return `editor-canvas device-${device} ${specialtyClass}` }, [device, site.category, site.metadata.templateVariant])
 
   return <div className={`visual-editor ${previewMode ? "preview-mode" : ""} ${mobilePanelOpen ? "mobile-panel-open" : ""} ${mobilePropertiesOpen ? "mobile-properties-open" : ""}`}>
     <header className="editor-topbar">
