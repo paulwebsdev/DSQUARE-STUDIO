@@ -537,6 +537,43 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     selectedTheme.radius = radiusVariants[(variantNumber - 1) % radiusVariants.length]
   }
   site.theme = { primaryColor:selectedTheme.primary, accentColor:selectedTheme.accent, backgroundColor:selectedTheme.background, textColor:selectedTheme.text, headingFont:selectedTheme.heading, bodyFont:selectedTheme.body, buttonRadius:selectedTheme.radius }
+  // Category-specific art direction: each category uses its own visual rhythm, while each of its ten variants changes the composition.
+  const categoryArtDirections: Record<string, { heroModes: string[]; galleryColumns: number[]; featureColumns: number[]; spacing: number[] }> = {
+    'Blog / Magazine': { heroModes:['editorial','split','centered','asymmetric','minimal','framed','banner','cinematic','gallery','editorial'], galleryColumns:[2,3,2,3,2,4,3,2,3,2], featureColumns:[3,2,3,2,3,2,3,2,3,2], spacing:[92,84,104,88,112,80,96,90,86,100] },
+    'Landing page': { heroModes:['centered','split','cinematic','framed','minimal','asymmetric','banner','centered','split','bold'], galleryColumns:[3,3,2,4,3,2,3,4,2,3], featureColumns:[3,4,3,2,3,4,2,3,4,3], spacing:[96,82,110,88,104,84,94,100,86,108] },
+    Agency: { heroModes:['split','editorial','asymmetric','cinematic','minimal','framed','centered','gallery','banner','split'], galleryColumns:[3,2,3,4,2,3,4,2,3,4], featureColumns:[3,2,3,3,2,4,3,2,3,4], spacing:[88,104,92,84,112,86,96,90,100,88] },
+    Restaurant: { heroModes:['cinematic','split','editorial','framed','centered','asymmetric','banner','minimal','gallery','cinematic'], galleryColumns:[3,2,3,4,2,3,4,3,2,3], featureColumns:[3,2,3,2,3,2,3,4,2,3], spacing:[84,92,100,86,104,88,96,110,82,90] },
+    Education: { heroModes:['split','centered','editorial','framed','banner','asymmetric','minimal','cinematic','gallery','split'], galleryColumns:[3,2,3,4,2,3,2,4,3,2], featureColumns:[3,4,3,2,3,4,2,3,4,3], spacing:[92,86,104,88,96,82,110,90,100,86] },
+    School: { heroModes:['split','cinematic','centered','asymmetric','framed','editorial','banner','minimal','gallery','split'], galleryColumns:[3,2,4,3,2,3,4,2,3,4], featureColumns:[3,4,3,2,4,3,2,3,4,3], spacing:[96,84,102,90,88,104,94,110,86,98] },
+    Community: { heroModes:['centered','split','framed','editorial','asymmetric','banner','minimal','gallery','cinematic','centered'], galleryColumns:[3,2,3,4,2,3,4,2,3,4], featureColumns:[3,2,3,4,2,3,4,2,3,4], spacing:[96,88,104,92,84,100,110,86,94,102] },
+    'Real Estate': { heroModes:['split','cinematic','editorial','asymmetric','framed','minimal','banner','gallery','centered','split'], galleryColumns:[3,2,3,4,2,3,4,2,3,4], featureColumns:[3,2,3,2,3,4,2,3,2,3], spacing:[88,96,104,84,92,112,86,100,90,98] },
+    Healthcare: { heroModes:['centered','split','framed','editorial','minimal','asymmetric','banner','cinematic','gallery','centered'], galleryColumns:[3,2,3,4,2,3,4,2,3,4], featureColumns:[3,2,3,4,2,3,4,2,3,4], spacing:[100,88,96,104,112,86,94,90,102,98] },
+    'Beauty & Wellness': { heroModes:['editorial','centered','framed','split','minimal','asymmetric','gallery','banner','cinematic','editorial'], galleryColumns:[3,2,3,4,2,3,4,2,3,4], featureColumns:[3,2,3,2,3,4,2,3,4,2], spacing:[104,92,100,86,112,90,98,84,96,108] },
+    'Hotel & Travel': { heroModes:['cinematic','split','gallery','editorial','framed','asymmetric','banner','centered','minimal','cinematic'], galleryColumns:[3,2,4,3,2,4,3,2,3,4], featureColumns:[3,2,3,4,2,3,4,2,3,4], spacing:[88,96,84,104,92,100,86,110,94,90] },
+    Finance: { heroModes:['editorial','split','centered','framed','asymmetric','minimal','cinematic','banner','gallery','editorial'], galleryColumns:[3,2,3,4,2,3,4,2,3,4], featureColumns:[3,4,3,2,3,4,2,3,4,3], spacing:[92,88,104,86,96,112,90,100,84,98] },
+    'Technology / SaaS': { heroModes:['split','centered','cinematic','asymmetric','framed','minimal','banner','gallery','editorial','split'], galleryColumns:[3,2,4,3,2,4,3,2,3,4], featureColumns:[3,4,3,4,2,3,4,2,3,4], spacing:[88,96,84,100,92,108,86,98,104,90] },
+    'Non-profit': { heroModes:['centered','split','editorial','framed','asymmetric','banner','gallery','minimal','cinematic','centered'], galleryColumns:[3,2,3,4,2,3,4,2,3,4], featureColumns:[3,2,3,4,2,3,4,2,3,4], spacing:[100,90,104,88,96,84,110,92,98,106] },
+    Events: { heroModes:['cinematic','centered','split','banner','asymmetric','framed','editorial','gallery','minimal','cinematic'], galleryColumns:[3,2,4,3,2,4,3,2,3,4], featureColumns:[3,2,3,4,2,3,4,2,3,4], spacing:[84,96,88,104,92,100,86,110,94,90] },
+    Construction: { heroModes:['split','cinematic','editorial','asymmetric','framed','banner','minimal','gallery','centered','split'], galleryColumns:[3,2,3,4,2,3,4,2,3,4], featureColumns:[3,4,3,2,3,4,2,3,4,3], spacing:[88,96,104,84,92,100,110,86,98,90] },
+    Legal: { heroModes:['editorial','split','centered','framed','minimal','asymmetric','cinematic','banner','gallery','editorial'], galleryColumns:[3,2,3,4,2,3,4,2,3,4], featureColumns:[3,2,3,4,2,3,4,2,3,4], spacing:[104,92,100,88,112,86,96,90,98,108] },
+    Automotive: { heroModes:['split','cinematic','asymmetric','framed','centered','banner','gallery','minimal','editorial','split'], galleryColumns:[3,2,4,3,2,4,3,2,3,4], featureColumns:[3,2,3,4,2,3,4,2,3,4], spacing:[88,96,84,100,92,104,86,110,98,90] },
+    'Fitness & Sports': { heroModes:['cinematic','split','centered','asymmetric','framed','banner','minimal','gallery','editorial','cinematic'], galleryColumns:[3,2,3,4,2,3,4,2,3,4], featureColumns:[3,4,3,4,2,3,4,2,3,4], spacing:[84,92,100,88,96,104,110,86,98,90] },
+    Wedding: { heroModes:['editorial','centered','split','framed','gallery','asymmetric','minimal','banner','cinematic','editorial'], galleryColumns:[3,2,4,3,2,4,3,2,3,4], featureColumns:[3,2,3,4,2,3,4,2,3,4], spacing:[108,96,100,88,104,90,112,86,98,106] },
+    'Pet Care': { heroModes:['centered','split','framed','cinematic','asymmetric','editorial','banner','gallery','minimal','centered'], galleryColumns:[3,2,3,4,2,3,4,2,3,4], featureColumns:[3,4,3,2,3,4,2,3,4,3], spacing:[96,88,104,92,100,86,110,94,98,102] },
+    'Music & Entertainment': { heroModes:['cinematic','split','centered','asymmetric','banner','framed','gallery','minimal','editorial','cinematic'], galleryColumns:[3,2,4,3,2,4,3,2,3,4], featureColumns:[3,2,3,4,2,3,4,2,3,4], spacing:[84,96,88,104,92,100,86,110,98,90] },
+    'Personal Services': { heroModes:['split','editorial','centered','framed','asymmetric','minimal','banner','gallery','cinematic','split'], galleryColumns:[3,2,3,4,2,3,4,2,3,4], featureColumns:[3,4,3,2,3,4,2,3,4,3], spacing:[92,100,88,104,96,112,86,98,90,102] },
+    Photography: { heroModes:['gallery','split','editorial','minimal','framed','asymmetric','centered','banner','cinematic','gallery'], galleryColumns:[3,2,4,3,2,4,3,2,3,4], featureColumns:[3,2,3,4,2,3,4,2,3,4], spacing:[88,96,104,112,92,100,86,98,90,106] },
+    'Fashion & Apparel': { heroModes:['editorial','gallery','centered','split','minimal','framed','asymmetric','banner','cinematic','editorial'], galleryColumns:[3,2,4,3,2,4,3,2,3,4], featureColumns:[3,2,3,4,2,3,4,2,3,4], spacing:[104,92,100,88,112,96,86,98,90,108] },
+    'Church & Ministry': { heroModes:['centered','split','editorial','framed','asymmetric','banner','minimal','gallery','cinematic','centered'], galleryColumns:[3,2,3,4,2,3,4,2,3,4], featureColumns:[3,4,3,2,3,4,2,3,4,3], spacing:[100,92,104,88,96,86,112,98,90,106] },
+    Agriculture: { heroModes:['cinematic','split','editorial','asymmetric','framed','gallery','banner','centered','minimal','cinematic'], galleryColumns:[3,2,4,3,2,4,3,2,3,4], featureColumns:[3,4,3,2,3,4,2,3,4,3], spacing:[88,96,104,84,92,100,86,110,98,90] },
+  }
+  const categoryArt = categoryArtDirections[category]
+  const artIndex = (variantNumber - 1) % 10
+  const artHeroMode = categoryArt?.heroModes[artIndex] ?? 'split'
+  const artGalleryColumns = categoryArt?.galleryColumns[artIndex] ?? 3
+  const artFeatureColumns = categoryArt?.featureColumns[artIndex] ?? 3
+  const artSpacing = categoryArt?.spacing[artIndex] ?? 88
+
   const sections: Array<[SiteSection['kind'], string, string, string?]> = [...(categoryContent[category] ?? content[baseTemplateId] ?? content.business)]
 
   const businessBlueprints: Array<Array<[SiteSection['kind'], string, string, string?]>> = [
@@ -700,7 +737,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
       const isHero = kind === 'hero'
       const tone = isHero ? heroTone : index % 2 === 0 ? palette[baseTemplateId] ?? '#f3eee5' : '#ffffff'
       const block = makeSection(kind, title, body, button, tone)
-      const isDark = isHero && layoutVariant % 3 === 0
+      const isDark = isHero && (layoutVariant % 3 === 0 || (Boolean(categoryArt) && artHeroMode === 'cinematic'))
       const textColor = isDark ? '#ffffff' : selectedTheme.text
       return {
         ...block,
@@ -717,6 +754,16 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
           layout: kind === 'gallery' || (kind === 'features' && (category === 'Business' || layoutVariant % 2 === 0)) ? 'grid' : 'stacked',
           gridColumns: kind === 'gallery' ? '3' : kind === 'features' && (category === 'Business' || layoutVariant % 2 === 0) ? (layoutVariant === 6 ? '4' : '3') : '2',
           borderTop: !isHero && index % 2 === 0 ? '1px solid #e9e4dc' : 'none',
+          ...(categoryArt ? (isHero ? {
+            minHeight: artHeroMode === 'cinematic' ? '560px' : artHeroMode === 'banner' ? '360px' : artHeroMode === 'minimal' ? '480px' : artHeroMode === 'gallery' ? '420px' : '440px',
+            padding: artHeroMode === 'editorial' ? 'clamp(112px,14vw,184px) 12%' : artHeroMode === 'minimal' ? 'clamp(130px,16vw,196px) 10%' : artHeroMode === 'banner' ? 'clamp(72px,9vw,112px) 8%' : artHeroMode === 'cinematic' ? 'clamp(140px,16vw,200px) 9%' : 'clamp(84px,10vw,140px) 8%',
+            ...(artHeroMode === 'centered' || artHeroMode === 'minimal' ? { textAlign:'center' as const } : {}),
+            ...(artHeroMode === 'cinematic' ? { backgroundColor:selectedTheme.primary, color:'#ffffff', borderRadius:'0', overflow:'hidden' } : {}),
+            ...(artHeroMode === 'framed' ? { borderRadius:'28px', margin:'22px 3%', boxShadow:'0 24px 70px rgba(20,32,38,.12)' } : {}),
+            ...(artHeroMode === 'split' || artHeroMode === 'asymmetric' ? { display:'grid', gridTemplateColumns:artHeroMode === 'asymmetric' ? 'minmax(0,1.15fr) minmax(260px,.85fr)' : 'minmax(0,1fr) minmax(280px,1fr)', alignItems:'center', columnGap:'clamp(24px,5vw,76px)' } : {}),
+            ...(artHeroMode === 'gallery' ? { display:'grid', gridTemplateColumns:'minmax(0,.85fr) minmax(300px,1.15fr)', alignItems:'center', columnGap:'clamp(22px,4vw,60px)' } : {}),
+            ...(artHeroMode === 'banner' ? { borderBottom:'1px solid color-mix(in srgb,'+selectedTheme.accent+' 35%,transparent)' } : {}),
+          } : kind === 'gallery' ? { layout:'grid', gridColumns:String(artGalleryColumns), gap:'clamp(14px,2vw,28px)' } : kind === 'features' ? { layout:'grid', gridColumns:String(artFeatureColumns), gap:'clamp(14px,2vw,26px)' } : kind === 'contact' ? { borderRadius:artIndex % 2 === 0 ? '24px' : '0', margin:artIndex % 3 === 0 ? '0 3% 3%' : '0' } : { padding:artSpacing+'px 8%' }) : {}),
           ...(category === 'Portfolio' ? {
             ...(isHero ? {display:layoutVariant%2===0?'grid':'block',gridTemplateColumns:layoutVariant%2===0?'minmax(0,1.05fr) minmax(280px,.95fr)':undefined,alignItems:'center',columnGap:'clamp(24px,5vw,72px)',minHeight:layoutVariant%3===0?'520px':'440px',borderRadius:layoutVariant%2===0?'0':'22px'} : {}),
             ...(kind==='gallery'?{gridColumns:layoutVariant%3===0?'2':layoutVariant%3===1?'3':'4',gap:'clamp(14px,2vw,26px)'}:{}),
@@ -755,6 +802,15 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
               borderRadius: item.kind === 'button' ? selectedTheme.radius : item.styles.borderRadius,
               padding: item.kind === 'button' ? '15px 28px' : item.styles.padding,
               letterSpacing: item.kind === 'heading' && layoutVariant === 6 ? '-0.04em' : item.styles.letterSpacing,
+              ...(categoryArt && isHero && item.kind === 'image' ? {
+                width:'100%', height:artHeroMode === 'cinematic' ? 'clamp(280px,38vw,500px)' : artHeroMode === 'gallery' ? 'clamp(320px,42vw,560px)' : 'clamp(260px,34vw,460px)',
+                maxWidth:artHeroMode === 'split' || artHeroMode === 'asymmetric' || artHeroMode === 'gallery' ? '100%' : '1120px',
+                objectFit:'cover', borderRadius:artHeroMode === 'framed' ? '26px' : artHeroMode === 'cinematic' ? '0' : selectedTheme.radius,
+                boxShadow:artHeroMode === 'split' || artHeroMode === 'asymmetric' || artHeroMode === 'gallery' ? '0 24px 64px rgba(20,32,38,.16)' : 'none',
+                ...(['split','asymmetric','gallery'].includes(artHeroMode) ? { gridColumn:'2', gridRow:'1 / span 3', alignSelf:'center' } : {}),
+              } : {}),
+              ...(categoryArt && isHero && ['heading','text','button'].includes(item.kind) && ['split','asymmetric','gallery'].includes(artHeroMode) ? { gridColumn:'1' } : {}),
+              ...(categoryArt && isHero && artHeroMode === 'cinematic' && item.kind !== 'image' ? { color:'#ffffff' } : {}),
               ...(category === 'Business' && item.kind === 'image' && isHero ? {
                 width: [0,3,5,7].includes(layoutVariant) ? '100%' : '100%',
                 height: [0,3,5,7].includes(layoutVariant) ? 'clamp(300px, 38vw, 500px)' : 'clamp(240px, 34vw, 430px)',
