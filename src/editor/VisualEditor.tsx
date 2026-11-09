@@ -52,9 +52,17 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const selectedText = selectedComponent?.content ?? selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
 
   useEffect(() => {
-    localStorage.setItem(storageKey, JSON.stringify(site))
-    setSavedAt('Saved just now')
-  }, [site])
+    setSavedAt('Saving…')
+    const timer = window.setTimeout(() => {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(site))
+        setSavedAt('Saved just now')
+      } catch {
+        setSavedAt('Could not save — storage is full')
+      }
+    }, 250)
+    return () => window.clearTimeout(timer)
+  }, [site, storageKey])
 
   const commit = (next: SiteDocument) => {
     setHistory(items => [...items.slice(-29), site])
@@ -312,6 +320,25 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     setSite(next)
   }
 
+  useEffect(() => {
+    const handleEditorShortcut = (event: KeyboardEvent) => {
+      if (!(event.ctrlKey || event.metaKey)) return
+      const target = event.target as HTMLElement | null
+      if (target?.isContentEditable || target?.closest('input, textarea, select, [contenteditable="true"]')) return
+      const key = event.key.toLowerCase()
+      if (key === 'z') {
+        event.preventDefault()
+        if (event.shiftKey) redo()
+        else undo()
+      } else if (key === 'y') {
+        event.preventDefault()
+        redo()
+      }
+    }
+    window.addEventListener('keydown', handleEditorShortcut)
+    return () => window.removeEventListener('keydown', handleEditorShortcut)
+  }, [history, future, site])
+
 
   const downloadTextFile = (fileName: string, content: string, mimeType: string) => {
     const url = URL.createObjectURL(new Blob([content], { type: mimeType }))
@@ -372,7 +399,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         <button className="editor-tool" onClick={redo} disabled={!future.length} aria-label="Redo"><Redo2 size={17} /></button>
         <button className="editor-preview" onClick={() => setPreviewMode(value => !value)}><Eye size={15} /> {previewMode ? "Exit preview" : "Preview"}</button>
         <button className="editor-preview editor-export" onClick={() => { setExportMessage(""); setExportOpen(true) }}><Download size={15} /> Export</button>
-        <button className="primary-button editor-save" onClick={() => { localStorage.setItem(storageKey, JSON.stringify(site)); setSavedAt('Saved just now') }}><Save size={14} /> Save</button>
+        <button className="primary-button editor-save" onClick={() => { try { localStorage.setItem(storageKey, JSON.stringify(site)); setSavedAt('Saved just now') } catch { setSavedAt('Could not save — storage is full') } }}><Save size={14} /> Save</button>
       </div>
     </header>
     <div className="editor-workspace">
