@@ -471,8 +471,30 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
       Object.entries(files.assets).forEach(([name, content]) => zip.file(name, content))
       zip.file('styles.css', files.css)
       zip.file('script.js', files.js)
-      zip.file('README.txt', 'Website source files for ' + site.name + '\n\nOpen index.html to view the website.\nAll pages, styles and scripts are included.\nContact forms are front-end previews and need a form service to receive submissions.\nUploaded images are included in the assets folder.\n\nCreated with DSQUARE STUDIO.\n')
-      const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } })
+      const pageList = Object.entries(files.htmlFiles).map(([fileName]) => '  - ' + fileName).join('\n')
+      const assetCount = Object.keys(files.assets).length
+      zip.file('README.txt', 'WEBSITE SOURCE PACKAGE\n' + site.name + '\n\n' +
+        'GETTING STARTED\n' +
+        '1. Keep the folder structure unchanged.\n' +
+        '2. Open index.html in a browser to preview the website.\n' +
+        '3. Upload the complete folder to a static web host to publish it.\n\n' +
+        'PAGES INCLUDED\n' + pageList + '\n\n' +
+        'PACKAGE CONTENTS\n' +
+        '- styles.css: shared website styles and responsive rules.\n' +
+        '- script.js: small front-end interaction script.\n' +
+        '- assets/: ' + assetCount + ' packaged image asset(s).\n\n' +
+        'IMPORTANT NOTES\n' +
+        '- Contact forms are front-end previews only. Connect a secure form service before collecting messages.\n' +
+        '- No hosting account, domain, database or payment service is included.\n' +
+        '- Keep all page files, styles.css, script.js and assets/ together.\n\n' +
+        'Created with DSQUARE STUDIO.\n')
+      const blob = await zip.generateAsync(
+        { type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } },
+        metadata => {
+          const percent = Math.max(0, Math.min(100, Math.round(metadata.percent)))
+          setExportMessage('Preparing ZIP… ' + percent + '%')
+        },
+      )
       const safeName = site.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'website'
       const url = URL.createObjectURL(blob)
       const anchor = document.createElement('a')
@@ -481,7 +503,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
       document.body.appendChild(anchor)
       anchor.click()
       anchor.remove()
-      window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+      window.setTimeout(() => URL.revokeObjectURL(url), 10000)
       setExportMessage('Your complete website source ZIP is ready.')
     } catch {
       setExportMessage('The export could not be created. Please try again.')
