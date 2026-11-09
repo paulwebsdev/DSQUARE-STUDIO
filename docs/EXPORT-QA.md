@@ -46,3 +46,12 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - [ ] Mark an image decorative; confirm exported HTML uses an empty alt attribute.
 - [ ] Add, duplicate and reuse elements; confirm each new element remains independently editable across device-specific styles.
 - [ ] Switch between pages while a component and mobile panel are selected; confirm stale selection and panels are cleared.
+
+## Workspace backup and restore checks
+
+- Download a workspace backup and confirm the JSON contains the format/version, projects, clients and saved editor documents.
+- Restore a valid backup and confirm projects, clients and website drafts are available again.
+- Try an unsupported version, malformed JSON, oversized file and a document for an unknown project; each should be rejected without changing the workspace.
+- Confirm the restore prompt clearly warns that current local workspace data will be replaced.
+- Simulate a browser storage write failure where possible; verify the previous projects, clients and saved documents are rolled back.
+- Confirm the settings page explains that backups contain private workspace information and are stored locally by the browser.
