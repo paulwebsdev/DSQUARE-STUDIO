@@ -1,5 +1,13 @@
 # DSQUARE STUDIO — Roadmap
 
+## Template marketplace expansion — 2026-11-09
+- [x] Expand the library to 21 website categories with 10 named starter options per category (210 options total).
+- [x] Add a dedicated School category with 10 school-specific starter concepts and school-focused page navigation.
+- [x] Give template variants distinct colour combinations, typography pairings, button shapes, spacing and selected section-order/layout treatments.
+- [ ] Continue developing category-specific section compositions, imagery and complete inner-page designs so each option feels purpose-built.
+- [ ] Verify all 210 options can be selected and opened in the visual editor on desktop and Android.
+
+
 ## Phase 1 — Foundation
 - [x] Record product goals and approved decisions.
 - [x] Define the initial architecture and module boundaries.
