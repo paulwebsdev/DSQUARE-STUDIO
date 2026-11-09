@@ -846,3 +846,23 @@ h1,h2,h3,h4,p { margin-top: 0; }
 @media(max-width:700px){.portfolio-variant-1 .site-preview-section.section-gallery{grid-template-columns:1fr}.portfolio-template .site-preview-section.section-gallery,.commerce-template .site-preview-section.section-gallery,.journal-template .site-preview-section.section-gallery{gap:14px}}
 @media(prefers-reduced-motion:reduce){.portfolio-template *,.commerce-template *,.journal-template *{animation:none!important;transition:none!important}}
 
+
+
+/* Final live-preview polish for Portfolio, E-commerce and editorial templates */
+.portfolio-template .ds-portfolio-selected{transform:translateY(-6px);box-shadow:0 18px 44px rgba(20,32,38,.14);outline:1px solid var(--ds-accent)}
+.portfolio-template .ds-portfolio-colour{filter:grayscale(0)!important}
+.portfolio-template .ds-portfolio-expanded{transform:scale(1.035);box-shadow:0 22px 50px rgba(20,32,38,.2)}
+.portfolio-template .ds-portfolio-reveal{animation:dsPortfolioReveal .7s ease both}
+.portfolio-template .ds-portfolio-cta{box-shadow:0 0 0 5px color-mix(in srgb,var(--ds-accent) 18%,transparent)}
+@keyframes dsPortfolioReveal{from{opacity:.25;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.commerce-template .ds-commerce-zoomed{transform:scale(1.08);z-index:2}
+.commerce-template .ds-commerce-heading-active{text-decoration:underline;text-decoration-color:var(--ds-accent);text-underline-offset:8px}
+.commerce-template .ds-commerce-live-note{display:inline-flex;padding:10px 15px;border-radius:999px;background:var(--ds-primary,#171717);color:#fff;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-top:18px}
+.commerce-template .ds-commerce-card-active{transform:translateY(-5px);box-shadow:0 18px 42px rgba(20,32,38,.13)}
+.journal-template .ds-journal-story-open{background:color-mix(in srgb,var(--ds-accent) 10%,white);padding:22px!important}
+.journal-template .ds-journal-headline-seen{animation:dsJournalHeadline .7s ease both}
+.journal-template .ds-journal-image-focus{transform:scale(1.04);filter:saturate(1.12)!important}
+.journal-template .ds-journal-link-active{color:var(--ds-accent)}
+@keyframes dsJournalHeadline{from{opacity:.3;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:760px){.portfolio-template .site-preview-section.section-hero,.commerce-template .site-preview-section.section-hero{display:block!important;min-height:0!important}.portfolio-template .site-preview-section.section-gallery,.commerce-template .site-preview-section.section-gallery,.journal-template .site-preview-section.section-gallery{grid-template-columns:1fr!important}.portfolio-template .site-preview-section,.commerce-template .site-preview-section,.journal-template .site-preview-section{padding-left:6%!important;padding-right:6%!important}}
+@media(prefers-reduced-motion:reduce){.portfolio-template *,.commerce-template *,.journal-template *{animation:none!important;transition:none!important}}
