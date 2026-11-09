@@ -359,7 +359,7 @@ h1,h2,h3,h4,p { margin-top: 0; }
 /* Mobile editor panels: bottom navigation opens a scrollable drawer */
 .mobile-panel-close{display:none}
 @media(max-width:600px){
-  .editor-mobile-add{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .editor-mobile-add{grid-template-columns:repeat(5,minmax(0,1fr))}
   .mobile-panel-open .editor-left-panel{
     display:flex!important;position:absolute;z-index:30;left:8px;right:8px;bottom:56px;
     width:auto;height:min(68vh,620px);max-height:calc(100% - 75px);
@@ -385,3 +385,13 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .layout-control-grid .property-label{min-width:0}
 .layout-control-grid input{width:100%;min-width:0}
 @media(max-width:420px){.layout-control-grid{grid-template-columns:1fr}}
+
+
+/* Mobile properties drawer */
+.mobile-properties-close{display:none}
+@media(max-width:600px){
+.mobile-properties-open .editor-right-panel{display:flex!important;position:absolute;z-index:31;left:8px;right:8px;bottom:56px;width:auto;height:min(72vh,680px);max-height:calc(100% - 75px);border:1px solid #5b4b31;border-radius:12px;background:#171614;box-shadow:0 16px 50px rgba(0,0,0,.65);overflow:hidden}
+.mobile-properties-open .editor-properties{min-height:0;overflow:auto}
+.mobile-properties-close{display:grid;place-items:center;width:27px;height:27px;margin-left:auto;border:1px solid #51432d;border-radius:5px;color:#e5d1a6;background:#211e18}
+.editor-properties-heading{display:flex;align-items:center;gap:8px}
+}
