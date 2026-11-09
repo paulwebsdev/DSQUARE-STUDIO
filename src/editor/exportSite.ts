@@ -67,15 +67,20 @@ export function buildExportFiles(site: SiteDocument): ExportFiles {
   const assetPaths = new Map<string, string>()
   const assetAltTexts = new Map((site.assets ?? []).map(asset => [asset.dataUrl, asset.altText]))
   let assetIndex = 0
-  const allImages = site.pages.flatMap(page => page.sections.flatMap(section => section.components.filter(component => component.kind === 'image')))
-  for (const image of allImages) {
-    const match = image.content.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,([\s\S]+)$/)
-    if (!match) continue
+  const registerImage = (dataUrl: string) => {
+    if (assetPaths.has(dataUrl)) return
+    const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,([\s\S]+)$/)
+    if (!match) return
     const extension = match[1].includes('svg') ? '.svg' : match[1].includes('png') ? '.png' : match[1].includes('webp') ? '.webp' : match[1].includes('gif') ? '.gif' : '.jpg'
     const path = 'assets/image-' + (++assetIndex) + extension
     const binary = atob(match[2])
     assets[path] = Uint8Array.from(binary, character => character.charCodeAt(0))
-    assetPaths.set(image.content, path)
+    assetPaths.set(dataUrl, path)
+  }
+  for (const page of site.pages) for (const section of page.sections) {
+    for (const component of section.components) if (component.kind === 'image') registerImage(component.content)
+    const backgroundMatch = String(section.styles.backgroundImage ?? '').match(/^url\((['"]?)(data:image\/[a-zA-Z0-9.+-]+;base64,[\s\S]+?)\1\)$/)
+    if (backgroundMatch) registerImage(backgroundMatch[2])
   }
   const htmlFiles: Record<string, string> = {}
   for (const page of site.pages) {
