@@ -248,6 +248,14 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
       ['contact','Speak with our legal team','Share a brief outline of your matter and arrange a confidential discussion.','Contact the firm'],
     ],
   }
+  const categoryContent: Record<string, Array<[SiteSection['kind'], string, string, string?]>> = {
+    Automotive:[['hero','Find your next drive.','Explore carefully selected vehicles, expert guidance and a smoother way to get on the road.','Browse vehicles'],['gallery','Featured vehicles','Discover standout models, new arrivals and vehicles selected for quality.'],['features','A better way to buy and care for your car','Get clear information, helpful advice and support from first enquiry to aftercare.'],['testimonials','Drivers who trust us','Hear from customers who found the right vehicle and support with our team.'],['contact','Ready for your next drive?','Tell us what you are looking for and arrange a viewing or test drive.','Book a test drive']],
+    'Fitness & Sports':[['hero','Make your next move count.','Build strength, confidence and consistency with coaching and programmes that meet you where you are.','Explore membership'],['features','Training for every goal','Discover coaching, classes and facilities designed to help you keep progressing.'],['gallery','Inside the community','Meet the coaches, explore the space and see the energy behind every session.'],['testimonials','Real people. Real progress.','Read stories from members who are building healthier habits and stronger performance.'],['contact','Start moving forward','Find the right membership or programme and take your first step.','Join us']],
+    Wedding:[['hero','Your story. Beautifully celebrated.','Thoughtful details, meaningful moments and a celebration that feels unmistakably yours.','Explore our work'],['gallery','Celebrations to remember','Explore beautiful settings, thoughtful details and moments from recent celebrations.'],['features','A thoughtful planning experience','From the first conversation to the final detail, we make the process feel clear and personal.'],['testimonials','Kind words from couples','Hear from couples who trusted us with a day that mattered.'],['contact','Let’s make your day unforgettable','Share your date, ideas and plans to start a conversation.','Enquire about your date']],
+    'Pet Care':[['hero','Care for every kind of companion.','Helpful, dependable care for the pets who make your house a home.','Explore our services'],['features','Care shaped around your pet','Discover our services, experienced team and the thoughtful details that keep pets happy.'],['gallery','Happy pets, happy people','Meet some of the pets in our care and see what makes our community special.'],['testimonials','Loved by pets and their people','Read kind words from the owners who trust us with their companions.'],['contact','We would love to meet your pet','Tell us what you need and we will help you find the right care.','Get in touch']],
+    'Music & Entertainment':[['hero','Make some noise. Make a moment.','Discover the talent, experiences and creative energy bringing people together.','Explore what’s on'],['gallery','On stage and behind the scenes','Explore performances, productions and creative work from our world.'],['features','Creative experiences, professionally delivered','From artist bookings to production support, discover what we can create together.'],['testimonials','The audience says it best','Hear from collaborators, audiences and partners.'],['contact','Let’s create something unforgettable','Tell us about your event, project or collaboration.','Make an enquiry']],
+    'Personal Services':[['hero','Good service makes life easier.','Practical help, dependable expertise and a personal approach you can count on.','Explore our services'],['features','How we can help','Find the right service, understand what is included and see how we make the process simple.'],['gallery','A closer look at our work','Explore examples, service details and the people behind the work.'],['testimonials','Trusted by our customers','Read how our team helps people get important things done.'],['contact','Tell us what you need','Share a few details and we will help you take the next step.','Request a quote']],
+  }
   const palette: Record<string, string> = {
     agency: '#f3eee5', business: '#edf3f4', portfolio: '#f5eeee', shop: '#f4f0e6',
     restaurant: '#f7eee8', launch: '#f0effb', education: '#edf4ef', journal: '#f3f0e9', community: '#edf2f6',
@@ -287,7 +295,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
   selectedTheme.body = bodyFonts[(variantNumber - 1) % bodyFonts.length]
   selectedTheme.radius = radiusVariants[(variantNumber - 1) % radiusVariants.length]
   site.theme = { primaryColor:selectedTheme.primary, accentColor:selectedTheme.accent, backgroundColor:selectedTheme.background, textColor:selectedTheme.text, headingFont:selectedTheme.heading, bodyFont:selectedTheme.body, buttonRadius:selectedTheme.radius }
-  const sections = content[baseTemplateId] ?? content.business
+  const sections = categoryContent[category] ?? content[baseTemplateId] ?? content.business
   const header = site.pages[0].sections[0]
   const footer = site.pages[0].sections[site.pages[0].sections.length - 1]
   const layoutVariant = (variantNumber - 1) % 10
@@ -338,6 +346,14 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     { ...footer, components: [{ ...component('text', '© ' + name + '. All rights reserved.'), id: createId('copyright'), styles: { ...component('text', '© ' + name + '. All rights reserved.').styles, color: '#ffffff', maxWidth: '100%' } }], styles: { ...footer.styles, padding: '36px 7%', backgroundColor: selectedTheme.primary } },
   ]
   site.metadata.description = sections[0][2]
+  const categoryPageLabels: Record<string, string[]> = {
+    Automotive:['Home','Vehicles','Services','Finance','About','Contact'],
+    'Fitness & Sports':['Home','Membership','Classes','Coaches','Timetable','Contact'],
+    Wedding:['Home','Our Story','Gallery','Packages','FAQs','RSVP','Contact'],
+    'Pet Care':['Home','Services','Our Team','Pet Gallery','FAQs','Contact'],
+    'Music & Entertainment':['Home','Artists','Events','Media','About','Bookings'],
+    'Personal Services':['Home','Services','How It Works','Reviews','About','Contact'],
+  }
   const pageLabels: Record<string, string[]> = {
     agency:['Home','About','Services','Work','Contact'], business:['Home','About','Services','Contact'], portfolio:['Home','Work','About','Contact'], shop:['Home','Shop','About','Contact'],
     restaurant:['Home','Menu','Our Story','Visit'], launch:['Home','FAQ','Contact'], education:['Home','Programs','Admissions','About','Contact'], journal:['Home','Stories','Topics','About'], community:['Home','About','Events','Join','Contact'],
@@ -345,8 +361,14 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     finance:['Home','Solutions','About','Insights','Contact'], saas:['Home','Features','Pricing','Resources','Contact'], nonprofit:['Home','Our Mission','Programs','Impact','Get Involved'],
     events:['Home','Schedule','Speakers','Venue','Register'], construction:['Home','Services','Projects','About','Request a Quote'], legal:['Home','Practice Areas','Our Firm','People','Contact'],
   }
-  const labels = category === 'School' ? ['Home','About','Academics','Admissions','Student Life','News','Contact'] : (pageLabels[baseTemplateId] ?? ['Home','About','Services','Contact'])
-  const innerPageHighlights: Record<string, [string, string, string, string]> = {
+  const labels = category === 'School' ? ['Home','About','Academics','Admissions','Student Life','News','Contact'] : (categoryPageLabels[category] ?? pageLabels[baseTemplateId] ?? ['Home','About','Services','Contact'])
+  const innerPageHighlights: Record<string, [string, string, string, string]> = {\n    Automotive: ['Vehicle collection', 'Browse new arrivals, featured models and carefully selected vehicles for different needs and budgets.', 'Support beyond the showroom', 'Find clear information about viewings, test drives, servicing and ownership support.'],
+    'Fitness & Sports': ['Programmes and classes', 'Explore strength, conditioning, group sessions and coaching for different experience levels.', 'Progress with the right support', 'Meet the coaches, understand membership options and find a routine that works for you.'],
+    Wedding: ['Planning and packages', 'Explore celebration styles, planning support and thoughtful details for your day.', 'Your day, your way', 'Find answers about dates, venues, suppliers and what happens next.'],
+    'Pet Care': ['Care and services', 'Explore grooming, boarding, health support and other services for your companion.', 'A team you can trust', 'Meet the people, understand our care approach and prepare for your pet’s visit.'],
+    'Music & Entertainment': ['Artists and experiences', 'Discover performers, productions, live events and creative services.', 'Plan your next event', 'Find booking information, technical details and ways to work together.'],
+    'Personal Services': ['Services and packages', 'Explore practical services, clear packages and support tailored to your needs.', 'Simple from start to finish', 'Understand our process, service areas and how to request help.'],
+
     shop: ['Featured collection', 'Browse carefully selected products, discover new arrivals and find customer favourites.', 'Shopping made simple', 'Enjoy clear product details, helpful support and a smooth path from discovery to checkout.'],
     restaurant: ['From our kitchen', 'Explore starters, signature dishes, seasonal plates and freshly prepared favourites.', 'A table worth sharing', 'Find dining options, opening hours and the details you need before your visit.'],
     education: ['Learning pathways', 'Explore subjects, programmes, enrichment and opportunities for every stage of learning.', 'A supportive school community', 'Meet our educators, discover student life and see how every learner is encouraged to thrive.'],
@@ -359,6 +381,14 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     construction: ['Our capabilities', 'Explore our services, specialist trades and the projects we deliver from start to finish.', 'A clear project process', 'Understand how planning, communication and careful delivery keep work moving.'],
     legal: ['How we can help', 'Explore our legal services and the areas where our team provides focused support.', 'A considered approach', 'Understand what to expect from an initial discussion and how we work with clients.'],
     nonprofit: ['Programmes in action', 'Discover the initiatives, services and community projects behind our mission.', 'Ways to make a difference', 'Find out how to volunteer, partner with us or support the work.'],
+  }
+  const categoryPageDescriptions: Record<string, Record<string, string>> = {
+    Automotive:{Vehicles:'Explore available vehicles, key details and options to arrange a viewing or test drive.',Services:'Discover maintenance, repairs and aftercare designed to keep you moving.',Finance:'Understand available finance guidance and the information to prepare before applying.'},
+    'Fitness & Sports':{Membership:'Compare membership options and find the level of access that suits your goals.',Classes:'Explore group sessions, training styles and class information.',Coaches:'Meet the coaches and learn about their experience and approach.',Timetable:'Plan your week with our class and training schedule.'},
+    Wedding:{'Our Story':'Meet the people, inspiration and approach behind the celebrations we create.',Gallery:'Explore real celebrations, thoughtful details and ideas for your own day.',Packages:'Discover planning options and services that can be shaped around your celebration.',FAQs:'Find answers to common questions about planning, dates and our services.',RSVP:'Share your response and important details for the celebration.'},
+    'Pet Care':{Services:'Explore the care options available and find the right support for your companion.','Our Team':'Meet the people who care for pets with patience, experience and attention.', 'Pet Gallery':'A look at the happy companions who make our community special.',FAQs:'Find practical answers about visits, preparation and ongoing care.'},
+    'Music & Entertainment':{Artists:'Meet the artists, performers and creative talent we work with.',Events:'Discover upcoming performances, appearances and live experiences.',Media:'Explore music, videos, photography and highlights from recent work.',Bookings:'Tell us about your event and the talent or production support you need.'},
+    'Personal Services':{Services:'Explore our services, what is included and how to request support.','How It Works':'A simple overview of the steps from first enquiry to completed service.',Reviews:'Read feedback from customers who have worked with our team.'},
   }
   const pageDescriptions: Record<string,string> = {
     About: 'Meet the people, purpose and principles behind ' + name + '. Discover our story and what makes our approach different.',
@@ -398,7 +428,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     if (index === 0) return site.pages[0]
     const slug = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'page'
     const pageHeading = label === 'Contact' ? 'Let’s start a conversation.' : label === 'Home' ? 'Welcome to ' + name + '.' : label
-    const pageBody = pageDescriptions[label] ?? 'Discover more about ' + name + ', our approach and how we can help you take the next step.'
+    const pageBody = categoryPageDescriptions[category]?.[label] ?? pageDescriptions[label] ?? 'Discover more about ' + name + ', our approach and how we can help you take the next step.'
     const pageSections: SiteSection[] = [
       {
         id:createId('section'), kind:'header', name:'Navigation', enabled:true,
@@ -420,7 +450,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
         styles:{padding:'clamp(56px, 7vw, 88px) 8%',backgroundColor:selectedTheme.background,layout:'grid',gridColumns:'2'},
         components:[
           {...component('heading',label==='About'?'The thinking behind '+name:'A closer look'),id:createId('heading'),styles:{fontFamily:selectedTheme.heading,fontSize:'clamp(1.8rem, 3vw, 2.8rem)',fontWeight:'750',color:selectedTheme.primary,maxWidth:'760px'}},
-          {...component('text',(innerPageHighlights[baseTemplateId] ?? ['','A considered experience, shaped around what matters most.','','Discover useful information and find the right next step with '+name+'.'])[1]),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.05rem',lineHeight:'1.8',color:selectedTheme.text,maxWidth:'680px'}},
+          {...component('text',(innerPageHighlights[category] ?? innerPageHighlights[baseTemplateId] ?? ['','A considered experience, shaped around what matters most.','','Discover useful information and find the right next step with '+name+'.'])[1]),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.05rem',lineHeight:'1.8',color:selectedTheme.text,maxWidth:'680px'}},
           {...component('text',(innerPageHighlights[baseTemplateId] ?? ['Thoughtful expertise','A considered experience shaped around your needs.','Clear information','Helpful guidance for your next step.'])[0]),id:createId('feature-one'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
           {...component('text',(innerPageHighlights[baseTemplateId] ?? ['Thoughtful expertise','A considered experience shaped around your needs.','Clear information','Helpful guidance for your next step.'])[2]),id:createId('feature-two'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
         ],
