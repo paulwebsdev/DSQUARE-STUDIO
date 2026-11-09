@@ -159,6 +159,12 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [ ] Add validation and tests for generated multi-page site documents.
 
 
+## AI draft page-content upgrade
+- [x] Generate page introductions that respond to common page purposes such as About, Services, Portfolio, Shop, Menu, Courses, Events and FAQ.
+- [x] Add a relevant secondary content section to generated Services, Portfolio/Work, Shop/Product, Menu, Course/Program and Event/Testimonial pages.
+- [ ] Expand page-specific copy and section structures using the real AI provider after backend integration.
+
+
 ## Secure AI integration design
 - [x] Document a provider-neutral server-side AI adapter contract for website generation and natural-language revisions.
 - [x] Define authentication, validation, sanitization, rate-limit, secret-management and failure-handling requirements.
