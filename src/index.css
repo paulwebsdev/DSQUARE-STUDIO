@@ -719,3 +719,19 @@ h1,h2,h3,h4,p { margin-top: 0; }
  .large-template-preview{height:380px;width:100%;max-width:330px}
 }
 @media(max-width:360px){.template-grid{grid-template-columns:1fr}.template-preview{min-height:250px}}
+
+/* Business template family: polished cards, editorial rhythm and motion-safe entrances. */
+.site-preview-section.section-features .business-feature-card,
+.site-preview-section.section-features>*:nth-child(n+3){min-width:0}
+.site-preview-section.section-features>*:nth-child(n+3){transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease}
+.site-preview-section.section-features>*:nth-child(n+3):hover{transform:translateY(-5px);box-shadow:0 20px 42px rgba(20,32,38,.12)}
+.site-preview-section.section-testimonials>*{animation:dsqSlideUp .65s ease both}
+.site-preview-section.section-testimonials>*:nth-child(2){animation-delay:.08s}
+.site-preview-section.section-testimonials>*:nth-child(3){animation-delay:.16s}
+.site-preview-section.section-gallery .image-canvas-wrap{overflow:hidden}
+.site-preview-section.section-gallery .image-canvas-wrap img{transition:transform .65s cubic-bezier(.2,.7,.2,1),filter .35s ease}
+.site-preview-section.section-gallery .image-canvas-wrap:hover img{transform:scale(1.045)}
+.site-preview-section.section-contact{background-image:radial-gradient(circle at 85% 20%,rgba(255,255,255,.13),transparent 32%),linear-gradient(135deg,transparent,rgba(0,0,0,.12))}
+.site-preview-section.section-hero .image-canvas-wrap{overflow:hidden}
+.site-preview-section.section-hero .image-canvas-wrap img{animation:dsqZoomIn 1.05s .2s ease both}
+@media(prefers-reduced-motion:reduce){.site-preview-section.section-testimonials>*,.site-preview-section.section-hero .image-canvas-wrap img{animation:none!important}.site-preview-section.section-gallery .image-canvas-wrap img{transition:none!important}}
