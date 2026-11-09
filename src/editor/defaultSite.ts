@@ -182,13 +182,30 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
   const primaryVariants = ['#24211d','#243b45','#35252d','#263b30','#302b43','#3d2b24','#243d3b','#342d3b','#29251e','#25344a']
   selectedTheme.accent = accentVariants[(variantNumber - 1) % accentVariants.length]
   selectedTheme.primary = primaryVariants[(variantNumber - 1) % primaryVariants.length]
+  const headingFonts = ['Georgia', 'Manrope', 'Inter', 'Playfair Display', 'Arial', 'Georgia', 'Manrope', 'Inter', 'DM Sans', 'Georgia']
+  const bodyFonts = ['Inter', 'Arial', 'Manrope', 'Inter', 'DM Sans', 'Lato', 'Inter', 'Arial', 'Manrope', 'Inter']
+  const radiusVariants = ['4px', '12px', '0px', '18px', '8px', '2px', '24px', '6px', '14px', '999px']
+  selectedTheme.heading = headingFonts[(variantNumber - 1) % headingFonts.length]
+  selectedTheme.body = bodyFonts[(variantNumber - 1) % bodyFonts.length]
+  selectedTheme.radius = radiusVariants[(variantNumber - 1) % radiusVariants.length]
   site.theme = { primaryColor:selectedTheme.primary, accentColor:selectedTheme.accent, backgroundColor:selectedTheme.background, textColor:selectedTheme.text, headingFont:selectedTheme.heading, bodyFont:selectedTheme.body, buttonRadius:selectedTheme.radius }
   const sections = content[baseTemplateId] ?? content.business
   const header = site.pages[0].sections[0]
   const footer = site.pages[0].sections[site.pages[0].sections.length - 1]
+  const layoutVariant = (variantNumber - 1) % 5
+  const variantSections = layoutVariant === 1
+    ? [sections[0], ...sections.slice(1).reverse()]
+    : layoutVariant === 2 && sections.length > 2
+      ? [sections[0], ...sections.slice(2), sections[1]]
+      : layoutVariant === 3 && sections.length > 2
+        ? [sections[0], ...sections.slice(1).filter((_, index) => index % 2 === 0), ...sections.slice(1).filter((_, index) => index % 2 !== 0)]
+        : sections
   site.pages[0].sections = [
-    { ...header, components: [{ ...component('heading', name.toUpperCase()), id: createId('brand') }] },
-    ...sections.map(([kind, title, body, button], index) => makeSection(kind, title, body, button, index % 2 === 0 ? palette[baseTemplateId] ?? '#f3eee5' : '#ffffff')),
+    { ...header, components: [{ ...component('heading', name.toUpperCase()), id: createId('brand') }], styles: { ...header.styles, padding: layoutVariant === 4 ? '32px 8%' : '24px 6%' } },
+    ...variantSections.map(([kind, title, body, button], index) => {
+      const block = makeSection(kind, title, body, button, index % 2 === 0 ? palette[baseTemplateId] ?? '#f3eee5' : '#ffffff')
+      return { ...block, styles: { ...block.styles, padding: layoutVariant === 4 ? '104px 10%' : layoutVariant === 2 ? '64px 5%' : kind === 'hero' ? '136px 8%' : '76px 8%', textAlign: layoutVariant === 3 && kind === 'hero' ? 'center' : 'left', layout: layoutVariant === 1 && kind === 'features' ? 'grid' : 'stacked', gridColumns: layoutVariant === 1 && kind === 'features' ? '3' : '2' } }
+    }),
     { ...footer, components: [{ ...component('text', '© ' + name + '. All rights reserved.'), id: createId('copyright') }] },
   ]
   site.metadata.description = sections[0][2]
