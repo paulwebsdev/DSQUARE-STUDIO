@@ -174,7 +174,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     'Interior Design': ['photo-1600210492486-724fe5c67fb0','photo-1600607687939-ce8a6c25118c','photo-1600566753086-00f18fb6b3ea'],
     Other: ['photo-1497366811353-6870744d04b2','photo-1497366754035-f200968a6e72','photo-1497366216548-37526070297c'],
   }
-  const galleryImages = categoryGalleryImages[category] ?? galleryImageSets[baseTemplateId] ?? [heroImage, 'photo-1497366754035-f200968a6e72', 'photo-1497366811353-6870744d04b2']
+  const galleryImages = categoryGalleryImages[category] ?? [heroImage, 'photo-1497366754035-f200968a6e72', 'photo-1497366811353-6870744d04b2']
   const makeSection = (kind: SiteSection['kind'], title: string, body: string, button?: string, tone = '#ffffff'): SiteSection => ({
     id: createId('section'),
     kind,
