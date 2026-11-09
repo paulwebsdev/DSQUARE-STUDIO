@@ -353,3 +353,8 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Keep the manifest free of workspace client records and browser-local editor data.
 - [x] Document that forms and external services remain unconnected in the export manifest.
 - [ ] Validate the manifest against the actual ZIP contents on Android and desktop.
+
+
+## Export experience improvements
+- [x] Show a pre-download inventory of pages, active sections and media assets.
+- [x] Explain that the package contains the current design while forms and connected services still require integration.
