@@ -24,6 +24,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     } catch { return createStarterSite(projectName, category) }
   })
   const [selectedId, setSelectedId] = useState(site.pages[0]?.sections[1]?.id ?? '')
+  const [activePageId, setActivePageId] = useState(site.pages[0]?.id ?? '')
   const [device, setDevice] = useState<DeviceMode>('desktop')
   const [panel, setPanel] = useState<'add' | 'layers' | 'settings'>('add')
   const [history, setHistory] = useState<SiteDocument[]>([])
@@ -33,7 +34,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const [previewMode, setPreviewMode] = useState(false)
   const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null)
 
-  const page = site.pages[0]
+  const page = site.pages.find(item => item.id === activePageId) ?? site.pages[0]
   const selected = page?.sections.find(section => section.id === selectedId) ?? page?.sections[0]
   const selectedComponent = selected?.components.find(item => item.id === selectedComponentId)
   const selectedText = selectedComponent?.content ?? selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
@@ -47,6 +48,51 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     setHistory(items => [...items.slice(-29), site])
     setFuture([])
     setSite({ ...next, updatedAt: new Date().toISOString() })
+  }
+
+  const addPage = () => {
+    const pageNumber = site.pages.length + 1
+    const newPage = {
+      id: globalThis.crypto?.randomUUID?.() ?? `page-${Date.now()}`,
+      name: `New page ${pageNumber}`,
+      slug: `page-${pageNumber}`,
+      isHomePage: false,
+      sections: [
+        { id: `header-${Date.now()}`, kind: 'header' as const, name: 'Header', enabled: true, styles: { padding: '24px 8%', backgroundColor: '#171717' }, components: [{ id: `brand-${Date.now()}`, kind: 'heading' as const, content: site.name, visible: true, styles: { color: '#ffffff', fontSize: '1.4rem' } }] },
+        { id: `hero-${Date.now()}`, kind: 'hero' as const, name: 'Page introduction', enabled: true, styles: { padding: '96px 8%', backgroundColor: '#f3eee5' }, components: [{ id: `title-${Date.now()}`, kind: 'heading' as const, content: newPage.name, visible: true, styles: { fontSize: '2.8rem', fontWeight: '700', color: '#171717' } }, { id: `copy-${Date.now()}`, kind: 'text' as const, content: 'Add the content for this page in the properties panel.', visible: true, styles: { fontSize: '1rem', color: '#666666' } }] },
+        { id: `footer-${Date.now()}`, kind: 'footer' as const, name: 'Footer', enabled: true, styles: { padding: '32px 8%', backgroundColor: '#171717' }, components: [{ id: `copyright-${Date.now()}`, kind: 'text' as const, content: '© ' + site.name + '. All rights reserved.', visible: true, styles: { color: '#ffffff' } }] },
+      ],
+    }
+    commit({ ...site, pages: [...site.pages, newPage] })
+    setActivePageId(newPage.id)
+    setSelectedId(newPage.sections[1].id)
+    setSelectedComponentId(null)
+  }
+
+  const renamePage = () => {
+    if (!page) return
+    const name = window.prompt('Enter a name for this page', page.name)?.trim()
+    if (!name) return
+    const slug = name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'page'
+    commit({ ...site, pages: site.pages.map(item => item.id === page.id ? { ...item, name, slug: item.isHomePage ? '' : slug } : item) })
+  }
+
+  const duplicatePage = () => {
+    if (!page) return
+    const copy = { ...page, id: `page-${Date.now()}`, name: `${page.name} copy`, slug: `${page.slug || 'home'}-copy`, isHomePage: false, sections: page.sections.map(section => ({ ...section, id: `${section.id}-copy-${Date.now()}`, components: section.components.map(item => ({ ...item, id: `${item.id}-copy-${Date.now()}` })) })) }
+    commit({ ...site, pages: [...site.pages, copy] })
+    setActivePageId(copy.id)
+    setSelectedId(copy.sections[1]?.id ?? copy.sections[0]?.id ?? '')
+  }
+
+  const deletePage = () => {
+    if (!page || page.isHomePage || site.pages.length <= 1) return
+    if (!window.confirm(`Delete the "${page.name}" page?`)) return
+    const remaining = site.pages.filter(item => item.id !== page.id)
+    commit({ ...site, pages: remaining })
+    setActivePageId(remaining[0].id)
+    setSelectedId(remaining[0].sections[1]?.id ?? remaining[0].sections[0]?.id ?? '')
+    setSelectedComponentId(null)
   }
 
   const updateSection = (sectionId: string, updater: (section: SiteSection) => SiteSection) => {
@@ -136,7 +182,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         <div className="editor-panel-foot"><Sparkles size={14} /> Select a section to edit its content.</div>
       </aside>
       <main className="editor-stage">
-        <div className="editor-stage-toolbar"><div><span className="editor-page-pill">Home page <ChevronDown size={13} /></span><span className="editor-stage-muted">/</span><span className="editor-stage-muted">Editing</span></div><div className="device-switch"><button className={device === 'desktop' ? 'selected' : ''} onClick={() => setDevice('desktop')} aria-label="Desktop preview"><Monitor size={16} /></button><button className={device === 'tablet' ? 'selected' : ''} onClick={() => setDevice('tablet')} aria-label="Tablet preview"><Tablet size={16} /></button><button className={device === 'mobile' ? 'selected' : ''} onClick={() => setDevice('mobile')} aria-label="Mobile preview"><Smartphone size={16} /></button></div></div>
+        <div className="editor-stage-toolbar"><div><select className="editor-page-select" aria-label="Choose page" value={page.id} onChange={event => { const nextPage = site.pages.find(item => item.id === event.target.value); if (nextPage) { setActivePageId(nextPage.id); setSelectedId(nextPage.sections[1]?.id ?? nextPage.sections[0]?.id ?? ''); setSelectedComponentId(null) } }}>{site.pages.map(item => <option key={item.id} value={item.id}>{item.name}{item.isHomePage ? ' (Home)' : ''}</option>)}</select><button className="editor-page-action" onClick={addPage}>+ Page</button><button className="editor-page-action" onClick={renamePage}>Rename</button><button className="editor-page-action" onClick={duplicatePage}>Duplicate</button><button className="editor-page-action" onClick={deletePage} disabled={page.isHomePage || site.pages.length <= 1}>Delete</button><span className="editor-stage-muted">/</span><span className="editor-stage-muted">Editing</span></div><div className="device-switch"><button className={device === 'desktop' ? 'selected' : ''} onClick={() => setDevice('desktop')} aria-label="Desktop preview"><Monitor size={16} /></button><button className={device === 'tablet' ? 'selected' : ''} onClick={() => setDevice('tablet')} aria-label="Tablet preview"><Tablet size={16} /></button><button className={device === 'mobile' ? 'selected' : ''} onClick={() => setDevice('mobile')} aria-label="Mobile preview"><Smartphone size={16} /></button></div></div>
         <div className="editor-canvas-wrap"><div className={canvasClass}>
           {page.sections.filter(section => section.enabled).map(section => <section key={section.id} onClick={() => { setSelectedId(section.id); setSelectedComponentId(null) }} className={`site-preview-section ${selected?.id === section.id ? 'is-selected' : ''} section-${section.kind}`} style={section.styles}>
             {section.components.filter(item => item.visible).map(item => { const selectItem = (event: MouseEvent) => { event.stopPropagation(); setSelectedId(section.id); setSelectedComponentId(item.id) }; const selectedClass = selectedComponentId === item.id ? 'component-selected' : ''; return item.kind === 'heading' ? <h2 key={item.id} className={selectedClass} onClick={selectItem} style={item.styles}>{item.content}</h2> : item.kind === 'text' ? <p key={item.id} className={selectedClass} onClick={selectItem} style={item.styles}>{item.content}</p> : item.kind === 'button' ? <button key={item.id} className={selectedClass} onClick={selectItem} style={item.styles}>{item.content}</button> : item.kind === 'image' ? <img key={item.id} className={selectedClass} onClick={selectItem} style={item.styles} src={item.content} alt="Website content" /> : null })}
