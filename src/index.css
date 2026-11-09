@@ -307,3 +307,7 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .site-preview-section .component-selected{outline:2px solid #d2a64f;outline-offset:3px;border-radius:2px;cursor:text}
 .site-preview-section img{display:block;max-width:100%;height:auto;object-fit:cover}
 .visual-editor.preview-mode .component-selected{outline:0}
+
+
+/* Multi-page editor controls */
+.editor-page-select{max-width:150px;border:1px solid #dedbd5;border-radius:8px;padding:7px 9px;background:#fff;color:#24211d;font:inherit;font-size:12px}.editor-page-action{border:1px solid #dedbd5;border-radius:8px;padding:7px 9px;background:#fff;color:#514b42;font-size:11px;white-space:nowrap}.editor-page-action:disabled{opacity:.4;cursor:not-allowed}@media(max-width:700px){.editor-page-select{max-width:112px}.editor-page-action{padding:6px 7px;font-size:10px}}
