@@ -25,7 +25,7 @@
 ## Phase 3 — Templates
 - [x] Define template metadata and category system.
 - [x] Build template browsing, category filters, search and preview.
-- [x] Expand the library to 19 template concepts across 19 website categories, including real estate, healthcare, beauty, travel, finance, SaaS, nonprofit, events, construction and legal.
+- [x] Expand the library to 210 named template options across 21 website categories, including real estate, healthcare, beauty, travel, finance, SaaS, nonprofit, events, construction, legal and school.
 - [x] Add category-specific colour palettes, typography and button styling for premium brand direction.
 - [x] Generate editable multi-page starter documents from each template, not just a homepage.
 - [x] Improve template preview cards with a richer browser/page composition.
@@ -43,8 +43,10 @@
 ## Phase 5 — AI website generation
 - [ ] Design prompt and requirements flow.
 - [ ] Add provider adapter and secure server-side calls.
-- [ ] Generate structured, editable site documents.
-- [ ] Support iterative changes.
+- [x] Generate structured, editable multi-page site documents from the brief using the built-in template/draft engine.
+- [ ] Generate structured, editable site documents using a real AI provider.
+- [x] Add local natural-language quick commands for a small set of editor changes.
+- [ ] Support rich iterative changes through the secure AI provider.
 
 ## Phase 6 — Export and publishing
 - [ ] Build static-site export and asset packaging.
