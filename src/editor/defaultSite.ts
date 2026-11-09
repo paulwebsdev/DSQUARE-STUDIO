@@ -346,6 +346,20 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     events:['Home','Schedule','Speakers','Venue','Register'], construction:['Home','Services','Projects','About','Request a Quote'], legal:['Home','Practice Areas','Our Firm','People','Contact'],
   }
   const labels = category === 'School' ? ['Home','About','Academics','Admissions','Student Life','News','Contact'] : (pageLabels[baseTemplateId] ?? ['Home','About','Services','Contact'])
+  const innerPageHighlights: Record<string, [string, string, string, string]> = {
+    shop: ['Featured collection', 'Browse carefully selected products, discover new arrivals and find customer favourites.', 'Shopping made simple', 'Enjoy clear product details, helpful support and a smooth path from discovery to checkout.'],
+    restaurant: ['From our kitchen', 'Explore starters, signature dishes, seasonal plates and freshly prepared favourites.', 'A table worth sharing', 'Find dining options, opening hours and the details you need before your visit.'],
+    education: ['Learning pathways', 'Explore subjects, programmes, enrichment and opportunities for every stage of learning.', 'A supportive school community', 'Meet our educators, discover student life and see how every learner is encouraged to thrive.'],
+    realestate: ['Featured properties', 'Explore selected homes, commercial spaces and new opportunities in sought-after locations.', 'Your property journey', 'Get clear guidance on viewings, buying, selling and finding a place that feels right.'],
+    healthcare: ['Care and services', 'Explore available services, specialist support and practical information for patients.', 'Your care, clearly explained', 'Find appointment guidance, patient resources and answers to common questions.'],
+    beauty: ['Signature treatments', 'Discover our most-loved treatments, tailored services and thoughtful finishing touches.', 'Your time to unwind', 'Explore the experience, prepare for your visit and find the right treatment for you.'],
+    travel: ['Discover your destination', 'Explore stays, local highlights and experiences selected to make every journey memorable.', 'Plan with confidence', 'Find useful travel information, thoughtful recommendations and support before you go.'],
+    saas: ['Tools for better work', 'Explore the workflows, integrations and features that help your team stay focused.', 'Built to scale with you', 'See how flexible plans, helpful resources and responsive support fit your team.'],
+    events: ['The event experience', 'Explore sessions, special moments and practical details for your time with us.', 'Plan your visit', 'Find venue information, timings and everything you need for a smooth event day.'],
+    construction: ['Our capabilities', 'Explore our services, specialist trades and the projects we deliver from start to finish.', 'A clear project process', 'Understand how planning, communication and careful delivery keep work moving.'],
+    legal: ['How we can help', 'Explore our legal services and the areas where our team provides focused support.', 'A considered approach', 'Understand what to expect from an initial discussion and how we work with clients.'],
+    nonprofit: ['Programmes in action', 'Discover the initiatives, services and community projects behind our mission.', 'Ways to make a difference', 'Find out how to volunteer, partner with us or support the work.'],
+  }
   const pageDescriptions: Record<string,string> = {
     About: 'Meet the people, purpose and principles behind ' + name + '. Discover our story and what makes our approach different.',
     Services: 'Explore our services, expertise and the practical ways we can help you move forward with confidence.',
@@ -406,9 +420,9 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
         styles:{padding:'clamp(56px, 7vw, 88px) 8%',backgroundColor:selectedTheme.background,layout:'grid',gridColumns:'2'},
         components:[
           {...component('heading',label==='About'?'The thinking behind '+name:'A closer look'),id:createId('heading'),styles:{fontFamily:selectedTheme.heading,fontSize:'clamp(1.8rem, 3vw, 2.8rem)',fontWeight:'750',color:selectedTheme.primary,maxWidth:'760px'}},
-          {...component('text','A considered experience, shaped around what matters most. Explore the details, discover useful information and find the right next step with '+name+'.'),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.05rem',lineHeight:'1.8',color:selectedTheme.text,maxWidth:'680px'}},
-          {...component('text','Thoughtful expertise'),id:createId('feature-one'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
-          {...component('text','Clear information and helpful guidance'),id:createId('feature-two'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
+          {...component('text',(innerPageHighlights[baseTemplateId] ?? ['','A considered experience, shaped around what matters most.','','Discover useful information and find the right next step with '+name+'.'])[1]),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.05rem',lineHeight:'1.8',color:selectedTheme.text,maxWidth:'680px'}},
+          {...component('text',(innerPageHighlights[baseTemplateId] ?? ['Thoughtful expertise','A considered experience shaped around your needs.','Clear information','Helpful guidance for your next step.'])[0]),id:createId('feature-one'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
+          {...component('text',(innerPageHighlights[baseTemplateId] ?? ['Thoughtful expertise','A considered experience shaped around your needs.','Clear information','Helpful guidance for your next step.'])[2]),id:createId('feature-two'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
         ],
       },
       {
@@ -416,7 +430,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
         styles:{padding:'clamp(56px, 7vw, 84px) 8%',backgroundColor:selectedTheme.primary},
         components:[
           {...component('heading',label==='Contact'?'We would love to hear from you.':'Ready for the next step?'),id:createId('heading'),styles:{fontFamily:selectedTheme.heading,fontSize:'clamp(2rem, 4vw, 3.4rem)',fontWeight:'750',lineHeight:'1.1',color:'#ffffff',maxWidth:'850px'}},
-          {...component('text','Get in touch with '+name+' and let’s make a plan together.'),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.05rem',lineHeight:'1.8',color:'#f2f0eb',maxWidth:'680px'}},
+          {...component('text',baseTemplateId==='shop'?'Have a question about a product or an order? Our team is ready to help.':baseTemplateId==='restaurant'?'Planning a meal or a special occasion? We would be delighted to welcome you.':baseTemplateId==='education'?'Take the next step and speak with our admissions team about joining our school.':baseTemplateId==='realestate'?'Tell us what you are looking for and let our property team guide your next move.':'Get in touch with '+name+' and let’s make a plan together.'),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.05rem',lineHeight:'1.8',color:'#f2f0eb',maxWidth:'680px'}},
           {...component('button',label==='Admissions'?'Ask about admissions':label==='Pricing'?'Talk about plans':'Contact us'),id:createId('button'),styles:{backgroundColor:selectedTheme.accent,color:'#ffffff',padding:'15px 28px',borderRadius:selectedTheme.radius,fontWeight:'700'}},
         ],
       },
