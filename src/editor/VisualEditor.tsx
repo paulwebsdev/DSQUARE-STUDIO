@@ -70,6 +70,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const [replaceImageId, setReplaceImageId] = useState<string | null>(null)
   const imageInputRef = useRef<HTMLInputElement>(null)
   const exportCloseRef = useRef<HTMLButtonElement>(null)
+  const exportTriggerRef = useRef<HTMLButtonElement>(null)
 
   const page = site.pages.find(item => item.id === activePageId) ?? site.pages[0]
   const selected = page?.sections.find(section => section.id === selectedId) ?? page?.sections[0]
@@ -278,8 +279,10 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   }
 
   const addUploadedImage = async (file?: File, replaceComponentId?: string) => {
-    if (!file || !selected || !file.type.startsWith('image/')) return
-    if (file.size > 5 * 1024 * 1024) { window.alert('Please choose an image smaller than 5 MB.'); return }
+    if (!file) { setReplaceImageId(null); return }
+    if (!selected) { window.alert('Select a section before adding an image.'); setReplaceImageId(null); return }
+    if (!file.type.startsWith('image/')) { window.alert('Please choose a supported image file.'); setReplaceImageId(null); return }
+    if (file.size > 5 * 1024 * 1024) { window.alert('Please choose an image smaller than 5 MB.'); setReplaceImageId(null); return }
     let uploadFile = file
     // Resize large JPEG, PNG and WebP images while preserving their original format.
     // Keep SVG, GIF and unsupported formats untouched to avoid changing vector or animation content.
@@ -311,7 +314,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     const reader = new FileReader()
     reader.onload = () => {
       const dataUrl = typeof reader.result === 'string' ? reader.result : ''
-      if (!dataUrl) { window.alert('The selected image could not be read. Please try another file.'); return }
+      if (!dataUrl) { window.alert('The selected image could not be read. Please try another file.'); setReplaceImageId(null); return }
       const asset = { id: freshEditorId('asset'), name: file.name, mimeType: uploadFile.type, dataUrl, altText: file.name.replace(/\.[^.]+$/, ''), createdAt: new Date().toISOString() }
       const imageComponent = { id: replaceComponentId ?? freshEditorId('image'), kind: 'image' as const, content: dataUrl, visible: true, styles: { width: '100%', maxWidth: '520px', borderRadius: '8px' } }
       commit({ ...site, assets: [...(site.assets ?? []).filter(item => item.dataUrl !== dataUrl), asset], pages: site.pages.map(p => p.id === page.id ? { ...p, sections: p.sections.map(section => section.id === selected.id ? { ...section, components: replaceComponentId ? section.components.map(item => item.id === replaceComponentId ? { ...item, content: dataUrl } : item) : [...section.components, imageComponent] } : section) } : p) })
@@ -319,7 +322,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
       setReplaceImageId(null)
       setMobilePanelOpen(false)
     }
-    reader.onerror = () => window.alert('The selected image could not be read. Please try another file.')
+    reader.onerror = () => { window.alert('The selected image could not be read. Please try another file.'); setReplaceImageId(null) }
     reader.readAsDataURL(uploadFile)
   }
 
@@ -447,11 +450,15 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   }
 
   const downloadSourceFile = (kind: 'html' | 'css' | 'js') => {
-    const files = buildExportFiles(site)
-    if (kind === 'html') downloadTextFile('index.html', files.htmlFiles['index.html'] ?? Object.values(files.htmlFiles)[0] ?? '', 'text/html')
-    if (kind === 'css') downloadTextFile('styles.css', files.css, 'text/css')
-    if (kind === 'js') downloadTextFile('script.js', files.js, 'text/javascript')
-    setExportMessage(kind.toUpperCase() + ' source file downloaded.')
+    try {
+      const files = buildExportFiles(site)
+      if (kind === 'html') downloadTextFile('index.html', files.htmlFiles['index.html'] ?? Object.values(files.htmlFiles)[0] ?? '', 'text/html')
+      if (kind === 'css') downloadTextFile('styles.css', files.css, 'text/css')
+      if (kind === 'js') downloadTextFile('script.js', files.js, 'text/javascript')
+      setExportMessage(kind.toUpperCase() + ' source file downloaded.')
+    } catch {
+      setExportMessage('The source file could not be prepared. Please try again.')
+    }
   }
 
   const downloadWebsiteZip = async () => {
@@ -484,7 +491,10 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   }
 
   useEffect(() => {
-    if (!exportOpen) return
+    if (!exportOpen) {
+      exportTriggerRef.current?.focus()
+      return
+    }
     const timer = window.setTimeout(() => exportCloseRef.current?.focus(), 0)
     const onKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape' && !exportBusy) setExportOpen(false) }
     window.addEventListener('keydown', onKeyDown)
@@ -501,7 +511,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         <button className="editor-tool" onClick={undo} disabled={!history.length} aria-label="Undo"><Undo2 size={17} /></button>
         <button className="editor-tool" onClick={redo} disabled={!future.length} aria-label="Redo"><Redo2 size={17} /></button>
         <button className="editor-preview" onClick={() => { setEditingComponentId(null); setPreviewMode(value => !value) }} aria-pressed={previewMode}><Eye size={15} /> {previewMode ? "Exit preview" : "Preview"}</button>
-        <button className="editor-preview editor-export" onClick={() => { setExportMessage(""); setExportOpen(true) }}><Download size={15} /> Export</button>
+        <button ref={exportTriggerRef} className="editor-preview editor-export" onClick={() => { setExportMessage(""); setExportOpen(true) }}><Download size={15} /> Export</button>
         <button className="primary-button editor-save" onClick={() => { try { localStorage.setItem(storageKey, JSON.stringify(site)); setSavedAt('Saved just now') } catch { setSavedAt('Could not save — storage is full') } }}><Save size={14} /> Save</button>
       </div>
     </header>
