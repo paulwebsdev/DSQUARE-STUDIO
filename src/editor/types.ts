@@ -62,6 +62,8 @@ export type SiteTheme = {
   buttonRadius: string
 }
 
+export type SiteAsset = { id: string; name: string; mimeType: string; dataUrl: string; altText: string; createdAt: string }
+
 export type SiteDocument = {
   schemaVersion: typeof SITE_SCHEMA_VERSION
   id: string
@@ -72,6 +74,7 @@ export type SiteDocument = {
   updatedAt: string
   theme: SiteTheme
   pages: SitePage[]
+  assets?: SiteAsset[]
   metadata: {
     title: string
     description: string
