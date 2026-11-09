@@ -64,3 +64,12 @@ The dashboard, browser-local project/client management, initial template library
 - [x] Save the generated document under its new project ID before opening the visual editor.
 - [ ] Expand template page plans into individually editable multi-page website documents.
 - [ ] Replace concept-only template thumbnails with rendered page previews.
+
+
+## Multi-page editor foundation
+- [x] Add page switching within each project website document.
+- [x] Create additional pages with a starter header, introduction and footer.
+- [x] Rename pages and generate URL-friendly slugs.
+- [x] Duplicate existing pages with independent section/component IDs.
+- [x] Delete non-home pages while protecting the home page and final remaining page.
+- [ ] Add page navigation links and rendered multi-page preview/export routing.
