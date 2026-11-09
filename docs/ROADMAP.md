@@ -165,6 +165,13 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [ ] Expand page-specific copy and section structures using the real AI provider after backend integration.
 
 
+## Natural-language editor quick actions
+- [x] Add a dedicated AI Edit panel in desktop and mobile editor navigation.
+- [x] Support safe local commands for adding common sections, changing the selected section background, changing primary/accent theme colours and replacing a selected section heading.
+- [x] Show supported examples and clear feedback when an instruction is not recognized.
+- [ ] Replace the local command matcher with authenticated natural-language AI revisions through the secure backend adapter.
+
+
 ## Secure AI integration design
 - [x] Document a provider-neutral server-side AI adapter contract for website generation and natural-language revisions.
 - [x] Define authentication, validation, sanitization, rate-limit, secret-management and failure-handling requirements.
