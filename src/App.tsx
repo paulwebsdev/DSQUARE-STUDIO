@@ -130,9 +130,17 @@ function App() {
         pageKey.includes('event') ? 'Find upcoming experiences, connect with others and see what is happening next.' :
         pageKey.includes('faq') ? 'Find clear answers to common questions and helpful information before you get started.' :
         aiPrompt.trim()
+      const detailKind = pageKey.includes('service') || pageKey.includes('program') || pageKey.includes('course') ? 'features' :
+        pageKey.includes('portfolio') || pageKey.includes('work') || pageKey.includes('project') || pageKey.includes('shop') || pageKey.includes('product') || pageKey.includes('menu') ? 'gallery' :
+        pageKey.includes('event') || pageKey.includes('testimonial') ? 'testimonials' : ''
+      const detailTitle = detailKind === 'features' ? 'What we offer' : detailKind === 'gallery' ? 'Explore our work' : 'What people are saying'
+      const detailCopy = detailKind === 'features' ? 'Discover the key services and opportunities available from ' + name + '.' :
+        detailKind === 'gallery' ? 'Browse highlights, featured items and examples selected by ' + name + '.' :
+        'Real experiences help you understand what makes ' + name + ' special.'
       document.pages.push({ id: pageId, name: pageName, isHomePage: false, slug, sections: [
         { id: makeId(), kind: 'header', name: 'Header', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: name.toUpperCase(), visible: true, styles: {} }] },
         { id: makeId(), kind: 'hero', name: pageName, enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: pageName, visible: true, styles: {} }, { id: makeId(), kind: 'text', content: pageCopy, visible: true, styles: {} }] },
+        ...(detailKind ? [{ id: makeId(), kind: detailKind as 'features' | 'gallery' | 'testimonials', name: detailTitle, enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading' as const, content: detailTitle, visible: true, styles: {} }, { id: makeId(), kind: 'text' as const, content: detailCopy, visible: true, styles: {} }] }] : []),
         { id: makeId(), kind: 'contact', name: 'Contact', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: 'Let’s connect', visible: true, styles: {} }] },
         { id: makeId(), kind: 'footer', name: 'Footer', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'text', content: '© ' + name + '. All rights reserved.', visible: true, styles: {} }] },
       ] })
