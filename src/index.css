@@ -793,3 +793,56 @@ h1,h2,h3,h4,p { margin-top: 0; }
 @keyframes dsqServicePulse{50%{box-shadow:0 0 0 7px rgba(224,184,79,.18),0 12px 28px rgba(0,0,0,.12)}}
 @keyframes dsqHeadingReveal{from{opacity:.35;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.business-template *{animation:none!important;transition:none!important}}
+
+
+/* Portfolio, storefront and editorial personalities in the live editor */
+.portfolio-template .site-preview-section.section-hero{position:relative;overflow:hidden}
+.portfolio-template .site-preview-section.section-gallery .image-canvas-wrap{overflow:hidden}
+.portfolio-template .site-preview-section.section-gallery img{transition:transform .65s cubic-bezier(.2,.8,.2,1),filter .4s}
+.portfolio-template .site-preview-section.section-gallery img:hover{transform:scale(1.045);filter:saturate(1.12)}
+.portfolio-template .site-preview-section.section-features>*{border-top:1px solid color-mix(in srgb,var(--ds-accent,#c99b45) 45%,transparent);transition:transform .35s,box-shadow .35s}
+.portfolio-variant-1 .site-preview-section.section-gallery{display:grid;grid-template-columns:1.4fr 1fr;gap:22px}
+.portfolio-variant-2 .site-preview-section.section-hero{text-align:center}
+.portfolio-variant-2 .site-preview-section.section-gallery>*{border-radius:24px;overflow:hidden}
+.portfolio-variant-3 .site-preview-section.section-hero h2{font-family:Arial,sans-serif;letter-spacing:-.07em;text-transform:uppercase}
+.portfolio-variant-3 .site-preview-section.section-gallery img{filter:grayscale(1)}
+.portfolio-variant-4 .site-preview-section.section-hero h2{font-style:italic}
+.portfolio-variant-4 .site-preview-section.section-gallery>*{border-radius:18px}
+.portfolio-variant-5 .site-preview-section.section-gallery img{border-radius:2px;box-shadow:0 18px 40px rgba(30,50,40,.14)}
+.portfolio-variant-6 .site-preview-section.section-features>*{border-radius:24px;background:linear-gradient(145deg,#fff,rgba(167,185,239,.12))}
+.portfolio-variant-7 .site-preview-section.section-hero{background-image:radial-gradient(circle at 85% 15%,rgba(230,160,138,.25),transparent 38%)}
+.portfolio-variant-8 .site-preview-section.section-gallery img{border-radius:0}
+.portfolio-variant-9 .site-preview-section.section-hero h2{letter-spacing:-.055em}
+.portfolio-variant-10 .site-preview-section.section-contact{border-radius:30px;margin:0 4% 4%}
+.commerce-template .site-preview-section.section-gallery>*{position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.commerce-template .site-preview-section.section-gallery img{transition:transform .55s}
+.commerce-template .site-preview-section.section-gallery img:hover{transform:scale(1.04)}
+.commerce-template .site-preview-section.section-features>*{border:1px solid rgba(30,30,30,.09);background:rgba(255,255,255,.78)}
+.commerce-template button{min-height:44px}
+.commerce-variant-1 .site-preview-section.section-hero{text-align:center}
+.commerce-variant-2 .site-preview-section.section-hero h2{font-family:Georgia,serif;font-style:italic}
+.commerce-variant-3 .site-preview-section.section-gallery>*{border-radius:14px}
+.commerce-variant-4 .site-preview-section.section-gallery img{border-radius:4px;filter:saturate(.86)}
+.commerce-variant-5 .site-preview-section.section-hero{background-image:radial-gradient(circle at 80% 12%,rgba(217,140,165,.2),transparent 38%)}
+.commerce-variant-6 .site-preview-section.section-features>*{border-radius:5px;box-shadow:0 12px 26px rgba(25,45,55,.08)}
+.commerce-variant-7 .site-preview-section.section-gallery img{border-radius:0}
+.commerce-variant-8 .site-preview-section.section-hero{text-align:center}
+.commerce-variant-9 .site-preview-section.section-features>*{border-radius:18px;background:linear-gradient(145deg,#fff,rgba(182,198,109,.13))}
+.commerce-variant-10 .site-preview-section.section-hero h2{letter-spacing:-.045em}
+.journal-template .site-preview-section.section-hero{border-bottom:1px solid color-mix(in srgb,var(--ds-accent,#a77b4d) 38%,transparent)}
+.journal-template .site-preview-section.section-gallery>*{border-bottom:1px solid rgba(30,30,30,.14);padding-bottom:18px}
+.journal-template .site-preview-section.section-gallery img{filter:saturate(.88);transition:filter .4s,transform .5s}
+.journal-template .site-preview-section.section-gallery img:hover{filter:saturate(1.12);transform:scale(1.025)}
+.journal-variant-1 .site-preview-section.section-hero h2{font-family:Georgia,serif;font-size:clamp(2.8rem,7vw,5.5rem)}
+.journal-variant-2 .site-preview-section.section-hero{text-align:center}
+.journal-variant-3 .site-preview-section.section-hero h2{text-transform:uppercase;letter-spacing:-.055em}
+.journal-variant-4 .site-preview-section.section-gallery>*{border-radius:14px}
+.journal-variant-5 .site-preview-section.section-gallery img{border-radius:0}
+.journal-variant-6 .site-preview-section.section-hero h2{font-family:Georgia,serif;font-style:italic}
+.journal-variant-7 .site-preview-section.section-features>*{border-left:3px solid var(--ds-accent,#d48b62);padding-left:18px}
+.journal-variant-8 .site-preview-section.section-gallery>*{border-radius:20px;background:rgba(255,255,255,.65)}
+.journal-variant-9 .site-preview-section.section-hero{text-align:center}
+.journal-variant-10 .site-preview-section.section-contact{border-radius:24px;margin:0 4% 4%}
+@media(max-width:700px){.portfolio-variant-1 .site-preview-section.section-gallery{grid-template-columns:1fr}.portfolio-template .site-preview-section.section-gallery,.commerce-template .site-preview-section.section-gallery,.journal-template .site-preview-section.section-gallery{gap:14px}}
+@media(prefers-reduced-motion:reduce){.portfolio-template *,.commerce-template *,.journal-template *{animation:none!important;transition:none!important}}
+
