@@ -617,7 +617,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         <div ref={previewScrollRef} className="editor-canvas-wrap"><div className={canvasClass}>
           {page.sections.filter(section => section.enabled).map(section => <section key={section.id} tabIndex={0} aria-label={section.name + ' section'} aria-selected={selected?.id === section.id} onKeyDown={event => { if (event.target !== event.currentTarget) return; if (event.altKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) { event.preventDefault(); setSelectedId(section.id); moveSection(event.key === 'ArrowUp' ? -1 : 1, section.id) } else if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setSelectedId(section.id); setSelectedComponentId(null) } }} draggable={!previewMode && !['header','footer'].includes(section.kind)} onDragStart={event => { if (['header','footer'].includes(section.kind)) { event.preventDefault(); return } setDraggedSectionId(section.id); event.dataTransfer.effectAllowed = 'move'; event.dataTransfer.setData('text/plain', section.id) }} onDragOver={event => { if (draggedSectionId) event.preventDefault() }} onDrop={event => { event.preventDefault(); const sourceId = event.dataTransfer.getData('text/plain') || draggedSectionId; if (sourceId) moveSectionTo(sourceId, section.id); setDraggedSectionId(null) }} onDragEnd={() => setDraggedSectionId(null)} data-section-id={section.id} onTouchMove={event => { if (draggedSectionId) event.preventDefault() }} onTouchEnd={event => { if (!draggedSectionId) return; const touch = event.changedTouches[0]; const target = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('[data-section-id]') as HTMLElement | null; const targetId = target?.dataset.sectionId; if (targetId && targetId !== draggedSectionId) moveSectionTo(draggedSectionId, targetId); setDraggedSectionId(null) }} onClick={() => { setSelectedId(section.id); setSelectedComponentId(null); setEditingComponentId(null) }} className={'site-preview-section ' + (selected?.id === section.id ? 'is-selected ' : '') + (draggedSectionId === section.id ? 'is-dragging ' : '') + 'section-' + section.kind} style={section.styles}>
             {section.components.filter(item => item.visible).map(item => { const selectItem = (event: MouseEvent) => { event.stopPropagation(); setSelectedId(section.id); setSelectedComponentId(item.id) }; const selectedClass = selectedComponentId === item.id ? 'component-selected' : ''; const elementStyle = { ...item.styles, ...(item.responsiveStyles?.[device] ?? {}) }; const handleElementClick = (event: MouseEvent) => { selectItem(event) }; const handleElementKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => { if (event.key === 'Escape' && editingComponentId === item.id) { event.preventDefault(); event.currentTarget.blur(); setEditingComponentId(null) } else if (event.key === 'Enter' && editingComponentId === item.id && ['heading','button'].includes(item.kind)) { event.preventDefault(); event.currentTarget.blur() } else if ((event.key === 'Enter' || event.key === ' ') && editingComponentId !== item.id) { event.preventDefault(); event.stopPropagation(); setSelectedId(section.id); setSelectedComponentId(item.id) } else if (event.key === 'F2' && ['heading','text','button','container'].includes(item.kind)) { event.preventDefault(); setSelectedId(section.id); setSelectedComponentId(item.id); setEditingComponentId(item.id) } }; return item.kind === 'heading' ? <h2 key={item.id} tabIndex={0} aria-label={'Select heading: ' + item.content} onKeyDown={handleElementKeyDown} className={selectedClass} onClick={handleElementClick} onDoubleClick={() => setEditingComponentId(item.id)} contentEditable={editingComponentId === item.id} suppressContentEditableWarning onBlur={event => editingComponentId === item.id && finishInlineEdit(item.id, event.currentTarget.textContent ?? '')} style={elementStyle}>{item.content}</h2> : item.kind === 'text' ? <p key={item.id} tabIndex={0} aria-label={'Select text: ' + item.content} onKeyDown={handleElementKeyDown} className={selectedClass} onClick={handleElementClick} onDoubleClick={() => setEditingComponentId(item.id)} contentEditable={editingComponentId === item.id} suppressContentEditableWarning onBlur={event => editingComponentId === item.id && finishInlineEdit(item.id, event.currentTarget.textContent ?? '')} style={elementStyle}>{item.content}</p> : item.kind === 'button' ? <button key={item.id} onKeyDown={handleElementKeyDown} aria-label={'Select button: ' + item.content} className={selectedClass} onClick={handleElementClick} onDoubleClick={() => setEditingComponentId(item.id)} contentEditable={editingComponentId === item.id} suppressContentEditableWarning onBlur={event => editingComponentId === item.id && finishInlineEdit(item.id, event.currentTarget.textContent ?? '')} style={elementStyle}>{item.content}</button> : item.kind === 'image' ? (() => {
-              const beginImageGesture = (event: ReactPointerEvent<HTMLElement>, mode: 'move' | 'resize') => {
+              const beginImageGesture = (event: ReactPointerEvent<HTMLElement>, mode: 'move' | 'resize', handle = 'se') => {
                 if (previewMode || editingComponentId === item.id) return
                 event.preventDefault(); event.stopPropagation(); selectItem(event as unknown as MouseEvent)
                 const image = (event.currentTarget.closest('.image-canvas-wrap')?.querySelector('img') ?? event.currentTarget) as HTMLImageElement
@@ -625,64 +625,74 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
                 const rect = image.getBoundingClientRect()
                 const initialWidth = rect.width, initialHeight = rect.height
                 const initialX = Number(elementStyle.imageX ?? 0), initialY = Number(elementStyle.imageY ?? 0)
-                const pointerMove = (move: PointerEvent) => {
-                  const dx = move.clientX - startX, dy = move.clientY - startY
-                  if (mode === 'move') image.style.translate = `${dx}px ${dy}px`
-                  else { image.style.width = `${Math.max(40, initialWidth + dx)}px`; image.style.height = `${Math.max(40, initialHeight + dy)}px` }
+                let lastDx = 0, lastDy = 0
+                const dimensions = (dx: number, dy: number) => {
+                  const west = handle.includes('w'), north = handle.includes('n')
+                  return {
+                    width: Math.max(40, initialWidth + (west ? -dx : handle.includes('e') ? dx : 0)),
+                    height: Math.max(40, initialHeight + (north ? -dy : handle.includes('s') ? dy : 0)),
+                    x: initialX + (west ? dx : 0),
+                    y: initialY + (north ? dy : 0),
+                  }
                 }
-                const finishGesture = (up: PointerEvent) => {
+                const pointerMove = (move: PointerEvent) => {
+                  lastDx = move.clientX - startX; lastDy = move.clientY - startY
+                  if (mode === 'move') image.style.translate = `${lastDx}px ${lastDy}px`
+                  else {
+                    const next = dimensions(lastDx, lastDy)
+                    image.style.width = `${next.width}px`
+                    image.style.height = `${next.height}px`
+                  }
+                }
+                const cleanup = () => {
                   window.removeEventListener('pointermove', pointerMove)
                   window.removeEventListener('pointerup', finishGesture)
-                  window.removeEventListener('pointercancel', finishGesture)
-                  const dx = up.clientX - startX, dy = up.clientY - startY
+                  window.removeEventListener('pointercancel', cancelGesture)
                   image.style.translate = ''
                   image.style.width = ''
                   image.style.height = ''
+                }
+                const finishGesture = () => {
+                  cleanup()
                   if (mode === 'move') {
                     updateSection(section.id, current => ({
                       ...current,
-                      components: current.components.map(component => {
-                        if (component.id !== item.id) return component
-                        return {
-                          ...component,
-                          responsiveStyles: {
-                            ...component.responsiveStyles,
-                            [device]: {
-                              ...(component.responsiveStyles?.[device] ?? {}),
-                              imageX: String(initialX + dx),
-                              imageY: String(initialY + dy),
-                            },
-                          },
-                        }
-                      }),
+                      components: current.components.map(component => component.id !== item.id ? component : ({
+                        ...component,
+                        responsiveStyles: {
+                          ...component.responsiveStyles,
+                          [device]: { ...(component.responsiveStyles?.[device] ?? {}), imageX: String(initialX + lastDx), imageY: String(initialY + lastDy) },
+                        },
+                      })),
                     }))
                   } else {
+                    const next = dimensions(lastDx, lastDy)
                     updateSection(section.id, current => ({
                       ...current,
-                      components: current.components.map(component => {
-                        if (component.id !== item.id) return component
-                        return {
-                          ...component,
-                          responsiveStyles: {
-                            ...component.responsiveStyles,
-                            [device]: {
-                              ...(component.responsiveStyles?.[device] ?? {}),
-                              width: `${Math.max(40, initialWidth + dx)}px`,
-                              height: `${Math.max(40, initialHeight + dy)}px`,
-                            },
+                      components: current.components.map(component => component.id !== item.id ? component : ({
+                        ...component,
+                        responsiveStyles: {
+                          ...component.responsiveStyles,
+                          [device]: {
+                            ...(component.responsiveStyles?.[device] ?? {}),
+                            width: `${next.width}px`,
+                            height: `${next.height}px`,
+                            imageX: String(next.x),
+                            imageY: String(next.y),
                           },
-                        }
-                      }),
+                        },
+                      })),
                     }))
                   }
                 }
+                const cancelGesture = () => cleanup()
                 window.addEventListener('pointermove', pointerMove)
                 window.addEventListener('pointerup', finishGesture, { once: true })
-                window.addEventListener('pointercancel', finishGesture, { once: true })
+                window.addEventListener('pointercancel', cancelGesture, { once: true })
               }
               return <div key={item.id} className={'image-canvas-wrap ' + selectedClass} onClick={handleElementClick}>
                 <img tabIndex={0} aria-label="Select image element; drag to move" onKeyDown={handleElementKeyDown} onPointerDown={event => beginImageGesture(event, 'move')} style={{ ...elementStyle, position: 'relative', touchAction: 'none', transform: `translate(${elementStyle.imageX ?? '0'}px, ${elementStyle.imageY ?? '0'}px) rotate(${elementStyle.rotation ?? '0'}deg) scaleX(${elementStyle.flipX === 'true' ? -1 : 1}) scaleY(${elementStyle.flipY === 'true' ? -1 : 1})`, transformOrigin: 'center center', cursor: previewMode ? 'default' : 'move' }} src={item.content} alt={(site.assets ?? []).find(asset => asset.dataUrl === item.content)?.altText ?? ''} />
-                {selectedComponentId === item.id && !previewMode && <button type="button" className="image-resize-handle" aria-label="Drag to resize image" title="Drag to resize" onPointerDown={event => beginImageGesture(event, 'resize')} />}
+                {selectedComponentId === item.id && !previewMode && ['nw','n','ne','e','se','s','sw','w'].map(handle => <button key={handle} type="button" className={'image-resize-handle handle-' + handle} aria-label={'Resize image from ' + handle + ' edge'} title={'Drag to resize from ' + handle} onPointerDown={event => beginImageGesture(event, 'resize', handle)} />)}
               </div>
             })() : item.kind === 'form' ? <form key={item.id} className="site-preview-form" onSubmit={event => { event.preventDefault(); if (previewMode) window.alert('Form preview only. Connect a form service before publishing to receive submissions.') }} onClick={selectItem}><input aria-label="Your name" placeholder="Your name" required /><input aria-label="Email address" type="email" placeholder="Email address" required /><textarea aria-label="Your message" placeholder="Your message" required /><button type="submit">Send message</button></form> : item.kind === 'container' ? <div key={item.id} tabIndex={0} aria-label={'Select container: ' + item.content} onKeyDown={handleElementKeyDown} className={selectedClass} onClick={handleElementClick} onDoubleClick={() => setEditingComponentId(item.id)} contentEditable={editingComponentId === item.id} suppressContentEditableWarning onBlur={event => editingComponentId === item.id && finishInlineEdit(item.id, event.currentTarget.textContent ?? '')} style={elementStyle}>{item.content}</div> : null })}
             {section.kind === 'header' && site.pages.length > 1 && <nav className="site-page-navigation" aria-label="Website pages">{site.pages.map(navPage => <button key={navPage.id} type="button" className={navPage.id === page.id ? 'active' : ''} onClick={event => { event.stopPropagation(); setActivePageId(navPage.id); setSelectedId(navPage.sections[1]?.id ?? navPage.sections[0]?.id ?? ''); setSelectedComponentId(null); setEditingComponentId(null); setMobilePanelOpen(false); setMobilePropertiesOpen(false) }}>{navPage.name}</button>)}</nav>}
