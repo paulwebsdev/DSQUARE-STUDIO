@@ -367,3 +367,9 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Add media sorting by newest, filename and approximate file size.
 - [x] Keep media search and sorting local to the editor without changing exported website content.
 - [ ] Verify search, sorting and selection behaviour with large media libraries on desktop and Android.
+
+
+## Full-page preview usability — 2026-11-09
+- [x] Rework preview layout sizing so the canvas scroll container receives the available viewport height.
+- [x] Enable momentum and vertical touch scrolling for the full-page preview on mobile.
+- [ ] Physically verify long-page scrolling and page navigation on Android.
