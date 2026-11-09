@@ -138,3 +138,13 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Add normal-flow, relative, absolute and sticky positioning modes.
 - [x] Add top, right, bottom and left offsets plus layer-order control.
 - [x] Store positioning settings in per-device responsive styles.
+
+
+## Advanced visual editor batch — 2026-11-09
+- [x] Add stacked, flexible-row and CSS-grid section layouts with editable grid columns and gaps.
+- [x] Add section background image selection from the project media library.
+- [x] Add section entrance animations and speed presets, with reduced-motion support.
+- [x] Add global theme controls for primary/accent colours and heading/body fonts.
+- [x] Add expanded component typography controls including font family, line height, letter spacing and text transform.
+- [x] Save selected elements as reusable project-library elements and insert them into other sections.
+- [ ] Validate touch interactions and exported layout/effect styling on physical devices before production.
