@@ -664,7 +664,23 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     finance:['Home','Solutions','About','Insights','Contact'], saas:['Home','Features','Pricing','Resources','Contact'], nonprofit:['Home','Our Mission','Programs','Impact','Get Involved'],
     events:['Home','Schedule','Speakers','Venue','Register'], construction:['Home','Services','Projects','About','Request a Quote'], legal:['Home','Practice Areas','Our Firm','People','Contact'],
   }
-  const labels = category === 'School' ? ['Home','About','Academics','Admissions','Student Life','News','Contact'] : (categoryPageLabels[category] ?? pageLabels[baseTemplateId] ?? ['Home','About','Services','Contact'])
+  const businessPageLabels = [
+    ['Home','About','Services','Industries','Contact'],
+    ['Home','Expertise','Approach','Insights','Contact'],
+    ['Home','Growth','Capabilities','Case Studies','Contact'],
+    ['Home','Practice Areas','Our Approach','People','Contact'],
+    ['Home','Solutions','Projects','Industries','Request a Quote'],
+    ['Home','Advisory','Leadership','Perspectives','Contact'],
+    ['Home','Platform','Features','Pricing','Book a Demo'],
+    ['Home','Our Expertise','Our Approach','Insights','Contact'],
+    ['Home','Services','Our Work','Industries','Contact'],
+    ['Home','What We Do','Our Story','Customer Care','Contact'],
+  ]
+  const labels = category === 'Business'
+    ? businessPageLabels[(variantNumber - 1) % businessPageLabels.length]
+    : category === 'School'
+      ? ['Home','About','Academics','Admissions','Student Life','News','Contact']
+      : (categoryPageLabels[category] ?? pageLabels[baseTemplateId] ?? ['Home','About','Services','Contact'])
   const innerPageHighlights: Record<string, [string, string, string, string]> = {
     Photography:['Selected work','Explore portraits, events, commercial projects and carefully curated image stories.','Book a session','Find package information, availability and details for planning your shoot.'],
     'Fashion & Apparel':['The latest collection','Discover considered pieces, seasonal edits and styles for every occasion.','Made to be worn','Find sizing, delivery and care information before choosing your favourites.'],
