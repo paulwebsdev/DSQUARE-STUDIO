@@ -76,7 +76,7 @@ export function createStarterSite(name = 'Untitled website', category = 'Busines
 
 /** Build a complete editable homepage from one of the studio's starter templates. */
 export function createSiteFromTemplate(templateId: string, name: string, category: string): SiteDocument {
-  const site = createStarterSite(name, category)
+  const variantNumber = Number(templateId.match(/-v(\\d+)$/)?.[1] ?? '1')\n  const baseTemplateId = templateId.replace(/-v\\d+$/, '')\n  const site = createStarterSite(name, category)
   const makeSection = (kind: SiteSection['kind'], title: string, body: string, button?: string, tone = '#ffffff'): SiteSection => ({
     id: createId('section'),
     kind,
@@ -175,14 +175,18 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     construction: { primary:'#39362f', accent:'#a58b5f', background:'#faf9f5', text:'#38352f', heading:'Manrope', body:'Inter', radius:'4px' },
     legal: { primary:'#252f3c', accent:'#988a76', background:'#fafaf8', text:'#303844', heading:'Georgia', body:'Inter', radius:'3px' },
   }
-  const selectedTheme = themes[templateId] ?? themes.business
+  const selectedTheme = themes[baseTemplateId] ?? themes.business
+  const accentVariants = ['#b18a51','#6d8f9a','#b16d68','#8a9a6a','#9a82b5','#b17e58','#648c83','#8c789e','#b59a63','#7186a1']
+  const primaryVariants = ['#24211d','#243b45','#35252d','#263b30','#302b43','#3d2b24','#243d3b','#342d3b','#29251e','#25344a']
+  selectedTheme.accent = accentVariants[(variantNumber - 1) % accentVariants.length]
+  selectedTheme.primary = primaryVariants[(variantNumber - 1) % primaryVariants.length]
   site.theme = { primaryColor:selectedTheme.primary, accentColor:selectedTheme.accent, backgroundColor:selectedTheme.background, textColor:selectedTheme.text, headingFont:selectedTheme.heading, bodyFont:selectedTheme.body, buttonRadius:selectedTheme.radius }
-  const sections = content[templateId] ?? content.business
+  const sections = content[baseTemplateId] ?? content.business
   const header = site.pages[0].sections[0]
   const footer = site.pages[0].sections[site.pages[0].sections.length - 1]
   site.pages[0].sections = [
     { ...header, components: [{ ...component('heading', name.toUpperCase()), id: createId('brand') }] },
-    ...sections.map(([kind, title, body, button], index) => makeSection(kind, title, body, button, index % 2 === 0 ? palette[templateId] ?? '#f3eee5' : '#ffffff')),
+    ...sections.map(([kind, title, body, button], index) => makeSection(kind, title, body, button, index % 2 === 0 ? palette[baseTemplateId] ?? '#f3eee5' : '#ffffff')),
     { ...footer, components: [{ ...component('text', '© ' + name + '. All rights reserved.'), id: createId('copyright') }] },
   ]
   site.metadata.description = sections[0][2]
@@ -193,7 +197,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     finance:['Home','Solutions','About','Insights','Contact'], saas:['Home','Features','Pricing','Resources','Contact'], nonprofit:['Home','Our Mission','Programs','Impact','Get Involved'],
     events:['Home','Schedule','Speakers','Venue','Register'], construction:['Home','Services','Projects','About','Request a Quote'], legal:['Home','Practice Areas','Our Firm','People','Contact'],
   }
-  const labels = pageLabels[templateId] ?? ['Home','About','Services','Contact']
+  const labels = category === 'School' ? ['Home','About','Academics','Admissions','Student Life','News','Contact'] : (pageLabels[baseTemplateId] ?? ['Home','About','Services','Contact'])
   const pageDescriptions: Record<string,string> = {
     About: 'Meet the people, purpose and principles behind ' + name + '. Discover our story and what makes our approach different.',
     Services: 'Explore our services, expertise and the practical ways we can help you move forward with confidence.',
@@ -235,7 +239,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     const pageBody = pageDescriptions[label] ?? 'Discover more about ' + name + ', our approach and how we can help you take the next step.'
     const pageSections: SiteSection[] = [
       { id:createId('section'), kind:'header', name:'Navigation', enabled:true, styles:{padding:'22px 7%',backgroundColor:'#ffffff'}, components:[{...component('heading',name.toUpperCase()),id:createId('brand')}] },
-      { id:createId('section'), kind:'hero', name:label + ' introduction', enabled:true, styles:{padding:'88px 8%',backgroundColor:palette[templateId] ?? '#edf3f4'}, components:[{...component('heading',pageHeading),id:createId('heading')},{...component('text',pageBody),id:createId('text')}] },
+      { id:createId('section'), kind:'hero', name:label + ' introduction', enabled:true, styles:{padding:'88px 8%',backgroundColor:palette[baseTemplateId] ?? '#edf3f4'}, components:[{...component('heading',pageHeading),id:createId('heading')},{...component('text',pageBody),id:createId('text')}] },
       { id:createId('section'), kind:'features', name:'More to discover', enabled:true, styles:{padding:'66px 8%',backgroundColor:'#ffffff'}, components:[{...component('heading','Thoughtfully designed around you'),id:createId('heading')},{...component('text','Clear information, considered details and a helpful experience from the first visit to the next step.'),id:createId('text')}] },
       { id:createId('section'), kind:'contact', name:'Next step', enabled:true, styles:{padding:'66px 8%',backgroundColor:selectedTheme.primary}, components:[{...component('heading','Ready to find out more?'),id:createId('heading')},{...component('text','Get in touch with ' + name + ' and let’s make a plan.'),id:createId('text')},{...component('button','Contact us'),id:createId('button')}] },
       { id:createId('section'), kind:'footer', name:'Footer', enabled:true, styles:{padding:'28px 7%',backgroundColor:'#171717'}, components:[{...component('text','© ' + name + '. All rights reserved.'),id:createId('copyright')}] },
