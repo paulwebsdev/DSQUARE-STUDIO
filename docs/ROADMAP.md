@@ -248,3 +248,13 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Generate collision-resistant IDs for saved and inserted reusable elements.
 - [x] Clear stale component selection and close mobile panels when switching website pages.
 - [ ] Verify keyboard-only editor selection and screen-reader announcements in a real browser accessibility pass.
+
+
+## Workspace backup and restore — 2026-11-09
+- [x] Add a downloadable JSON backup containing project records, client records and saved editable website documents.
+- [x] Add a restore flow with an explicit replacement confirmation.
+- [x] Validate backup format, version, record fields, project references and website-document JSON before restoring.
+- [x] Reject oversized backup files and show clear success or failure feedback.
+- [x] Explain that backup files contain private workspace data and that current persistence is browser-local, not cloud sync.
+- [ ] Test backup/restore with large media libraries and across different mobile browsers.
+- [ ] Add encrypted cloud backup and cross-device sync after the secure backend is selected.
