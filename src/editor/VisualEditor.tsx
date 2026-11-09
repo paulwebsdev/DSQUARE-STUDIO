@@ -84,6 +84,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const [mobilePropertiesOpen, setMobilePropertiesOpen] = useState(false)
   const [savedAt, setSavedAt] = useState('Just saved')
   const [previewMode, setPreviewMode] = useState(false)
+  const [previewScrolled, setPreviewScrolled] = useState(false)
   const [exportOpen, setExportOpen] = useState(false)
   const [exportBusy, setExportBusy] = useState(false)
   const [exportMessage, setExportMessage] = useState('')
@@ -99,6 +100,15 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const exportCloseRef = useRef<HTMLButtonElement>(null)
   const exportTriggerRef = useRef<HTMLButtonElement>(null)
   const previewScrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const scrollport = previewScrollRef.current
+    if (!previewMode || !scrollport) { setPreviewScrolled(false); return }
+    const updateScrollState = () => setPreviewScrolled(scrollport.scrollTop > 360)
+    scrollport.addEventListener('scroll', updateScrollState, { passive: true })
+    updateScrollState()
+    return () => scrollport.removeEventListener('scroll', updateScrollState)
+  }, [previewMode])
 
   useEffect(() => {
     const scrollport = previewScrollRef.current
@@ -131,6 +141,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
 
   const page = site.pages.find(item => item.id === activePageId) ?? site.pages[0]
   const selected = page?.sections.find(section => section.id === selectedId) ?? page?.sections[0]
+  const previewContactSection = page?.sections.find(section => section.kind === 'contact' && section.enabled)
   const selectedComponent = selected?.components.find(item => item.id === selectedComponentId)
   const selectedImageAsset = selectedComponent?.kind === 'image' ? (site.assets ?? []).find(asset => asset.dataUrl === selectedComponent.content) : undefined
   const selectedText = selectedComponent?.content ?? selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
@@ -762,6 +773,8 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
             {section.components.length === 0 && <span className="site-preview-placeholder">{section.name}</span>}
             <span className="section-selection-label">{section.name}</span>{!previewMode && !['header','footer'].includes(section.kind) && <button type="button" className="section-touch-drag-handle" aria-label={'Move ' + section.name} title="Hold and drag to move section" onClick={event => event.stopPropagation()} onTouchStart={event => { event.stopPropagation(); setDraggedSectionId(section.id) }} onKeyDown={event => { if (event.altKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) { event.preventDefault(); setSelectedId(section.id); moveSection(event.key === 'ArrowUp' ? -1 : 1, section.id) } }}>⠿</button>}
           </section>)}
+          {previewMode && previewContactSection && <button type="button" className="preview-floating-contact" onClick={() => previewScrollRef.current?.querySelector('[data-section-id="' + previewContactSection.id + '"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span className="preview-floating-spark">✦</span> Let's talk <span aria-hidden="true">↗</span></button>}
+          {previewMode && <button type="button" className={'preview-back-top ' + (previewScrolled ? 'is-visible' : '')} aria-label="Back to top" onClick={() => previewScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}>↑</button>}
         </div></div>
       </main>
       <aside className="editor-right-panel"><div className="editor-properties-heading"><div><Settings2 size={16} /><strong>Edit selection</strong></div><span>{selectedComponent ? selectedComponent.kind.toUpperCase() : "SECTION"}</span><button className="mobile-properties-close" onClick={() => setMobilePropertiesOpen(false)} aria-label="Close properties"><X size={16} /></button></div>{selected ? <div className="editor-properties"><div className="inspector-intro"><strong>{selectedComponent ? `Editing ${selectedComponent.kind}` : `Editing ${selected?.name ?? "section"}`}</strong><small>{selectedComponent ? "Choose a group below to change this item." : "Choose a group below to customise this section."}</small></div>
