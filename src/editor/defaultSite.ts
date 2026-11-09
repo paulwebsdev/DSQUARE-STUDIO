@@ -627,6 +627,21 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
           layout: kind === 'gallery' || (kind === 'features' && (category === 'Business' || layoutVariant % 2 === 0)) ? 'grid' : 'stacked',
           gridColumns: kind === 'gallery' ? '3' : kind === 'features' && (category === 'Business' || layoutVariant % 2 === 0) ? (layoutVariant === 6 ? '4' : '3') : '2',
           borderTop: !isHero && index % 2 === 0 ? '1px solid #e9e4dc' : 'none',
+          ...(category === 'Portfolio' ? {
+            ...(isHero ? {display:layoutVariant%2===0?'grid':'block',gridTemplateColumns:layoutVariant%2===0?'minmax(0,1.05fr) minmax(280px,.95fr)':undefined,alignItems:'center',columnGap:'clamp(24px,5vw,72px)',minHeight:layoutVariant%3===0?'520px':'440px',borderRadius:layoutVariant%2===0?'0':'22px'} : {}),
+            ...(kind==='gallery'?{gridColumns:layoutVariant%3===0?'2':layoutVariant%3===1?'3':'4',gap:'clamp(14px,2vw,26px)'}:{}),
+            ...(kind==='features'?{layout:'grid',gridColumns:layoutVariant%2===0?'3':'2',gap:'22px'}:{}),
+            ...(kind==='testimonials'?{layout:'grid',gridColumns:'2',gap:'18px'}:{}),
+          } : category === 'E-commerce' ? {
+            ...(isHero?{display:layoutVariant%2===0?'grid':'block',gridTemplateColumns:layoutVariant%2===0?'minmax(0,1fr) minmax(280px,1fr)':undefined,alignItems:'center',columnGap:'clamp(24px,5vw,64px)',minHeight:'430px',borderRadius:layoutVariant%3===0?'0':'18px'}:{}),
+            ...(kind==='gallery'?{layout:'grid',gridColumns:layoutVariant%3===0?'2':layoutVariant%3===1?'3':'4',gap:'clamp(12px,2vw,24px)'}:{}),
+            ...(kind==='features'?{layout:'grid',gridColumns:layoutVariant%2===0?'3':'2',gap:'18px'}:{}),
+            ...(kind==='testimonials'?{layout:'grid',gridColumns:'2',gap:'18px'}:{}),
+          } : category === 'Blog / Magazine' ? {
+            ...(isHero?{textAlign:layoutVariant%2===0?'center':'left',padding:layoutVariant%3===0?'clamp(100px,14vw,180px) 10%':'clamp(76px,9vw,124px) 8%',minHeight:layoutVariant%3===0?'480px':'360px',borderBottom:'1px solid color-mix(in srgb,'+selectedTheme.accent+' 35%,transparent)'}:{}),
+            ...(kind==='gallery'?{layout:'grid',gridColumns:layoutVariant%3===0?'2':layoutVariant%3===1?'3':'2',gap:'clamp(16px,2.4vw,30px)'}:{}),
+            ...(kind==='features'?{layout:'grid',gridColumns:layoutVariant%2===0?'3':'2',gap:'20px'}:{}),
+          } : {}),
           ...(category === 'Business' ? {
             ...(isHero && (businessProfile?.hero === 'split' || [0,3,5,7].includes(layoutVariant)) ? { display:'grid', gridTemplateColumns:'minmax(0,1fr) minmax(0,1fr)', alignItems:'center', columnGap:'clamp(28px,5vw,76px)' } : {}),
             ...(kind === 'gallery' ? { gridColumns: layoutVariant % 2 === 0 ? '3' : '2', gap:'22px' } : {}),
@@ -758,6 +773,9 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
   ]
   site.metadata.description = sections[0][2]
   const categoryPageLabels: Record<string, string[]> = {
+    Portfolio:['Home','Selected Work','Services','About','Process','Contact'],
+    'E-commerce':['Home','Shop','Collections','New Arrivals','About','Shipping & Returns','Contact'],
+    'Blog / Magazine':['Home','Latest Stories','Features','Topics','Contributors','About','Newsletter'],
     Photography:['Home','Portfolio','Services','About','Packages','Contact'],
     'Fashion & Apparel':['Home','Shop','Collections','Our Story','Size Guide','Contact'],
     'Church & Ministry':['Home','About','Ministries','Services','Events','Give','Contact'],
@@ -796,6 +814,9 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
       ? ['Home','About','Academics','Admissions','Student Life','News','Contact']
       : (categoryPageLabels[category] ?? pageLabels[baseTemplateId] ?? ['Home','About','Services','Contact'])
   const innerPageHighlights: Record<string, [string, string, string, string]> = {
+    Portfolio:['Selected projects','Explore a curated body of work, with the thinking, craft and outcomes behind each project.','Work together','Share your brief, timeline and ambitions to start a thoughtful creative collaboration.'],
+    'E-commerce':['Shop the collection','Explore product ranges, useful details and carefully selected customer favourites.','Shopping with confidence','Find clear information about delivery, returns, payment options and customer support.'],
+    'Blog / Magazine':['The latest stories','Discover fresh reporting, thoughtful features, interviews and practical guides from our editors.','Stay in the conversation','Subscribe for selected stories, editorial highlights and updates from the publication.'],
     Photography:['Selected work','Explore portraits, events, commercial projects and carefully curated image stories.','Book a session','Find package information, availability and details for planning your shoot.'],
     'Fashion & Apparel':['The latest collection','Discover considered pieces, seasonal edits and styles for every occasion.','Made to be worn','Find sizing, delivery and care information before choosing your favourites.'],
     'Church & Ministry':['Life together','Discover our ministries, community groups and opportunities to grow and serve.','Plan your visit','Find service times, location details and ways to connect with the church family.'],
@@ -823,6 +844,9 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     nonprofit: ['Programmes in action', 'Discover the initiatives, services and community projects behind our mission.', 'Ways to make a difference', 'Find out how to volunteer, partner with us or support the work.'],
   }
   const categoryPageDescriptions: Record<string, Record<string, string>> = {
+    Portfolio:{'Selected Work':'Browse a considered selection of projects, case studies and creative experiments.','Services':'Explore creative services, disciplines and ways to collaborate.','About':'Meet the person or studio behind the work, including values, experience and point of view.','Process':'See how a project moves from discovery and direction through design and delivery.','Contact':'Share your brief and tell us what you would like to make together.'},
+    'E-commerce':{Shop:'Browse products, collections and customer favourites in one clear storefront.','Collections':'Explore curated product edits organised around style, use and occasion.','New Arrivals':'See the latest products and recently added pieces.','About':'Learn about the store, product standards and the people behind the brand.','Shipping & Returns':'Find practical information about delivery, exchanges, returns and customer care.'},
+    'Blog / Magazine':{'Latest Stories':'Read the newest reporting, features, interviews and editorial picks.','Features':'Explore long-form stories, profiles and in-depth perspectives.','Topics':'Browse the subjects and themes covered by the publication.','Contributors':'Meet the writers, editors, photographers and guest voices behind the stories.','About':'Learn about the publication, its editorial point of view and the team.','Newsletter':'Get selected stories and editorial highlights delivered to your inbox.'},
     Business:{About:'Learn about our story, values and the people committed to helping customers and partners succeed.',Services:'Explore our core services, capabilities and the practical ways we support businesses.',Contact:'Tell us what you need and our team will help you find the right next step.'},
     Automotive:{Vehicles:'Explore available vehicles, key details and options to arrange a viewing or test drive.',Services:'Discover maintenance, repairs and aftercare designed to keep you moving.',Finance:'Understand available finance guidance and the information to prepare before applying.'},
     'Fitness & Sports':{Membership:'Compare membership options and find the level of access that suits your goals.',Classes:'Explore group sessions, training styles and class information.',Coaches:'Meet the coaches and learn about their experience and approach.',Timetable:'Plan your week with our class and training schedule.'},
@@ -878,6 +902,9 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     const pageBody = categoryPageDescriptions[category]?.[label] ?? pageDescriptions[label] ?? 'Discover more about ' + name + ', our approach and how we can help you take the next step.'
     const pageHighlights = innerPageHighlights[category] ?? innerPageHighlights[baseTemplateId] ?? ['Thoughtful expertise','A considered experience shaped around your needs.','Clear information','Helpful guidance for your next step.']
     const showcaseByCategory: Record<string, { title: string; items: string[] }> = {
+      Portfolio:{title:'Selected projects & case studies',items:['Brand identity · A clear visual system shaped around a distinctive point of view.','Digital experiences · Thoughtful websites and products designed for real people.','Art direction · Image, type and composition brought together with intention.']},
+      'E-commerce':{title:'Shop the collection',items:['New arrivals · Discover the latest additions and seasonal edits.','Bestsellers · Explore customer favourites and proven everyday choices.','Curated collections · Browse products grouped by style, purpose and occasion.']},
+      'Blog / Magazine':{title:'From the editorial desk',items:['Latest features · Fresh stories, interviews and useful perspectives.','Editor’s picks · A considered selection of stories worth your time.','Popular reads · Explore the articles readers are sharing and returning to.']},
       Business:{title:'Our business capabilities',items:['Strategy & consulting · Clear thinking and practical plans for your next stage.','Business operations · Dependable support that helps your organisation work better.','Client partnerships · Responsive people focused on long-term relationships.']},
       shop: { title: 'Explore the collection', items: ['New arrivals · Discover the latest additions to the collection.', 'Customer favourites · Browse pieces customers return to again and again.', 'Made for everyday · Clear details, thoughtful quality and easy support.'] },
       restaurant: { title: 'A taste of the menu', items: ['Small plates · Fresh starters and seasonal dishes to share.', 'From the kitchen · Signature mains prepared with care.', 'Something sweet · Desserts and drinks to finish your visit.'] },
