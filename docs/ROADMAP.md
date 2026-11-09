@@ -17,6 +17,14 @@
 - [ ] Verify button links, hover states and touch behaviour in desktop and Android browsers.
 
 
+## Universal template imagery and one-tap replacement — 2026-11-09
+- [x] Give all 33 categories a relevant starter hero image and three category-matched gallery images.
+- [x] Ensure every starter template includes a visual gallery section, even when its original layout did not include one.
+- [x] Normalize image URLs consistently so category hero images load as actual image sources.
+- [x] Add an on-canvas Replace image action for selected template images, while retaining the image properties replacement control.
+- [ ] Verify all 330 template variants, remote image loading, and image replacement on desktop and Android.
+
+
 ## Phase 1 — Foundation
 - [x] Record product goals and approved decisions.
 - [x] Define the initial architecture and module boundaries.
