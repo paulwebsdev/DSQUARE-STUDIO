@@ -379,6 +379,20 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     'Personal Services': { primary:'#293b49', accent:'#b18a51', background:'#f8fafb', text:'#34414a', heading:'Manrope', body:'Inter', radius:'6px' },
   }
   const selectedTheme = { ...(categoryThemes[category] ?? themes[baseTemplateId] ?? themes.business) }
+  // Ten genuinely different Business art directions: palette, typography and shape language.
+  const businessArtDirections = [
+    { primary:'#17252b', accent:'#e2a33a', background:'#f4f2ec', text:'#30383d', heading:'Manrope', body:'Inter', radius:'4px' },
+    { primary:'#171717', accent:'#e23d36', background:'#fff8f5', text:'#292929', heading:'Arial', body:'Inter', radius:'0px' },
+    { primary:'#123b73', accent:'#39a7e8', background:'#f1f7fc', text:'#20354b', heading:'Manrope', body:'Inter', radius:'16px' },
+    { primary:'#493326', accent:'#c18b55', background:'#f6f0e8', text:'#44372e', heading:'Georgia', body:'Arial', radius:'2px' },
+    { primary:'#24533e', accent:'#b8d45c', background:'#f5f8f1', text:'#2c4034', heading:'Arial', body:'Inter', radius:'10px' },
+    { primary:'#202b3a', accent:'#f0a24a', background:'#f3f5f7', text:'#303d4b', heading:'Manrope', body:'Inter', radius:'6px' },
+    { primary:'#111827', accent:'#a3e635', background:'#f6f8f2', text:'#273128', heading:'Arial', body:'Inter', radius:'12px' },
+    { primary:'#39264f', accent:'#c49be8', background:'#f7f3fa', text:'#3d3447', heading:'Georgia', body:'Inter', radius:'18px' },
+    { primary:'#173f43', accent:'#f07f62', background:'#f3f8f6', text:'#2b4141', heading:'Manrope', body:'Arial', radius:'3px' },
+    { primary:'#202c52', accent:'#e0b84f', background:'#f5f4ef', text:'#30384c', heading:'Georgia', body:'Inter', radius:'999px' },
+  ]
+  if (category === 'Business') Object.assign(selectedTheme, businessArtDirections[(variantNumber - 1) % businessArtDirections.length])
   const accentVariants = ['#b18a51','#6d8f9a','#b16d68','#8a9a6a','#9a82b5','#b17e58','#648c83','#8c789e','#b59a63','#7186a1']
   const primaryVariants = ['#24211d','#243b45','#35252d','#263b30','#302b43','#3d2b24','#243d3b','#342d3b','#29251e','#25344a']
   selectedTheme.accent = accentVariants[(variantNumber - 1) % accentVariants.length]
@@ -503,7 +517,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     { layout:'flex', padding:'30px 8%', background:'#ffffff', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid #e8e5df', brandSize:'1.5rem', brandAlign:'left', tagline:'GOOD PEOPLE. GOOD BUSINESS.', action:'Say hello' },
   ]
   const headerProfile = category === 'Business' ? businessHeaderProfiles[(variantNumber - 1) % businessHeaderProfiles.length] : undefined
-  const brandComponent = { ...component('heading', name.toUpperCase()), id:createId('brand'), styles:{ ...component('heading', name.toUpperCase()).styles, fontSize:headerProfile?.brandSize ?? '1rem', letterSpacing:'0.12em', fontWeight:'800', color:category === 'Business' && [2,5,6,8].includes(layoutVariant) ? '#ffffff' : selectedTheme.primary, margin:'0', textAlign:headerProfile?.brandAlign ?? 'left' } }
+  const brandComponent = { ...component('heading', name.toUpperCase()), id:createId('brand'), styles:{ ...component('heading', name.toUpperCase()).styles, fontSize:headerProfile?.brandSize ?? '1rem', letterSpacing:'0.12em', fontWeight:'800', color:category === 'Business' && [2,5,6,8].includes(layoutVariant) ? '#ffffff' : selectedTheme.primary, margin:'0', textAlign:(headerProfile?.brandAlign ?? 'left') as 'left' | 'center' | 'right' } }
   const headerComponents = [brandComponent]
   if (headerProfile?.tagline) headerComponents.push({ ...component('text', headerProfile.tagline), id:createId('header-tagline'), styles:{ fontSize:'0.62rem', fontWeight:'800', letterSpacing:'0.16em', color:[2,5,6,8].includes(layoutVariant) ? '#d7dce2' : selectedTheme.accent, maxWidth:'none', margin:'8px 0 0', textAlign:headerProfile.brandAlign } } as typeof brandComponent)
   if (headerProfile?.action) headerComponents.push({ ...component('button', headerProfile.action), id:createId('header-action'), styles:{ backgroundColor:selectedTheme.accent, color:'#171717', padding:'11px 18px', borderRadius:selectedTheme.radius, fontSize:'0.82rem', fontWeight:'700', margin:'0 0 0 auto' } } as typeof brandComponent)
