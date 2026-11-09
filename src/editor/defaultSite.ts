@@ -632,10 +632,9 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
           ['Good people. Good business.','DISCOVER  Our story  What we do  Our values','STAY CONNECTED  News  Social  Contact','SAY HELLO  We would love to hear from you'],
         ]
         const footerCopy = footerLayouts[(variantNumber - 1) % footerLayouts.length]
-        const footerColor = layoutVariant % 3 === 1 ? '#111827' : selectedTheme.primary
         return [
           { ...component('heading', footerCopy[0]), id:createId('footer-brand'), styles:{color:'#ffffff',fontSize:layoutVariant===2?'2rem':'1.45rem',fontWeight:'750',maxWidth:'520px',margin:'0 0 24px'} },
-          ...footerCopy.slice(1).map((copy,index)=>({ ...component('text',copy), id:createId('footer-column'), styles:{color:'#e8e9eb',fontSize:'0.88rem',lineHeight:'2.05',maxWidth:'280px',padding:'12px 0',borderTop:'1px solid rgba(255,255,255,.18)'} })),
+          ...footerCopy.slice(1).map((copy)=>({ ...component('text',copy), id:createId('footer-column'), styles:{color:'#e8e9eb',fontSize:'0.88rem',lineHeight:'2.05',maxWidth:'280px',padding:'12px 0',borderTop:'1px solid rgba(255,255,255,.18)'} })),
           { ...component('text','© '+name+' · All rights reserved.'), id:createId('copyright'), styles:{color:'#c5c9cf',fontSize:'0.78rem',maxWidth:'100%',paddingTop:'22px',borderTop:'1px solid rgba(255,255,255,.2)'} },
         ]
       })() : [{ ...component('text', '© ' + name + '. All rights reserved.'), id: createId('copyright'), styles: { ...component('text', '© ' + name + '. All rights reserved.').styles, color: '#ffffff', maxWidth: '100%' } }],
