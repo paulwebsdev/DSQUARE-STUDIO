@@ -5,7 +5,7 @@ export type ExportFiles = { htmlFiles: Record<string, string>; css: string; js: 
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]!)
 const safeFileName = (value: string) => value.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'page'
 const safeHref = (value: string, pageFiles: Map<string, string>) => {
-  const trimmed = value.trim()
+  const trimmed = value.trim().replace(/[\u0000-\u001f\u007f]/g, '')
   if (!trimmed || /^(?:\/\/|javascript:|data:|vbscript:|file:|blob:)/i.test(trimmed)) return '#'
   const path = trimmed.split(/[?#]/, 1)[0]
   const suffix = trimmed.slice(path.length)
@@ -25,7 +25,7 @@ const safeImageSource = (source: string, assetPaths: Map<string, string>) => {
 
 const styleText = (styles: StyleMap = {}) => Object.entries(styles)
   .filter(([key, value]) => value !== undefined && /^[a-zA-Z-]+$/.test(key))
-  .map(([key, value]) => key.replace(/[A-Z]/g, letter => '-' + letter.toLowerCase()) + ':' + String(value).replace(/[;{}<>\u0000-\u001f]/g, ''))
+  .map(([key, value]) => key.replace(/[A-Z]/g, letter => '-' + letter.toLowerCase()) + ':' + String(value).replace(/[;{}<>\u0000-\u001f]/g, '').replace(/(?:expression|javascript)\s*:/gi, '').replace(/url\((?!["']?assets\/[a-z0-9._/-]+["']?\))[^)]*\)/gi, 'none'))
   .join(';')
 
 function renderComponent(component: SiteComponent, pageFiles: Map<string, string>, assetPaths: Map<string, string>, assetAltTexts: Map<string, string>): string {
@@ -57,7 +57,10 @@ function renderSection(section: SiteSection, pageFiles: Map<string, string>, pag
   const backgroundImage = sectionStyles.backgroundImage
   if (backgroundImage) {
     const match = String(backgroundImage).match(/^url\((['"]?)(data:image\/[a-zA-Z0-9.+-]+;base64,[\s\S]+?)\1\)$/)
-    if (match) sectionStyles.backgroundImage = 'url("' + (assetPaths.get(match[2]) ?? match[2]) + '")'
+    if (match) {
+      const packagedImage = assetPaths.get(match[2])
+      sectionStyles.backgroundImage = packagedImage ? 'url("' + packagedImage + '")' : 'none'
+    }
   }
   const style = styleText(sectionStyles)
   return '<section id="section-' + id + '" aria-label="' + escapeHtml(section.name) + '" class="ds-section ds-section-' + escapeHtml(section.kind) + '"' + (style ? ' style="' + escapeHtml(style) + '"' : '') + '>\n' + content + '\n' + navigation + '\n</section>'
