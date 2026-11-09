@@ -138,3 +138,10 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - [ ] Sort media by newest, name and largest; confirm sorting changes only the library order and not asset/page content.
 - [ ] Search for a missing term in both panels; confirm helpful empty states appear without errors.
 - [ ] Repeat on a narrow Android viewport and with a large media library.
+
+
+## Full-page preview scrolling on mobile
+- [ ] Open Preview on an Android phone and scroll from the first section to the footer using one-finger vertical swipes.
+- [ ] Confirm the preview scroll area, not the browser page, moves smoothly and reaches the final section.
+- [ ] Confirm page navigation and inline text editing still work after scrolling.
+- [ ] Repeat in desktop and tablet viewport modes.
