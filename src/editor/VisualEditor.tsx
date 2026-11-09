@@ -32,6 +32,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const [history, setHistory] = useState<SiteDocument[]>([])
   const [future, setFuture] = useState<SiteDocument[]>([])
   const [showAdd, setShowAdd] = useState(false)
+  const [mobilePanelOpen, setMobilePanelOpen] = useState(false)
   const [savedAt, setSavedAt] = useState('Just saved')
   const [previewMode, setPreviewMode] = useState(false)
   const [exportOpen, setExportOpen] = useState(false)
@@ -124,6 +125,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     setSelectedId(section.id)
     setPanel('layers')
     setShowAdd(false)
+    setMobilePanelOpen(false)
   }
 
   const moveSectionTo = (sourceId: string, targetId: string) => {
@@ -163,19 +165,48 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     setSelectedComponentId(null)
   }
 
-  const addUploadedImage = (file?: File) => {
+  const addUploadedImage = async (file?: File) => {
     if (!file || !selected || !file.type.startsWith('image/')) return
     if (file.size > 5 * 1024 * 1024) { window.alert('Please choose an image smaller than 5 MB.'); return }
+    let uploadFile = file
+    // Resize large JPEG, PNG and WebP images while preserving their original format.
+    // Keep SVG, GIF and unsupported formats untouched to avoid changing vector or animation content.
+    if (['image/jpeg', 'image/png', 'image/webp'].includes(file.type) && typeof createImageBitmap === 'function') {
+      try {
+        const bitmap = await createImageBitmap(file)
+        const maxDimension = 2000
+        const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height))
+        if (scale < 1 || file.size > 700 * 1024) {
+          const canvas = document.createElement('canvas')
+          canvas.width = Math.max(1, Math.round(bitmap.width * scale))
+          canvas.height = Math.max(1, Math.round(bitmap.height * scale))
+          const context = canvas.getContext('2d')
+          if (context) {
+            context.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+            const optimizedBlob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, file.type, file.type === 'image/png' ? undefined : 0.84))
+            if (optimizedBlob && optimizedBlob.size < file.size) {
+              uploadFile = new File([optimizedBlob], file.name, { type: file.type, lastModified: file.lastModified })
+            }
+          }
+          bitmap.close()
+        } else {
+          bitmap.close()
+        }
+      } catch {
+        // If decoding or canvas optimization is unavailable, retain the original upload.
+      }
+    }
     const reader = new FileReader()
     reader.onload = () => {
       const dataUrl = typeof reader.result === 'string' ? reader.result : ''
       if (!dataUrl) return
-      const asset = { id: globalThis.crypto?.randomUUID?.() ?? ('asset-' + Date.now()), name: file.name, mimeType: file.type, dataUrl, altText: file.name.replace(/\.[^.]+$/, ''), createdAt: new Date().toISOString() }
+      const asset = { id: globalThis.crypto?.randomUUID?.() ?? ('asset-' + Date.now()), name: file.name, mimeType: uploadFile.type, dataUrl, altText: file.name.replace(/\.[^.]+$/, ''), createdAt: new Date().toISOString() }
       const imageComponent = { id: 'image-' + Date.now(), kind: 'image' as const, content: dataUrl, visible: true, styles: { width: '100%', maxWidth: '520px', borderRadius: '8px' } }
       commit({ ...site, assets: [...(site.assets ?? []).filter(item => item.dataUrl !== dataUrl), asset], pages: site.pages.map(p => p.id === page.id ? { ...p, sections: p.sections.map(section => section.id === selected.id ? { ...section, components: [...section.components, imageComponent] } : section) } : p) })
       setSelectedComponentId(imageComponent.id)
+      setMobilePanelOpen(false)
     }
-    reader.readAsDataURL(file)
+    reader.readAsDataURL(uploadFile)
   }
 
   const finishInlineEdit = (componentId: string, value: string) => {
@@ -278,7 +309,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
 
   const canvasClass = useMemo(() => `editor-canvas device-${device}`, [device])
 
-  return <div className={`visual-editor ${previewMode ? "preview-mode" : ""}`}>
+  return <div className={`visual-editor ${previewMode ? "preview-mode" : ""} ${mobilePanelOpen ? "mobile-panel-open" : ""}`}>
     <header className="editor-topbar">
       <button className="editor-back" onClick={onExit}><ArrowLeft size={17} /><span>Back to studio</span></button>
       <div className="editor-project-name"><strong>{site.name}</strong><span><i /> {savedAt}</span></div>
@@ -296,7 +327,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
           <button className={panel === 'add' ? 'active' : ''} onClick={() => setPanel('add')}><Plus size={14} /> Add</button>
           <button className={panel === 'layers' ? 'active' : ''} onClick={() => setPanel('layers')}><Layers3 size={14} /> Layers</button>
           <button className={panel === 'media' ? 'active' : ''} onClick={() => setPanel('media')}><Image size={14} /> Media</button>
-          <button className={panel === 'seo' ? 'active' : ''} onClick={() => setPanel('seo')}><Settings2 size={14} /> SEO</button>
+          <button className={panel === 'seo' ? 'active' : ''} onClick={() => setPanel('seo')}><Settings2 size={14} /> SEO</button><button className="mobile-panel-close" onClick={() => setMobilePanelOpen(false)} aria-label="Close panel"><X size={15} /></button>
         </div>
         {panel === 'add' ? <div className="editor-panel-content"><div className="editor-panel-heading"><strong>Sections</strong><span>BUILD YOUR PAGE</span></div>{sectionOptions.map(item => <button className="add-section-item" key={item.kind} onClick={() => addSection(item.kind)}><span className="add-section-icon">{item.kind === 'gallery' ? <Image size={17} /> : item.kind === 'hero' ? <MousePointer2 size={17} /> : <Type size={17} />}</span><span><strong>{item.label}</strong><small>{item.description}</small></span><Plus size={14} /></button>)}</div> : panel === 'layers' ? <div className="editor-panel-content"><div className="editor-panel-heading"><strong>Page layers</strong><span>{page.sections.length} SECTIONS</span></div>{page.sections.map((section, index) => <button key={section.id} className={selected?.id === section.id ? 'layer-item selected' : 'layer-item'} onClick={() => setSelectedId(section.id)}><span>{String(index + 1).padStart(2, '0')}</span><strong>{section.name}</strong><small>{section.kind}</small></button>)}</div> : panel === 'media' ? <div className="editor-panel-content"><div className="editor-panel-heading"><strong>Media library</strong><span>{(site.assets ?? []).length} FILES</span></div><button className="add-image-control" onClick={() => imageInputRef.current?.click()}><Plus size={14} /> Upload image</button>{(site.assets ?? []).map(asset => <div className="media-library-item" key={asset.id}><img src={asset.dataUrl} alt={asset.altText} /><div><strong>{asset.name}</strong><small>{Math.round(asset.dataUrl.length * .75 / 1024)} KB approx.</small><label className="media-alt-label">Image description (alt text)<input value={asset.altText} placeholder="Describe this image" onChange={event => setSite(current => ({ ...current, assets: (current.assets ?? []).map(item => item.id === asset.id ? { ...item, altText: event.target.value } : item) }))} /></label><button onClick={() => { if (!selected) return; const component = { id: 'image-' + Date.now(), kind: 'image' as const, content: asset.dataUrl, visible: true, styles: { width: '100%', maxWidth: '520px', borderRadius: '8px' } }; updateSection(selected.id, section => ({ ...section, components: [...section.components, component] })); setSelectedComponentId(component.id) }}>Add to selected section</button><button onClick={() => commit({ ...site, assets: (site.assets ?? []).filter(item => item.id !== asset.id) })}>Remove from library</button></div></div>)}</div> : <div className="editor-panel-content"><div className="editor-panel-heading"><strong>SEO & site settings</strong><span>SEARCH PREVIEW</span></div><label className="property-label">Website title<input maxLength={70} value={site.metadata.title} onChange={event => commit({ ...site, metadata: { ...site.metadata, title: event.target.value } })} /></label><label className="property-label">Meta description<textarea rows={4} maxLength={320} value={site.metadata.description} onChange={event => commit({ ...site, metadata: { ...site.metadata, description: event.target.value } })} /></label><small className="seo-counter">{site.metadata.description.length}/320 characters</small><label className="property-label">Site language<select value={site.metadata.language} onChange={event => commit({ ...site, metadata: { ...site.metadata, language: event.target.value } })}><option value="en">English</option><option value="en-GB">English (UK)</option><option value="en-NG">English (Nigeria)</option><option value="fr">French</option><option value="es">Spanish</option><option value="pt">Portuguese</option><option value="ar">Arabic</option><option value="ha">Hausa</option><option value="yo">Yoruba</option><option value="ig">Igbo</option></select></label><p className="seo-help">These settings are added to the HTML pages when you export your website.</p></div>}
         <div className="editor-panel-foot"><Sparkles size={14} /> Select a section to edit its content.</div>
@@ -332,7 +363,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         <button className="remove-section" onClick={removeSection} disabled={['header','footer'].includes(selected.kind)}><Trash2 size={14} /> Remove section</button>
       </div> : <p className="editor-no-selection">Choose a section on the canvas.</p>}</aside>
     </div>
-    <div className="editor-mobile-add"><button onClick={() => setShowAdd(true)}><Plus size={16} /> Add section</button><button onClick={() => setPanel('layers')}><Layers3 size={16} /> Layers</button><button onClick={() => setPanel('seo')}><Settings2 size={16} /> SEO</button></div>
+    <div className="editor-mobile-add"><button onClick={() => { setPanel('add'); setMobilePanelOpen(true) }}><Plus size={16} /> Add</button><button onClick={() => { setPanel('layers'); setMobilePanelOpen(true) }}><Layers3 size={16} /> Layers</button><button onClick={() => { setPanel('media'); setMobilePanelOpen(true) }}><Image size={16} /> Media</button><button onClick={() => { setPanel('seo'); setMobilePanelOpen(true) }}><Settings2 size={16} /> SEO</button></div>
     {exportOpen && <div className="export-backdrop" role="presentation" onClick={() => !exportBusy && setExportOpen(false)}><section className="export-dialog" role="dialog" aria-modal="true" aria-labelledby="export-title" onClick={event => event.stopPropagation()}><button className="export-close" aria-label="Close export" onClick={() => setExportOpen(false)} disabled={exportBusy}><X size={18} /></button><div className="export-kicker">YOUR WEBSITE · SOURCE CODE</div><h2 id="export-title">Download your website</h2><p>Get the actual HTML, CSS and JavaScript files. The complete ZIP includes every page, styling and scripts needed to run the website.</p><button className="export-zip-button" onClick={downloadWebsiteZip} disabled={exportBusy}><Download size={17} /> {exportBusy ? "Preparing ZIP..." : "Download complete website ZIP"}</button><div className="export-file-heading">Or download individual source files</div><div className="export-file-grid"><button onClick={() => downloadSourceFile("html")}>index.html <span>Website structure</span></button><button onClick={() => downloadSourceFile("css")}>styles.css <span>Design and layout</span></button><button onClick={() => downloadSourceFile("js")}>script.js <span>Interactions</span></button></div>{exportMessage && <div className="export-status" role="status">{exportMessage}</div>}<small>Contact forms are exported as front-end previews. Connect a form service before using them to receive messages.</small></section></div>}
     {showAdd && <div className="editor-add-sheet"><div><strong>Add a section</strong><button onClick={() => setShowAdd(false)}>Close</button></div>{sectionOptions.map(item => <button key={item.kind} onClick={() => addSection(item.kind)}>{item.label}<Plus size={15} /></button>)}</div>}
   </div>
