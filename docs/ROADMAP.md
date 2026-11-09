@@ -23,6 +23,9 @@
 - [x] Build first responsive editor canvas and section selection model.
 - [x] Add starter section library and section properties panel.
 - [x] Add desktop/tablet/mobile preview modes, undo/redo and browser-local autosave.
+- [x] Add clean in-editor preview mode.
+- [x] Select individual text, heading and button elements on the canvas and edit their content.
+- [x] Render image components in the editor canvas when present in the site document.
 
 ## Phase 5 — AI website generation
 - [ ] Design prompt and requirements flow.
@@ -45,4 +48,4 @@
 
 ## Current milestone
 
-The dashboard, browser-local project/client management, initial template library prototype and v1 provider-neutral site document schema are in place. Template previews are concept previews; full editable page layouts will be implemented with the visual editor. All service-dependent features remain clearly marked as planned until their backend integrations exist.
+The dashboard, browser-local project/client management, initial template library prototype and v1 provider-neutral site document schema are in place. The visual editor now supports section editing, individual text/heading/button selection and content editing, image rendering, responsive device previews and a clean preview mode. Template previews are concept previews; full editable page layouts will be implemented with the visual editor. Project-specific documents, robust drag-and-drop, richer image controls, backend persistence, authentication and production publishing remain planned. All service-dependent features remain clearly marked as planned until their backend integrations exist.
