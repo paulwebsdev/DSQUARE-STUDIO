@@ -474,3 +474,7 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .backup-summary span{padding:7px 10px;border:1px solid #3b352a;border-radius:20px;color:#c8bda9;font-size:11px}
 .settings-info-copy{margin:12px 0;color:#b9b1a3;font-size:12px;line-height:1.7}
 @media(max-width:600px){.settings-backup-actions{display:grid}.settings-backup-actions>*{width:100%}}
+
+
+/* Section visibility and action controls */
+.section-visibility-toggle{display:flex;align-items:center;gap:9px;padding:10px 11px;border:1px solid #51432d;border-radius:7px;background:#211e18;color:#e5d1a6}.section-visibility-toggle input{width:16px;height:16px;accent-color:#c39b56}.property-actions button:disabled{opacity:.4;cursor:not-allowed}.layer-item small{white-space:nowrap}
