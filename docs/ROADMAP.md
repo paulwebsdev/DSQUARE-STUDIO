@@ -192,6 +192,7 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Include the editor's fade, slide and zoom entrance animation keyframes in exported CSS.
 - [x] Respect reduced-motion preferences and collapse CSS-grid sections to one column on narrow screens.
 - [x] Preserve per-device responsive styles when saving and inserting reusable elements.
+- [x] Add a repeatable manual editor/export QA checklist (`docs/EXPORT-QA.md`).
 - [ ] Add automated export regression tests and verify exported sites in desktop and mobile browsers.
 
 ## Editor reliability and export correction — 2026-11-09
@@ -205,5 +206,6 @@ Note: media assets remain in browser-local project storage for this prototype; a
 ## Mobile editing and preview refinement — 2026-11-09
 - [x] Add touch drag handles to move sections on touchscreens without making the whole canvas a drag target.
 - [x] Keep section dragging visually indicated while a reorder is in progress.
-- [x] Allow button text to remain editable in the scrollable preview mode.
+- [x] Allow headings, text, buttons and containers to be edited in the scrollable preview mode.
+- [x] Document physical-device touch-reordering checks in the editor/export QA checklist.
 - [ ] Validate touch reordering on physical Android and iOS devices and add automated editor interaction tests.
