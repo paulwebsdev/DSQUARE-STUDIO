@@ -345,3 +345,11 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Expand the exported README with getting-started steps, included page filenames, asset count and clear service limitations.
 - [x] Keep the ZIP download object URL alive longer to improve download handoff reliability on mobile browsers.
 - [ ] Verify ZIP progress, README contents and completed downloads on Android and desktop browsers.
+
+
+## Export manifest batch — 2026-11-09
+- [x] Add a versioned manifest.json to each complete website ZIP.
+- [x] Record site name, generation timestamp, language, exported page filenames, stylesheets, scripts and packaged assets.
+- [x] Keep the manifest free of workspace client records and browser-local editor data.
+- [x] Document that forms and external services remain unconnected in the export manifest.
+- [ ] Validate the manifest against the actual ZIP contents on Android and desktop.
