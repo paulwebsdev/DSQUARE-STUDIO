@@ -104,3 +104,7 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - [ ] Download individual files and ZIP on Android; confirm downloads complete before temporary URLs are revoked.
 - [ ] Export a project with malformed or unavailable background-image data; confirm export completes without broken data URLs.
 - [ ] Test exported links containing control characters and unsafe CSS URL values; confirm unsafe destinations are neutralized.
+
+- [ ] Try missing, unsupported and oversized image files; confirm clear feedback and no accidental replacement on the next upload.
+- [ ] Open and close Export using the keyboard; confirm focus returns to the Export button.
+- [ ] Simulate source-file export failure; confirm a helpful status appears and the editor stays usable.
