@@ -28,3 +28,13 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - The built-in AI draft and AI Edit commands are local helpers, not calls to a real AI model.
 - Touch interactions require physical Android/iOS validation before production release.
 - Export checks above are manual until a test runner and automated regression suite are introduced.
+
+
+## Project and client data reliability
+- [ ] Duplicate a project with a saved editor document; confirm the copy opens with the same content and its own project identity.
+- [ ] Duplicate a project without a saved editor document; confirm the project still appears as a draft.
+- [ ] Delete a project; confirm it disappears and its saved website document is removed.
+- [ ] Delete the project currently open in the editor; confirm the app returns to My projects.
+- [ ] Archive and restore a project; confirm its update date changes.
+- [ ] Delete a client with linked projects; confirm those projects remain and show no assigned client.
+- [ ] Simulate unavailable/full browser storage; confirm the dashboard shows a warning instead of crashing.
