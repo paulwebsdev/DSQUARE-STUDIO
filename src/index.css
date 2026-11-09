@@ -492,3 +492,15 @@ h1,h2,h3,h4,p { margin-top: 0; }
 @media(max-width:600px){
   .visual-editor.preview-mode .editor-workspace{height:calc(100vh - 55px);height:calc(100dvh - 55px);flex:1 1 auto}
 }
+
+
+/* Always keep the editor canvas scrollable, with or without Preview mode. */
+.visual-editor .editor-workspace{min-height:0;overflow:hidden}
+.visual-editor .editor-stage{min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.visual-editor .editor-canvas-wrap{flex:1 1 0;min-width:0;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.visual-editor .editor-canvas{height:auto;min-height:100%;overflow:visible}
+@media(max-width:600px){
+  .visual-editor:not(.preview-mode) .editor-workspace{display:block;position:relative;min-height:0}
+  .visual-editor:not(.preview-mode) .editor-stage{height:100%;min-height:0;padding-bottom:49px}
+  .visual-editor:not(.preview-mode) .editor-canvas-wrap{height:auto;min-height:0}
+}
