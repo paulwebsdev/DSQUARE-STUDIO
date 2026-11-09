@@ -492,6 +492,13 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
           layout: kind === 'gallery' || (kind === 'features' && (category === 'Business' || layoutVariant % 2 === 0)) ? 'grid' : 'stacked',
           gridColumns: kind === 'gallery' ? '3' : kind === 'features' && (category === 'Business' || layoutVariant % 2 === 0) ? (layoutVariant === 6 ? '4' : '3') : '2',
           borderTop: !isHero && index % 2 === 0 ? '1px solid #e9e4dc' : 'none',
+          ...(category === 'Business' ? {
+            ...(isHero && [0,3,5,7].includes(layoutVariant) ? { display:'grid', gridTemplateColumns:'minmax(0,1fr) minmax(0,1fr)', alignItems:'center', columnGap:'clamp(28px,5vw,76px)' } : {}),
+            ...(kind === 'gallery' ? { gridColumns: layoutVariant % 2 === 0 ? '3' : '2', gap:'22px' } : {}),
+            ...(kind === 'features' ? { gridColumns: layoutVariant % 3 === 0 ? '2' : '3', gap:'20px' } : {}),
+            ...(kind === 'testimonials' || kind === 'pricing' ? { layout:'grid', gridColumns: layoutVariant % 2 === 0 ? '2' : '3', gap:'18px' } : {}),
+            ...(kind === 'custom' ? { backgroundColor: layoutVariant % 2 === 0 ? '#f1f4f5' : '#f7f2e9', borderRadius: layoutVariant % 3 === 0 ? '24px' : '0px', margin:'24px 5%' } : {}),
+          } : {}),
         },
         components: [
           ...block.components.map(item => ({
@@ -509,12 +516,14 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
               padding: item.kind === 'button' ? '15px 28px' : item.styles.padding,
               letterSpacing: item.kind === 'heading' && layoutVariant === 6 ? '-0.04em' : item.styles.letterSpacing,
               ...(category === 'Business' && item.kind === 'image' && isHero ? {
-                width: layoutVariant % 3 === 1 ? 'min(48%, 620px)' : '100%',
-                height: layoutVariant % 3 === 1 ? 'clamp(300px, 38vw, 500px)' : 'clamp(280px, 42vw, 520px)',
-                maxWidth: layoutVariant % 3 === 1 ? '620px' : '1120px',
+                width: [0,3,5,7].includes(layoutVariant) ? '100%' : '100%',
+                height: [0,3,5,7].includes(layoutVariant) ? 'clamp(300px, 38vw, 500px)' : 'clamp(240px, 34vw, 430px)',
+                maxWidth: [0,3,5,7].includes(layoutVariant) ? '620px' : '1120px',
                 borderRadius: layoutVariant % 2 === 0 ? '18px' : '8px',
                 boxShadow: '0 24px 65px rgba(20,32,38,.18)',
+                ...([0,3,5,7].includes(layoutVariant) ? { gridColumn:'2', gridRow:'1 / span 3', alignSelf:'center' } : {}),
               } : {}),
+              ...(category === 'Business' && isHero && item.kind !== 'image' ? { gridColumn:'1' } : {}),
             },
           })),
           ...(category === 'Business' && kind === 'features' ? [
