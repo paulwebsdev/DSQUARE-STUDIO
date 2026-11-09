@@ -56,3 +56,11 @@ The dashboard, browser-local project/client management, initial template library
 - [x] Open the selected project directly from the project list.
 - [x] Initialize a new project's editor document with its project name and website category.
 - [ ] Replace browser-only storage with the future authenticated persistence adapter.
+
+
+## Template-to-editor integration
+- [x] Connect all nine starter templates to structured editable homepage documents.
+- [x] Generate template-specific hero, feature, gallery, testimonial, and contact content.
+- [x] Save the generated document under its new project ID before opening the visual editor.
+- [ ] Expand template page plans into individually editable multi-page website documents.
+- [ ] Replace concept-only template thumbnails with rendered page previews.
