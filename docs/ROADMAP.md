@@ -16,7 +16,11 @@
 ## Phase 3 — Templates
 - [x] Define template metadata and category system.
 - [x] Build template browsing, category filters, search and preview.
-- [x] Add starter template concepts across business, portfolio, e-commerce, blog, landing page, agency, restaurant, education and community categories.
+- [x] Expand the library to 19 template concepts across 19 website categories, including real estate, healthcare, beauty, travel, finance, SaaS, nonprofit, events, construction and legal.
+- [x] Add category-specific colour palettes, typography and button styling for premium brand direction.
+- [x] Generate editable multi-page starter documents from each template, not just a homepage.
+- [x] Improve template preview cards with a richer browser/page composition.
+- [ ] Replace abstract preview cards with actual rendered screenshots of each complete template.
 
 ## Phase 4 — Visual editor
 - [x] Define versioned site/page/section/component schema and starter document factory.
@@ -55,7 +59,7 @@
 
 ## Current milestone
 
-The dashboard, browser-local project/client management, initial template library prototype and v1 provider-neutral site document schema are in place. The visual editor now supports section editing, individual text/heading/button selection and content editing, image rendering, responsive device previews and a scrollable preview where text can also be edited in place. Template previews are concept previews; full editable page layouts will be implemented with the visual editor. Project-specific documents, robust drag-and-drop, richer image controls, backend persistence, authentication and production publishing remain planned. All service-dependent features remain clearly marked as planned until their backend integrations exist.
+The dashboard, browser-local project/client management, expanded premium template library and v1 provider-neutral site document schema are in place. The library now covers 19 website categories and generates editable multi-page drafts with category-specific brand styling and starter copy. The visual editor supports section editing, individual text/heading/button selection and content editing, image rendering, responsive device previews and a scrollable preview where text can also be edited in place. Template preview cards are still illustrative rather than live renderings of the finished websites. Backend persistence, authentication and production publishing remain planned. All service-dependent features remain clearly marked as planned until their backend integrations exist.
 
 
 ### Project-specific editor documents
@@ -66,10 +70,10 @@ The dashboard, browser-local project/client management, initial template library
 
 
 ## Template-to-editor integration
-- [x] Connect all nine starter templates to structured editable homepage documents.
-- [x] Generate template-specific hero, feature, gallery, testimonial, and contact content.
+- [x] Connect all 19 starter templates to structured editable multi-page website documents.
+- [x] Generate template-specific hero, feature, gallery, testimonial, contact and interior-page starter content.
 - [x] Save the generated document under its new project ID before opening the visual editor.
-- [ ] Expand template page plans into individually editable multi-page website documents.
+- [x] Expand template page plans into individually editable multi-page website documents.
 - [ ] Replace concept-only template thumbnails with rendered page previews.
 
 
