@@ -312,3 +312,24 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Prevent unrecognised or unsafe image source schemes from being written into exported image tags.
 - [x] Sanitize exported theme font, colour and button-radius values.
 - [ ] Run multi-page isolation, keyboard and malformed-image export checks in desktop and mobile browsers.
+
+
+## Image workflow, keyboard editing and export hardening — 2026-11-09
+- [x] Make Replace image update the selected image instead of inserting a second image.
+- [x] Preserve the existing image element ID and design styles when replacing its file.
+- [x] Generate collision-resistant media asset IDs.
+- [x] Reset replacement mode when starting a normal upload.
+- [x] Close the mobile media drawer after inserting a library image.
+- [x] Confirm before removing an asset from the media library; explain existing page placements remain.
+- [x] Keep image selection stable after replacement.
+- [x] Support Escape to exit inline text editing.
+- [x] Support Enter to finish single-line heading and button editing.
+- [x] Preserve keyboard selection shortcuts without overwriting the heading handler.
+- [x] Move the section identified by the focused touch-drag handle, not a stale selection.
+- [x] Focus the export dialog close button when the dialog opens.
+- [x] Close the export dialog with Escape when no export is running.
+- [x] Allow more time before revoking downloaded object URLs for mobile browser downloads.
+- [x] Strip control characters from exported link destinations.
+- [x] Block unsafe external/data URLs in exported CSS values.
+- [x] Fall back safely when an embedded section background image cannot be packaged.
+- [ ] Verify image replacement, keyboard editing and downloads on physical Android devices.
