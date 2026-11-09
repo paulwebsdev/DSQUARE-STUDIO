@@ -248,7 +248,7 @@ function App() {
   const generateAiDraft = (event: FormEvent) => {
     event.preventDefault()
     if (!aiPrompt.trim()) return
-    const templateId = aiCategory === 'Portfolio' ? 'portfolio' : aiCategory === 'E-commerce' ? 'shop' : aiCategory === 'Restaurant' ? 'restaurant' : aiCategory === 'Education' ? 'education' : aiCategory === 'Agency' ? 'agency' : aiCategory === 'Blog / Magazine' ? 'journal' : aiCategory === 'Community' ? 'community' : aiCategory === 'Landing page' ? 'launch' : 'business'
+    const templateId = templateProfiles[aiCategory]?.base ?? 'business'
     const name = aiBrandName.trim() || 'New website'
     const now = new Date().toISOString()
     const project: Project = { id: makeId(), name: name + ' website', category: aiCategory, clientId: '', status: 'Draft', createdAt: now, updatedAt: now }
@@ -262,9 +262,10 @@ function App() {
     const pageNames = [...new Set(aiPages.split(',').map(value => value.trim()).filter(Boolean))].slice(0, 8)
     const usedSlugs = new Set(document.pages.map(page => page.slug))
     pageNames.forEach(pageName => {
-      if (pageName.toLowerCase() === 'home') return
+      const normalizedPageName = pageName.trim().toLowerCase()
+      if (!normalizedPageName || normalizedPageName === 'home' || document.pages.some(page => page.name.trim().toLowerCase() === normalizedPageName)) return
       const pageId = makeId()
-      const baseSlug = pageName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'page'
+      const baseSlug = normalizedPageName.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'page'
       let slug = baseSlug
       let suffix = 2
       while (usedSlugs.has(slug)) { slug = baseSlug + '-' + suffix; suffix += 1 }
