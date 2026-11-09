@@ -108,7 +108,8 @@ The dashboard, browser-local project/client management, initial template library
 - [x] Keep existing image components compatible while registering uploaded images as managed site assets.
 - [x] Add website title, meta description and language controls.
 - [x] Export uploaded image data into an assets folder and rewrite exported image paths.
-- [ ] Add image alt-text editing and asset size/format optimization.
+- [x] Add editable image alt text and include descriptions in exported image markup.
+- [ ] Add asset size/format optimization.
 - [ ] Add Open Graph/social sharing metadata and an optional social preview image.
 - [ ] Add automated tests for multi-page export and media asset packaging.
 
