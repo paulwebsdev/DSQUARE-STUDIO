@@ -38,3 +38,11 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - [ ] Archive and restore a project; confirm its update date changes.
 - [ ] Delete a client with linked projects; confirm those projects remain and show no assigned client.
 - [ ] Simulate unavailable/full browser storage; confirm the dashboard shows a warning instead of crashing.
+
+
+## Image accessibility and editor consistency
+- [ ] Upload an image with a descriptive filename; confirm its alt text appears in the canvas and properties panel.
+- [ ] Change the selected image description; confirm the media library and exported HTML use the updated value.
+- [ ] Mark an image decorative; confirm exported HTML uses an empty alt attribute.
+- [ ] Add, duplicate and reuse elements; confirm each new element remains independently editable across device-specific styles.
+- [ ] Switch between pages while a component and mobile panel are selected; confirm stale selection and panels are cleared.
