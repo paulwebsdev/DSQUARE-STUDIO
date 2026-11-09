@@ -74,7 +74,9 @@ export default function VisualEditor({ onExit }: Props) {
     if (!selected) return
     updateSection(selected.id, section => ({
       ...section,
-      components: section.components.map((item, index) => index === 0 && item.kind === 'heading' ? { ...item, content: value } : item),
+      components: section.components.map((item, index) => selectedComponentId
+        ? (item.id === selectedComponentId ? { ...item, content: value } : item)
+        : (index === 0 && item.kind === 'heading' ? { ...item, content: value } : item)),
     }))
   }
 
