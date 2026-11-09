@@ -65,3 +65,14 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - [ ] Undo and redo multiple edits; confirm changes persist and timestamps/save status update.
 - [ ] Try an unreadable image file; confirm a helpful error appears and the editor remains usable.
 - [ ] Export links with HTTPS, mailto, tel, local page, JavaScript, data and unknown URI schemes; confirm only safe destinations survive.
+
+
+## Section management and keyboard editing
+- [ ] Duplicate a section; verify new section and component IDs are unique and edits do not affect the original.
+- [ ] Duplicate a section with tablet/mobile overrides; verify all device styles remain independent.
+- [ ] Hide a section; verify it disappears from preview/export but remains available in Layers and can be shown again.
+- [ ] Focus a section other than the currently selected one and use Alt+ArrowUp/Down; verify the focused section moves.
+- [ ] Verify move-up/down controls disable at the first and last movable section boundaries.
+- [ ] Use Tab to focus heading, paragraph, button, image and container; Enter/Space selects each element and F2 starts text editing where supported.
+- [ ] Duplicate two pages with slugs that normalize to the same filename (including case differences); verify exported HTML filenames remain unique.
+- [ ] Link to a page with a query string and anchor fragment; verify the exported link points to the correct HTML file and preserves both.
