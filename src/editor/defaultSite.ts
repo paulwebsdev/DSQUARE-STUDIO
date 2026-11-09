@@ -104,7 +104,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     Automotive: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=85',
     'Fitness & Sports': 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=85',
     Wedding: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=85',
-    'Pet Care': 'https://images.unsplash.com/photo-1548199973-03cce0BBC?auto=format&fit=crop&w=1600&q=85',
+    'Pet Care': 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=1600&q=85',
     'Music & Entertainment': 'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=1600&q=85',
     'Personal Services': 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=85',
   }
@@ -448,6 +448,19 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     const pageHeading = label === 'Contact' ? 'Let’s start a conversation.' : label === 'Home' ? 'Welcome to ' + name + '.' : label
     const pageBody = categoryPageDescriptions[category]?.[label] ?? pageDescriptions[label] ?? 'Discover more about ' + name + ', our approach and how we can help you take the next step.'
     const pageHighlights = innerPageHighlights[category] ?? innerPageHighlights[baseTemplateId] ?? ['Thoughtful expertise','A considered experience shaped around your needs.','Clear information','Helpful guidance for your next step.']
+    const showcaseByCategory: Record<string, { title: string; items: string[] }> = {
+      shop: { title: 'Explore the collection', items: ['New arrivals · Discover the latest additions to the collection.', 'Customer favourites · Browse pieces customers return to again and again.', 'Made for everyday · Clear details, thoughtful quality and easy support.'] },
+      restaurant: { title: 'A taste of the menu', items: ['Small plates · Fresh starters and seasonal dishes to share.', 'From the kitchen · Signature mains prepared with care.', 'Something sweet · Desserts and drinks to finish your visit.'] },
+      education: { title: 'Learning at every stage', items: ['Early years · A warm start built around curiosity and confidence.', 'Primary learning · Strong foundations, creativity and discovery.', 'Secondary pathways · Skills, subject choices and preparation for what comes next.'] },
+      realestate: { title: 'Featured property opportunities', items: ['Family homes · Comfortable spaces in welcoming neighbourhoods.', 'Modern apartments · Well-planned living with useful amenities.', 'Commercial spaces · Flexible locations for growing businesses.'] },
+      'Fitness & Sports': { title: 'Find your training rhythm', items: ['Strength sessions · Build confidence with guided resistance training.', 'Group classes · Train together with motivating coached sessions.', 'Personal coaching · Get a plan shaped around your goals.'] },
+      Wedding: { title: 'Celebration experiences', items: ['Full planning · Support from the first idea to the final detail.', 'Venue styling · Thoughtful spaces, flowers and finishing touches.', 'Photography · Preserve the moments you will want to revisit.'] },
+      Automotive: { title: 'Explore our vehicle range', items: ['New arrivals · Discover recently added vehicles and key specifications.', 'Certified pre-owned · Carefully selected vehicles with clear histories.', 'Aftercare · Servicing and support to keep you moving.'] },
+      'Pet Care': { title: 'Care for every companion', items: ['Grooming · Gentle care to help pets look and feel their best.', 'Day care & boarding · Safe, welcoming care while you are away.', 'Wellbeing · Helpful guidance for happier, healthier pets.'] },
+      'Music & Entertainment': { title: 'Discover the experience', items: ['Live performances · Artists and shows that bring the room to life.', 'Event production · Sound, lighting and creative technical support.', 'Artist bookings · Find the right talent for your occasion.'] },
+      'Personal Services': { title: 'Services made simple', items: ['Choose a service · Find the right support for your needs.', 'Clear process · Understand the steps, timing and what is included.', 'Personal support · Get help from a real team when you need it.'] },
+    }
+    const showcase = showcaseByCategory[category] ?? showcaseByCategory[baseTemplateId]
     const pageSections: SiteSection[] = [
       {
         id:createId('section'), kind:'header', name:'Navigation', enabled:true,
@@ -465,13 +478,12 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
         ],
       },
       {
-        id:createId('section'), kind:'features', name:'Explore '+label, enabled:true,
-        styles:{padding:'clamp(56px, 7vw, 88px) 8%',backgroundColor:selectedTheme.background,layout:'grid',gridColumns:'2'},
+        id:createId('section'), kind:showcase ? 'gallery' : 'features', name:showcase?.title ?? 'Explore '+label, enabled:true,
+        styles:{padding:'clamp(56px, 7vw, 88px) 8%',backgroundColor:selectedTheme.background,layout:'grid',gridColumns:'2',gap:'22px'},
         components:[
-          {...component('heading',label==='About'?'The thinking behind '+name:'A closer look'),id:createId('heading'),styles:{fontFamily:selectedTheme.heading,fontSize:'clamp(1.8rem, 3vw, 2.8rem)',fontWeight:'750',color:selectedTheme.primary,maxWidth:'760px'}},
-          {...component('text',pageHighlights[1]),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.05rem',lineHeight:'1.8',color:selectedTheme.text,maxWidth:'680px'}},
-          {...component('text',pageHighlights[0]),id:createId('feature-one'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
-          {...component('text',pageHighlights[2]),id:createId('feature-two'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
+          {...component('heading',showcase?.title ?? (label==='About'?'The thinking behind '+name:'A closer look')),id:createId('heading'),styles:{fontFamily:selectedTheme.heading,fontSize:'clamp(1.8rem, 3vw, 2.8rem)',fontWeight:'750',color:selectedTheme.primary,maxWidth:'760px',gridColumn:'1 / -1'}},
+          {...component('text',pageHighlights[1]),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.05rem',lineHeight:'1.8',color:selectedTheme.text,maxWidth:'680px',gridColumn:'1 / -1'}},
+          ...(showcase ? showcase.items : [pageHighlights[0],pageHighlights[2]]).map((item,index)=>({...component('text',item),id:createId('showcase-'+index),styles:{fontWeight:'600',fontSize:'1rem',lineHeight:'1.7',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'26px',borderRadius:selectedTheme.radius,border:'1px solid #e9e4dc',minHeight:'112px'}})),
         ],
       },
       {
