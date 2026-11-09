@@ -297,3 +297,18 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Prevent case-insensitive collisions in exported page filenames.
 - [x] Preserve query strings and anchor fragments when resolving internal page links.
 - [ ] Complete real-browser keyboard and exported multi-page link regression tests.
+
+
+## Multi-page isolation, keyboard shortcuts and export hardening — 2026-11-09
+- [x] Ensure adding a section changes only the active page; avoid sharing the same section ID/object across every page.
+- [x] Ensure section property updates are scoped to the active page.
+- [x] Generate distinct, case-insensitive page names when adding, renaming or duplicating pages.
+- [x] Generate distinct names when duplicating sections.
+- [x] Bound the undo future stack to prevent unbounded browser memory growth.
+- [x] Support Escape to leave inline editing, close export/mobile panels, and exit preview in sequence.
+- [x] Clear inline editing before toggling preview.
+- [x] Expose preview and device selection state through accessible pressed-state attributes.
+- [x] Package only recognised image data URL formats and skip malformed embedded images without aborting the export.
+- [x] Prevent unrecognised or unsafe image source schemes from being written into exported image tags.
+- [x] Sanitize exported theme font, colour and button-radius values.
+- [ ] Run multi-page isolation, keyboard and malformed-image export checks in desktop and mobile browsers.
