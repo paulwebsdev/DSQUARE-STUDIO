@@ -265,3 +265,9 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Explain that backup files contain private workspace data and that current persistence is browser-local, not cloud sync.
 - [ ] Test backup/restore with large media libraries and across different mobile browsers.
 - [ ] Add encrypted cloud backup and cross-device sync after the secure backend is selected.
+
+
+## Multi-page editor reliability batch
+- [x] Generate collision-resistant IDs for every section and component when creating a page.
+- [x] Deep-copy section, component and per-device styles when duplicating a page so copied pages remain independent.
+- [ ] Verify add/duplicate/edit flows on desktop and Android, including device-specific style changes.
