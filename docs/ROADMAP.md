@@ -49,3 +49,10 @@
 ## Current milestone
 
 The dashboard, browser-local project/client management, initial template library prototype and v1 provider-neutral site document schema are in place. The visual editor now supports section editing, individual text/heading/button selection and content editing, image rendering, responsive device previews and a clean preview mode. Template previews are concept previews; full editable page layouts will be implemented with the visual editor. Project-specific documents, robust drag-and-drop, richer image controls, backend persistence, authentication and production publishing remain planned. All service-dependent features remain clearly marked as planned until their backend integrations exist.
+
+
+### Project-specific editor documents
+- [x] Give each project its own editor document key in browser storage.
+- [x] Open the selected project directly from the project list.
+- [x] Initialize a new project's editor document with its project name and website category.
+- [ ] Replace browser-only storage with the future authenticated persistence adapter.
