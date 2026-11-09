@@ -391,6 +391,81 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
   selectedTheme.radius = radiusVariants[(variantNumber - 1) % radiusVariants.length]
   site.theme = { primaryColor:selectedTheme.primary, accentColor:selectedTheme.accent, backgroundColor:selectedTheme.background, textColor:selectedTheme.text, headingFont:selectedTheme.heading, bodyFont:selectedTheme.body, buttonRadius:selectedTheme.radius }
   const sections: Array<[SiteSection['kind'], string, string, string?]> = [...(categoryContent[category] ?? content[baseTemplateId] ?? content.business)]
+
+  const businessBlueprints: Array<Array<[SiteSection['kind'], string, string, string?]>> = [
+    [
+      ['hero','Business, built around what matters.','We help ambitious organisations make confident decisions, deliver better work and create lasting value.','Explore our capabilities'],
+      ['features','A clear path from ambition to results','Practical expertise across strategy, operations and customer experience.'],
+      ['gallery','Where we make a difference','A closer look at the people, spaces and work behind meaningful business progress.'],
+      ['testimonials','Partnership you can measure','Trusted relationships are built through thoughtful advice, consistent delivery and results.'],
+      ['contact','Let’s move your business forward','Tell us where you want to go. We will help you map the next step.','Book a consultation'],
+    ],
+    [
+      ['hero','Clarity for your next big move.','Independent thinking and practical consulting for leaders navigating change, growth and opportunity.','Talk to a consultant'],
+      ['features','Strategy that becomes action','From business reviews to implementation, we turn complex challenges into clear priorities.'],
+      ['gallery','Our consulting approach','Discover how we listen, analyse, plan and work alongside your team.'],
+      ['testimonials','Good advice. Better outcomes.','Our clients value clear communication, honest insight and work that moves things forward.'],
+      ['contact','Bring us your biggest challenge','Start with a conversation about what success should look like.','Arrange a discovery call'],
+    ],
+    [
+      ['hero','Make your next chapter your strongest.','A modern business partner for founders and teams ready to scale with focus and confidence.','See how we help'],
+      ['features','Built for momentum','Flexible support across growth planning, systems, partnerships and customer experience.'],
+      ['gallery','Progress in practice','Explore the ideas, tools and collaborations that help growing teams move faster.'],
+      ['testimonials','Growth is a team effort','Hear how clear priorities and dependable partners help businesses make progress.'],
+      ['contact','Ready to build what comes next?','Share your goals and let’s shape a practical plan for growth.','Start a conversation'],
+    ],
+    [
+      ['hero','Expertise that earns your confidence.','Professional services delivered with care, precision and a clear understanding of your priorities.','Meet our team'],
+      ['features','Specialist support. Personal attention.','Get the right expertise, clear advice and a responsive team from first conversation to completion.'],
+      ['gallery','Our work, thoughtfully delivered','A selection of projects and outcomes shaped around real client needs.'],
+      ['testimonials','A relationship built on trust','We believe the best work starts with listening and continues with dependable service.'],
+      ['contact','Let’s understand your needs','Speak with our team about the support that will make a difference.','Request an introduction'],
+    ],
+    [
+      ['hero','Stronger operations. Smarter outcomes.','Reliable business solutions for organisations that need quality, consistency and room to grow.','Explore our solutions'],
+      ['features','Capability you can count on','From planning and delivery to ongoing support, we bring the people and processes together.'],
+      ['gallery','Quality in every detail','See the standards, projects and practical expertise behind the way we work.'],
+      ['testimonials','Dependable by design','Our partners count on clear timelines, accountable teams and consistent delivery.'],
+      ['contact','Let’s discuss your requirements','Tell us what you need and we will prepare a considered next step.','Request a business quote'],
+    ],
+    [
+      ['hero','A better experience for every customer.','Thoughtful products, helpful people and straightforward service from a business that cares about the details.','Discover our services'],
+      ['features','Simple to work with. Easy to trust.','Clear options, responsive support and dependable service at every stage.'],
+      ['gallery','Made for the way you work','Explore our services, customer experience and the details that set us apart.'],
+      ['testimonials','Our customers say it best','Real feedback from people and teams who choose to work with us.'],
+      ['contact','How can we help today?','Tell us what you are looking for and our team will point you in the right direction.','Get in touch'],
+    ],
+    [
+      ['hero','Technology that makes work flow.','Connected business tools and expert support that help teams work smarter and serve customers better.','Explore the platform'],
+      ['features','One connected way to work','Bring your processes, people and information together with solutions designed around your business.'],
+      ['gallery','Designed around real workflows','See how thoughtful systems can remove friction and create more room for meaningful work.'],
+      ['pricing','A solution that fits your business','Start with what you need today and build on a foundation that can grow with you.','Discuss your options'],
+      ['contact','Let’s find the right fit','Talk with our team about your goals, workflows and next steps.','Book a product walkthrough'],
+    ],
+    [
+      ['hero','A more considered way to lead.','Strategic insight, trusted guidance and a discreet partnership for leaders making important decisions.','Meet our advisors'],
+      ['features','Perspective for complex decisions','We bring commercial understanding, thoughtful analysis and practical recommendations to the table.'],
+      ['gallery','Insight with real-world perspective','Explore our thinking, areas of expertise and the principles behind our work.'],
+      ['testimonials','Trusted at the moments that matter','Long-term relationships built on discretion, integrity and clear advice.'],
+      ['contact','Start a confidential conversation','Tell us what is on your mind and arrange a private discussion.','Speak with an advisor'],
+    ],
+    [
+      ['hero','Move business forward. Without the friction.','Practical services and connected support that help your organisation stay responsive, efficient and ready for what is next.','Explore our services'],
+      ['features','The details that keep business moving','Dependable processes, clear communication and a team focused on getting things done well.'],
+      ['gallery','A closer look at our capabilities','Discover the services, people and operating standards that support our clients.'],
+      ['testimonials','Built on consistency','Our clients value the confidence that comes from knowing the work is in good hands.'],
+      ['contact','Let’s make work easier','Share your requirements and we will help you find the right solution.','Request a proposal'],
+    ],
+    [
+      ['hero','Good business starts with a better connection.','A fresh, people-first company experience built around useful solutions, lasting relationships and meaningful service.','Let’s work together'],
+      ['features','What makes us different','A clear offer, a helpful team and a commitment to doing the right thing for every customer.'],
+      ['gallery','Discover the difference','Explore our story, services and the people who bring our promise to life.'],
+      ['testimonials','Relationships that last','We are proud to work with customers who value care, quality and follow-through.'],
+      ['contact','We would love to hear from you','Tell us a little about what you need and we will be in touch.','Contact our team'],
+    ],
+  ]
+  if (category === 'Business') sections.splice(0, sections.length, ...businessBlueprints[(variantNumber - 1) % businessBlueprints.length])
+
   if (!sections.some(([kind]) => kind === 'gallery')) {
     sections.splice(1, 0, ['gallery', category === 'E-commerce' ? 'Featured products' : category === 'School' || category === 'Education' ? 'Life on campus' : 'Explore what we do', 'A visual look at our work, people, products and the details that make this brand special.'])
   }
@@ -423,22 +498,52 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
           gridColumns: kind === 'gallery' ? '3' : kind === 'features' && layoutVariant % 2 === 0 ? (layoutVariant === 6 ? '4' : '3') : '2',
           borderTop: !isHero && index % 2 === 0 ? '1px solid #e9e4dc' : 'none',
         },
-        components: block.components.map(item => ({
-          ...item,
-          styles: {
-            ...item.styles,
-            color: item.kind === 'button' ? '#ffffff' : item.kind === 'heading' || item.kind === 'text' ? textColor : item.styles.color,
-            fontFamily: item.kind === 'heading' ? selectedTheme.heading : selectedTheme.body,
-            fontSize: item.kind === 'heading' ? (isHero ? (layoutVariant === 5 ? 'clamp(2.8rem, 7vw, 6rem)' : 'clamp(2.6rem, 6vw, 5.2rem)') : 'clamp(1.7rem, 3vw, 2.6rem)') : item.kind === 'text' ? '1.05rem' : item.styles.fontSize,
-            fontWeight: item.kind === 'heading' ? '750' : item.styles.fontWeight,
-            lineHeight: item.kind === 'heading' ? '1.08' : item.kind === 'text' ? '1.75' : item.styles.lineHeight,
-            maxWidth: item.kind === 'heading' ? '900px' : '680px',
-            backgroundColor: item.kind === 'button' ? selectedTheme.accent : item.styles.backgroundColor,
-            borderRadius: item.kind === 'button' ? selectedTheme.radius : item.styles.borderRadius,
-            padding: item.kind === 'button' ? '15px 28px' : item.styles.padding,
-            letterSpacing: item.kind === 'heading' && layoutVariant === 6 ? '-0.04em' : item.styles.letterSpacing,
-          },
-        })),
+        components: [
+          ...block.components.map(item => ({
+            ...item,
+            styles: {
+              ...item.styles,
+              color: item.kind === 'button' ? '#ffffff' : item.kind === 'heading' || item.kind === 'text' ? textColor : item.styles.color,
+              fontFamily: item.kind === 'heading' ? selectedTheme.heading : selectedTheme.body,
+              fontSize: item.kind === 'heading' ? (isHero ? (layoutVariant === 5 ? 'clamp(2.8rem, 7vw, 6rem)' : 'clamp(2.6rem, 6vw, 5.2rem)') : 'clamp(1.7rem, 3vw, 2.6rem)') : item.kind === 'text' ? '1.05rem' : item.styles.fontSize,
+              fontWeight: item.kind === 'heading' ? '750' : item.styles.fontWeight,
+              lineHeight: item.kind === 'heading' ? '1.08' : item.kind === 'text' ? '1.75' : item.styles.lineHeight,
+              maxWidth: item.kind === 'heading' ? '900px' : '680px',
+              backgroundColor: item.kind === 'button' ? selectedTheme.accent : item.styles.backgroundColor,
+              borderRadius: item.kind === 'button' ? selectedTheme.radius : item.styles.borderRadius,
+              padding: item.kind === 'button' ? '15px 28px' : item.styles.padding,
+              letterSpacing: item.kind === 'heading' && layoutVariant === 6 ? '-0.04em' : item.styles.letterSpacing,
+              ...(category === 'Business' && item.kind === 'image' && isHero ? {
+                width: layoutVariant % 3 === 1 ? 'min(48%, 620px)' : '100%',
+                height: layoutVariant % 3 === 1 ? 'clamp(300px, 38vw, 500px)' : 'clamp(280px, 42vw, 520px)',
+                maxWidth: layoutVariant % 3 === 1 ? '620px' : '1120px',
+                borderRadius: layoutVariant % 2 === 0 ? '18px' : '8px',
+                boxShadow: '0 24px 65px rgba(20,32,38,.18)',
+              } : {}),
+            },
+          })),
+          ...(category === 'Business' && kind === 'features' ? [
+            ...['Strategy & planning','Expert delivery','Clear communication'].map((title, cardIndex) => ({
+              ...component('text', title + ' — ' + [
+                'Make informed decisions with a practical plan shaped around your goals.',
+                'Work with experienced people who take ownership from start to finish.',
+                'Know what is happening, what comes next and how progress is measured.',
+              ][cardIndex]),
+              id: createId('business-feature'),
+              styles: { color: selectedTheme.primary, backgroundColor: '#ffffff', border: '1px solid #e5e9e7', borderRadius: '14px', padding: '24px', minHeight: '142px', fontSize: '0.98rem', lineHeight: '1.7', boxShadow: '0 12px 32px rgba(20,32,38,.06)' },
+            })),
+          ] : []),
+          ...(category === 'Business' && kind === 'testimonials' ? [
+            ...[
+              '“The team brought clarity to a complex project and made every next step feel manageable.”',
+              '“Responsive, thoughtful and consistently professional. We always knew where things stood.”',
+            ].map((quote, quoteIndex) => ({
+              ...component('text', quote),
+              id: createId('business-quote'),
+              styles: { color: selectedTheme.primary, backgroundColor: '#ffffff', borderLeft: '3px solid ' + selectedTheme.accent, borderRadius: '10px', padding: '22px', minHeight: '105px', fontSize: '1rem', lineHeight: '1.75', boxShadow: '0 12px 32px rgba(20,32,38,.06)', gridColumn: 'span 1' },
+            })),
+          ] : []),
+        ],
       }
     }),
     { ...footer, components: [{ ...component('text', '© ' + name + '. All rights reserved.'), id: createId('copyright'), styles: { ...component('text', '© ' + name + '. All rights reserved.').styles, color: '#ffffff', maxWidth: '100%' } }], styles: { ...footer.styles, padding: '36px 7%', backgroundColor: selectedTheme.primary } },
