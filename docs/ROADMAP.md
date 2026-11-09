@@ -283,3 +283,17 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Restrict exported links to safe web, email, telephone, anchor and relative destinations.
 - [x] Strip control characters and markup delimiters from exported inline CSS values.
 - [ ] Run keyboard-only, screen-reader and exported-link security checks in a real browser.
+
+
+## Section management and keyboard editing batch — 2026-11-09
+- [x] Duplicate editable sections with fresh section/component IDs and independent desktop/tablet/mobile styles.
+- [x] Add a section visibility toggle and identify hidden sections in the Layers panel.
+- [x] Fix keyboard section movement so it moves the focused section, not a previously selected section.
+- [x] Keep selection on the moved section and clear stale component/inline-edit state after structural changes.
+- [x] Disable section movement at the header/footer boundaries.
+- [x] Add keyboard selection for heading, text, button, image and container elements.
+- [x] Support F2 to begin inline editing of keyboard-selected text-capable elements.
+- [x] Reset stale inline-edit state when adding, duplicating or deleting components.
+- [x] Prevent case-insensitive collisions in exported page filenames.
+- [x] Preserve query strings and anchor fragments when resolving internal page links.
+- [ ] Complete real-browser keyboard and exported multi-page link regression tests.
