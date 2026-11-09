@@ -545,6 +545,9 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .image-canvas-wrap{position:relative;display:inline-block;max-width:100%;vertical-align:middle;line-height:0}
 .image-canvas-wrap img{display:block;max-width:100%}
 .image-canvas-wrap.component-selected{outline:2px solid #d2a64f;outline-offset:3px}
+.image-inline-replace{position:absolute;top:9px;right:9px;z-index:6;min-height:32px;padding:7px 11px;border:1px solid rgba(255,255,255,.75);border-radius:7px;background:#17130de8;color:#fff;font-size:11px;font-weight:700;line-height:1;box-shadow:0 3px 12px rgba(0,0,0,.22);cursor:pointer}
+.image-inline-replace:hover{background:#9c742f}
+.image-inline-replace:focus-visible{outline:2px solid #fff;outline-offset:3px}
 .image-resize-handle{position:absolute;width:17px;height:17px;min-width:17px;min-height:17px;padding:0;border:2px solid #17130d;border-radius:50%;background:#e0b75e;box-shadow:0 0 0 1px #f7e2b4;touch-action:none;z-index:5}
 .image-resize-handle:focus-visible{outline:2px solid #fff;outline-offset:3px}
 .image-resize-handle.handle-nw{left:-8px;top:-8px;cursor:nwse-resize}
