@@ -504,3 +504,28 @@ h1,h2,h3,h4,p { margin-top: 0; }
   .visual-editor:not(.preview-mode) .editor-stage{height:100%;min-height:0;padding-bottom:49px}
   .visual-editor:not(.preview-mode) .editor-canvas-wrap{height:auto;min-height:0}
 }
+
+/* Premium template library previews */
+.template-card { box-shadow: 0 12px 32px rgba(0,0,0,.12); }
+.template-preview { min-height: 190px; background-size: cover !important; }
+.template-preview::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.22)); pointer-events:none; }
+.mock-browser { position:relative; z-index:1; width:82%; max-width:280px; transform:perspective(650px) rotateY(-5deg) rotateX(2deg); transition:transform .3s ease; }
+.template-preview:hover .mock-browser { transform:perspective(650px) rotateY(0) rotateX(0) translateY(-3px); }
+.mock-site-content { min-height:125px; padding:11px 13px 9px; background:linear-gradient(135deg,#fffdf8,#e9e3d7); }
+.mock-site-nav { height:9px; display:flex; align-items:center; gap:5px; margin-bottom:13px; background:transparent; }
+.mock-site-nav b { width:25%; height:4px; margin-right:auto; border-radius:3px; background:#4b473e; }
+.mock-site-nav i { width:10%; height:3px; border-radius:3px; background:#b8b0a2; }
+.mock-site-layout { display:grid; grid-template-columns:1.15fr .85fr; align-items:center; gap:9px; }
+.mock-site-copy-block { min-width:0; }
+.mock-site-kicker { width:32%; height:3px; margin-bottom:6px; border-radius:3px; background:#b28c53; }
+.mock-site-heading { width:95%; height:12px; margin-bottom:6px; border-radius:2px; background:#39362e; }
+.mock-site-copy { width:95%; height:3px; margin-bottom:4px; border-radius:2px; background:#a9a092; }
+.mock-site-copy.short { width:66%; }
+.mock-site-button { width:39px; height:10px; margin-top:7px; border-radius:3px; background:#a17e4b; }
+.mock-site-image { width:100%; height:51px; margin:0; border-radius:3px; background:linear-gradient(135deg,#b6a78e,#716653); }
+.mock-site-proof { display:flex; gap:7px; margin-top:10px; }
+.mock-site-proof i { width:22%; height:3px; border-radius:3px; background:#c6bdae; }
+.template-card-body { padding:15px; }
+.template-card-body h3 { font-size:14px; }
+.template-card-footer { align-items:center; }
+@media(max-width:600px) { .template-preview { min-height:205px; } }
