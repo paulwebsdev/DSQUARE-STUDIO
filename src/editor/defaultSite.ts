@@ -386,11 +386,45 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     const pageHeading = label === 'Contact' ? 'Let’s start a conversation.' : label === 'Home' ? 'Welcome to ' + name + '.' : label
     const pageBody = pageDescriptions[label] ?? 'Discover more about ' + name + ', our approach and how we can help you take the next step.'
     const pageSections: SiteSection[] = [
-      { id:createId('section'), kind:'header', name:'Navigation', enabled:true, styles:{padding:'22px 7%',backgroundColor:'#ffffff'}, components:[{...component('heading',name.toUpperCase()),id:createId('brand')}] },
-      { id:createId('section'), kind:'hero', name:label + ' introduction', enabled:true, styles:{padding:'88px 8%',backgroundColor:palette[baseTemplateId] ?? '#edf3f4'}, components:[{...component('heading',pageHeading),id:createId('heading')},{...component('text',pageBody),id:createId('text')}] },
-      { id:createId('section'), kind:'features', name:'More to discover', enabled:true, styles:{padding:'66px 8%',backgroundColor:'#ffffff'}, components:[{...component('heading','Thoughtfully designed around you'),id:createId('heading')},{...component('text','Clear information, considered details and a helpful experience from the first visit to the next step.'),id:createId('text')}] },
-      { id:createId('section'), kind:'contact', name:'Next step', enabled:true, styles:{padding:'66px 8%',backgroundColor:selectedTheme.primary}, components:[{...component('heading','Ready to find out more?'),id:createId('heading')},{...component('text','Get in touch with ' + name + ' and let’s make a plan.'),id:createId('text')},{...component('button','Contact us'),id:createId('button')}] },
-      { id:createId('section'), kind:'footer', name:'Footer', enabled:true, styles:{padding:'28px 7%',backgroundColor:'#171717'}, components:[{...component('text','© ' + name + '. All rights reserved.'),id:createId('copyright')}] },
+      {
+        id:createId('section'), kind:'header', name:'Navigation', enabled:true,
+        styles:{padding:'22px 7%',backgroundColor:selectedTheme.background,borderBottom:'1px solid #e8e5df'},
+        components:[{...component('heading',name.toUpperCase()),id:createId('brand'),styles:{fontSize:'1rem',fontWeight:'800',letterSpacing:'0.15em',color:selectedTheme.primary}}],
+      },
+      {
+        id:createId('section'), kind:'hero', name:label + ' introduction', enabled:true,
+        styles:{padding:'clamp(64px, 9vw, 112px) 8%',backgroundColor:palette[baseTemplateId] ?? '#edf3f4'},
+        components:[
+          {...component('text','DISCOVER  /  '+label.toUpperCase()),id:createId('eyebrow'),styles:{fontSize:'0.75rem',fontWeight:'800',letterSpacing:'0.18em',color:selectedTheme.accent,maxWidth:'100%'}},
+          {...component('heading',pageHeading),id:createId('heading'),styles:{fontFamily:selectedTheme.heading,fontSize:'clamp(2.5rem, 5.5vw, 4.8rem)',fontWeight:'750',lineHeight:'1.08',color:selectedTheme.primary,maxWidth:'900px'}},
+          {...component('text',pageBody),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.1rem',lineHeight:'1.8',color:selectedTheme.text,maxWidth:'720px'}},
+          {id:createId('image'),kind:'image',content:templateHeroImages[baseTemplateId] ?? templateHeroImages.business,visible:true,styles:{width:'100%',height:'min(42vw, 360px)',maxWidth:'1120px',objectFit:'cover',borderRadius:selectedTheme.radius,margin:'30px auto 0'}},
+        ],
+      },
+      {
+        id:createId('section'), kind:'features', name:'Explore '+label, enabled:true,
+        styles:{padding:'clamp(56px, 7vw, 88px) 8%',backgroundColor:selectedTheme.background,layout:'grid',gridColumns:'2'},
+        components:[
+          {...component('heading',label==='About'?'The thinking behind '+name:'A closer look'),id:createId('heading'),styles:{fontFamily:selectedTheme.heading,fontSize:'clamp(1.8rem, 3vw, 2.8rem)',fontWeight:'750',color:selectedTheme.primary,maxWidth:'760px'}},
+          {...component('text','A considered experience, shaped around what matters most. Explore the details, discover useful information and find the right next step with '+name+'.'),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.05rem',lineHeight:'1.8',color:selectedTheme.text,maxWidth:'680px'}},
+          {...component('text','Thoughtful expertise'),id:createId('feature-one'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
+          {...component('text','Clear information and helpful guidance'),id:createId('feature-two'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
+        ],
+      },
+      {
+        id:createId('section'), kind:'contact', name:'Next step', enabled:true,
+        styles:{padding:'clamp(56px, 7vw, 84px) 8%',backgroundColor:selectedTheme.primary},
+        components:[
+          {...component('heading',label==='Contact'?'We would love to hear from you.':'Ready for the next step?'),id:createId('heading'),styles:{fontFamily:selectedTheme.heading,fontSize:'clamp(2rem, 4vw, 3.4rem)',fontWeight:'750',lineHeight:'1.1',color:'#ffffff',maxWidth:'850px'}},
+          {...component('text','Get in touch with '+name+' and let’s make a plan together.'),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.05rem',lineHeight:'1.8',color:'#f2f0eb',maxWidth:'680px'}},
+          {...component('button',label==='Admissions'?'Ask about admissions':label==='Pricing'?'Talk about plans':'Contact us'),id:createId('button'),styles:{backgroundColor:selectedTheme.accent,color:'#ffffff',padding:'15px 28px',borderRadius:selectedTheme.radius,fontWeight:'700'}},
+        ],
+      },
+      {
+        id:createId('section'), kind:'footer', name:'Footer', enabled:true,
+        styles:{padding:'30px 7%',backgroundColor:'#171717'},
+        components:[{...component('text','© '+name+'. All rights reserved.'),id:createId('copyright'),styles:{color:'#ffffff',maxWidth:'100%',fontSize:'0.9rem'}}],
+      },
     ]
     return { id:createId('page'), name:label, slug, isHomePage:false, sections:pageSections }
   })
