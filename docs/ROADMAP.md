@@ -177,3 +177,10 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Define authentication, validation, sanitization, rate-limit, secret-management and failure-handling requirements.
 - [ ] Implement the adapter in the selected trusted backend after the hosting/database platform decision.
 - [ ] Add mock-provider tests and validate generated documents against the shared site schema.
+
+
+## Independent element styling controls
+- [x] Add independent per-device background and text colour controls for each selected element.
+- [x] Add independent border colour, width and style controls.
+- [x] Add selectable shadow presets without changing other elements.
+- [ ] Add richer custom shadow and border-radius presets after usability testing.
