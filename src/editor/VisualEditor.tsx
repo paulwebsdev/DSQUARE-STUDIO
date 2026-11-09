@@ -638,8 +638,43 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
                   image.style.translate = ''
                   image.style.width = ''
                   image.style.height = ''
-                  if (mode === 'move') updateSection(section.id, current => ({ ...current, components: current.components.map(component => component.id === item.id ? { ...component, responsiveStyles: { ...component.responsiveStyles, [device]: { ...(component.responsiveStyles?.[device] ?? {}), imageX: String(initialX + dx), imageY: String(initialY + dy) } } : component) }))
-                  else updateSection(section.id, current => ({ ...current, components: current.components.map(component => component.id === item.id ? { ...component, responsiveStyles: { ...component.responsiveStyles, [device]: { ...(component.responsiveStyles?.[device] ?? {}), width: `${Math.max(40, initialWidth + dx)}px`, height: `${Math.max(40, initialHeight + dy)}px` } } : component) }))
+                  if (mode === 'move') {
+                    updateSection(section.id, current => ({
+                      ...current,
+                      components: current.components.map(component => {
+                        if (component.id !== item.id) return component
+                        return {
+                          ...component,
+                          responsiveStyles: {
+                            ...component.responsiveStyles,
+                            [device]: {
+                              ...(component.responsiveStyles?.[device] ?? {}),
+                              imageX: String(initialX + dx),
+                              imageY: String(initialY + dy),
+                            },
+                          },
+                        }
+                      }),
+                    }))
+                  } else {
+                    updateSection(section.id, current => ({
+                      ...current,
+                      components: current.components.map(component => {
+                        if (component.id !== item.id) return component
+                        return {
+                          ...component,
+                          responsiveStyles: {
+                            ...component.responsiveStyles,
+                            [device]: {
+                              ...(component.responsiveStyles?.[device] ?? {}),
+                              width: `${Math.max(40, initialWidth + dx)}px`,
+                              height: `${Math.max(40, initialHeight + dy)}px`,
+                            },
+                          },
+                        }
+                      }),
+                    }))
+                  }
                 }
                 window.addEventListener('pointermove', pointerMove)
                 window.addEventListener('pointerup', finishGesture, { once: true })
