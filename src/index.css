@@ -928,3 +928,6 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .landing-variant-9 .site-preview-section.section-hero{background:radial-gradient(circle at 50% 40%,#555b91,#15172d)}
 @media(max-width:700px){.landing-template .site-preview-section.section-features{grid-template-columns:1fr}.restaurant-template .site-preview-section.section-hero,.education-template .site-preview-section.section-hero,.realestate-template .site-preview-section.section-hero,.agency-template .site-preview-section.section-hero,.landing-template .site-preview-section.section-hero{min-height:0;display:block}.restaurant-template .site-preview-section,.education-template .site-preview-section,.realestate-template .site-preview-section,.agency-template .site-preview-section,.landing-template .site-preview-section{padding-left:6%!important;padding-right:6%!important}}
 @media(prefers-reduced-motion:reduce){.restaurant-template *,.education-template *,.realestate-template *,.agency-template *,.landing-template *{animation:none!important;transition:none!important}}
+
+.education-template .site-preview-section.section-features .education-course-preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media(max-width:700px){.education-template .site-preview-section.section-features .education-course-preview{grid-template-columns:1fr}}
