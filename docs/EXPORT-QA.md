@@ -55,3 +55,13 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - Confirm the restore prompt clearly warns that current local workspace data will be replaced.
 - Simulate a browser storage write failure where possible; verify the previous projects, clients and saved documents are rolled back.
 - Confirm the settings page explains that backups contain private workspace information and are stored locally by the browser.
+
+
+## Editor accessibility and export safety
+- [ ] Use Tab to focus canvas sections; confirm Enter/Space selects a section.
+- [ ] Focus a movable section and use Alt+ArrowUp/Down; confirm header/footer remain fixed.
+- [ ] Select a section from Layers after selecting one of its components; confirm the component selection clears.
+- [ ] Add, duplicate and delete pages while mobile drawers are open; confirm stale drawers/selections close.
+- [ ] Undo and redo multiple edits; confirm changes persist and timestamps/save status update.
+- [ ] Try an unreadable image file; confirm a helpful error appears and the editor remains usable.
+- [ ] Export links with HTTPS, mailto, tel, local page, JavaScript, data and unknown URI schemes; confirm only safe destinations survive.
