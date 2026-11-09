@@ -588,7 +588,10 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
         components:[
           {...component('heading',showcase?.title ?? (label==='About'?'The thinking behind '+name:'A closer look')),id:createId('heading'),styles:{fontFamily:selectedTheme.heading,fontSize:'clamp(1.8rem, 3vw, 2.8rem)',fontWeight:'750',color:selectedTheme.primary,maxWidth:'760px',gridColumn:'1 / -1'}},
           {...component('text',pageHighlights[1]),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.05rem',lineHeight:'1.8',color:selectedTheme.text,maxWidth:'680px',gridColumn:'1 / -1'}},
-          ...(showcase ? showcase.items : [pageHighlights[0],pageHighlights[2]]).flatMap((item,index)=>[\n            ...(showcase ? [{id:createId('showcase-image-'+index),kind:'image' as const,content:`https://images.unsplash.com/${galleryImages[index % galleryImages.length]}?auto=format&fit=crop&w=900&q=82`,visible:true,styles:{width:'100%',height:'clamp(150px, 20vw, 230px)',objectFit:'cover',borderRadius:selectedTheme.radius,gridColumn:'span 1'}}] : []),\n            {...component('text',item),id:createId('showcase-'+index),styles:{fontWeight:'650',fontSize:'1rem',lineHeight:'1.8',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'26px',borderRadius:selectedTheme.radius,border:'1px solid #e9e4dc',minHeight:'112px',alignSelf:'stretch'}},\n          ]),
+          ...(showcase ? showcase.items : [pageHighlights[0],pageHighlights[2]]).flatMap((item,index)=>[
+            ...(showcase ? [{id:createId('showcase-image-'+index),kind:'image' as const,content:`https://images.unsplash.com/${galleryImages[index % galleryImages.length]}?auto=format&fit=crop&w=900&q=82`,visible:true,styles:{width:'100%',height:'clamp(150px, 20vw, 230px)',objectFit:'cover',borderRadius:selectedTheme.radius,gridColumn:'span 1'}}] : []),
+            {...component('text',item),id:createId('showcase-'+index),styles:{fontWeight:'650',fontSize:'1rem',lineHeight:'1.8',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'26px',borderRadius:selectedTheme.radius,border:'1px solid #e9e4dc',minHeight:'112px',alignSelf:'stretch'}},
+          ]),
         ],
       },
       {
