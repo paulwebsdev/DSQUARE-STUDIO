@@ -92,3 +92,12 @@ The dashboard, browser-local project/client management, initial template library
 - [x] Add a contact-form layout preview with required name, email and message fields.
 - [ ] Connect forms to a secure submission service before production.
 - [ ] Add touch/keyboard drag alternatives and validate responsive controls on real devices.
+
+
+## Website source export
+- [x] Generate standalone HTML for every page in a site document.
+- [x] Generate shared CSS and JavaScript source files.
+- [x] Package all pages and shared assets into a downloadable ZIP archive.
+- [x] Offer individual HTML, CSS and JavaScript source downloads.
+- [ ] Add a managed asset library and copy image files into an assets folder during export.
+- [ ] Add a production form-service integration and automated export tests.
