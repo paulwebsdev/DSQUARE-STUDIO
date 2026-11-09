@@ -204,7 +204,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     { ...header, components: [{ ...component('heading', name.toUpperCase()), id: createId('brand') }], styles: { ...header.styles, padding: layoutVariant === 4 ? '32px 8%' : '24px 6%' } },
     ...variantSections.map(([kind, title, body, button], index) => {
       const block = makeSection(kind, title, body, button, index % 2 === 0 ? palette[baseTemplateId] ?? '#f3eee5' : '#ffffff')
-      return { ...block, styles: { ...block.styles, padding: layoutVariant === 4 ? '104px 10%' : layoutVariant === 2 ? '64px 5%' : kind === 'hero' ? '136px 8%' : '76px 8%', textAlign: layoutVariant === 3 && kind === 'hero' ? 'center' : 'left', layout: layoutVariant === 1 && kind === 'features' ? 'grid' : 'stacked', gridColumns: layoutVariant === 1 && kind === 'features' ? '3' : '2' } }
+      return { ...block, styles: { ...block.styles, padding: layoutVariant === 4 ? '104px 10%' : layoutVariant === 2 ? '64px 5%' : kind === 'hero' ? '136px 8%' : '76px 8%', textAlign: (layoutVariant === 3 && kind === 'hero' ? 'center' : 'left') as 'left' | 'center', layout: layoutVariant === 1 && kind === 'features' ? 'grid' : 'stacked', gridColumns: layoutVariant === 1 && kind === 'features' ? '3' : '2' } }
     }),
     { ...footer, components: [{ ...component('text', '© ' + name + '. All rights reserved.'), id: createId('copyright') }] },
   ]
