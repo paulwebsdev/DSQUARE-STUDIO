@@ -377,3 +377,7 @@ Note: media assets remain in browser-local project storage for this prototype; a
 
 - [x] Fix compact-phone Preview layout: remove the zero-height workspace rule and retain a full-height touch scroll container at narrow widths.
 - [ ] Physically verify Preview scrolling on Android and iPhone at both compact and expanded viewport sizes.
+
+
+- [x] Add an explicit mobile touch-scroll handler to the Preview canvas so vertical finger movement updates the canvas scroll position.
+- [ ] Physically verify actual content movement on Android and iPhone; automated deployment cannot substitute for device testing.
