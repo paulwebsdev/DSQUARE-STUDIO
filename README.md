@@ -7,8 +7,8 @@ A private, browser-based website creation studio for building websites for clien
 DSQUARE STUDIO is designed to support many website categories through an extensible template and site-document architecture. The workspace includes:
 
 - A template library with 21 categories and 10 named starter options per category (210 options).
-- A visual editor with editable sections and components, responsive device modes, media tools, page management and preview.
-- A local AI-builder brief flow that creates an editable starter draft. It does **not** currently call a real AI model.
+- A visual editor with editable sections and components, responsive device modes, direct image move/resize/rotate/flip controls, media tools, page management and preview.
+- A local AI-builder brief flow that creates an editable multi-page starter draft using category-matched templates. It does **not** currently call a real AI model.
 - Client and project management.
 - Website ZIP export with HTML, CSS, JavaScript, packaged images and a manifest.
 - Workspace JSON backup and restore.
