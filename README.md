@@ -1,42 +1,45 @@
 # DSQUARE STUDIO
 
-A private, AI-assisted website creation studio for building websites for clients.
+A private, browser-based website creation studio for building websites for clients.
 
 ## Product direction
 
-DSQUARE STUDIO is intended to support **all kinds of websites** through an extensible system. The product will combine:
+DSQUARE STUDIO is designed to support many website categories through an extensible template and site-document architecture. The workspace includes:
 
-- Template-based website creation
-- A visual drag-and-drop editor
-- AI-assisted website generation
-- Client and project management
-- Responsive previews for desktop, tablet and mobile
-- Website export and online publishing
+- A template library with 21 categories and 10 named starter options per category (210 options).
+- A visual editor with editable sections and components, responsive device modes, media tools, page management and preview.
+- A local AI-builder brief flow that creates an editable starter draft. It does **not** currently call a real AI model.
+- Client and project management.
+- Website ZIP export with HTML, CSS, JavaScript, packaged images and a manifest.
+- Workspace JSON backup and restore.
 
 ## Design direction
 
-- Premium black-and-gold visual identity
-- Responsive interface designed for desktop and mobile use
-- Hybrid editor: professional panels, focused canvas and guided workflows
-- Private, single-owner access; public registration is not part of the plan
+- Premium black-and-gold visual identity.
+- Responsive interface designed for desktop and mobile.
+- Hybrid editor with professional panels, a focused canvas and guided workflows.
+- Private, single-owner studio direction; public registration is not part of the product plan.
 
-## Current status
+## Current implementation status
 
-**Phase 1 — Foundation:** project documentation and the first dashboard interface.
+This is an actively developed **frontend prototype**, deployed through GitHub Pages. Project records, client records and editable website documents are stored in the current browser's local storage. They are not cloud-synced, and clearing browser site data can remove them. Use Settings to download a workspace backup regularly.
 
-The dashboard at this stage is a frontend foundation, not a complete production service. Authentication, persistent storage, AI provider integration, export and publishing will be implemented in later phases.
+Website ZIP export packages the current design, but production forms, payments, databases, bookings, hosting integrations and other connected services still require separate implementation. Direct online publishing is not yet connected.
 
-## Architecture
+The AI-builder and AI Edit interfaces currently use local draft/command logic. A real AI provider requires a secure server-side backend; API keys must never be placed in this frontend repository.
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/DECISIONS.md](docs/DECISIONS.md), and [docs/ROADMAP.md](docs/ROADMAP.md).
+Owner-only authentication is a product requirement, but secure server-side authentication is not yet implemented. Do not treat the public GitHub Pages prototype as a secured private production workspace.
+
+See [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/DECISIONS.md](docs/DECISIONS.md), and [docs/AI-PROVIDER-ADAPTER.md](docs/AI-PROVIDER-ADAPTER.md).
 
 ## Local development
 
 ```bash
 npm install
 npm run dev
+npm run build
 ```
 
-## Important
+## Security
 
-Do not add API keys, passwords, private tokens, or other secrets to source files or commit history. Production secrets must be stored in secure environment variables or a suitable secrets manager.
+Never commit API keys, passwords, private tokens, client records or other secrets. Production secrets must be stored server-side in secure environment variables or a suitable secrets manager.
