@@ -73,3 +73,12 @@ The dashboard, browser-local project/client management, initial template library
 - [x] Duplicate existing pages with independent section/component IDs.
 - [x] Delete non-home pages while protecting the home page and final remaining page.
 - [ ] Add page navigation links and rendered multi-page preview/export routing.
+
+
+
+## Editor upgrade batch
+- [x] Reorder page sections by dragging on the canvas (header and footer stay fixed).
+- [x] Add, replace and remove uploaded image components (5 MB per-image limit; stored in the browser document).
+- [x] Edit selected text/component colour, font size, alignment and weight.
+- [x] Show page navigation links in the website header and switch between pages in the editor.
+- [ ] Add keyboard/touch-specific drag alternatives and move image assets to managed storage before production.
