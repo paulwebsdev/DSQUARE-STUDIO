@@ -33,6 +33,7 @@ export type SiteComponent = {
   visible: boolean
   linkTo?: string
   openInNewTab?: boolean
+  buttonPreset?: 'gold' | 'dark' | 'outline' | 'soft' | 'custom'
   responsiveStyles?: Partial<Record<DeviceMode, StyleMap>>
 }
 
