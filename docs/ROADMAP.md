@@ -373,3 +373,7 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Rework preview layout sizing so the canvas scroll container receives the available viewport height.
 - [x] Enable momentum and vertical touch scrolling for the full-page preview on mobile.
 - [ ] Physically verify long-page scrolling and page navigation on Android.
+
+
+- [x] Fix compact-phone Preview layout: remove the zero-height workspace rule and retain a full-height touch scroll container at narrow widths.
+- [ ] Physically verify Preview scrolling on Android and iPhone at both compact and expanded viewport sizes.
