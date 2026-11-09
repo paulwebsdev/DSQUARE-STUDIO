@@ -122,3 +122,10 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - [ ] Compare manifest page and asset lists against the actual ZIP entries.
 - [ ] Confirm generation timestamp and language are present and no client directory or unrelated workspace records are included.
 - [ ] Confirm README describes manifest.json and service limitations accurately.
+
+
+## Export dialog summary
+- [ ] Confirm page count matches the exported HTML files.
+- [ ] Confirm active section count excludes disabled sections.
+- [ ] Confirm media count reflects the project media library and the ZIP contains packaged assets only when referenced.
+- [ ] Confirm the service limitation note is visible at desktop and mobile widths.
