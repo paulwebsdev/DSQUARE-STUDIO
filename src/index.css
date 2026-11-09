@@ -484,14 +484,11 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .export-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:-8px 0 14px}.export-summary span{padding:10px 8px;border:1px solid #39352e;border-radius:8px;background:#201e1a;color:#aaa397;text-align:center;font-size:10px}.export-summary strong{display:block;margin-bottom:3px;color:#e5c98e;font-size:17px}.export-readiness-note{margin:0 0 18px;padding:10px 12px;border-left:2px solid #b48b48;background:#211f1b;color:#bdb4a5;font-size:10px;line-height:1.6}@media(max-width:420px){.export-summary{gap:5px}.export-summary span{padding:8px 4px;font-size:9px}.export-summary strong{font-size:15px}}
 
 
-/* Reliable full-page preview scrolling, including touch devices. */
-.visual-editor.preview-mode .editor-workspace{display:flex;flex:1 1 0;min-height:0;overflow:hidden}
-.visual-editor.preview-mode .editor-stage{display:flex;flex:1 1 0;height:auto;min-height:0;overflow:hidden}
-.visual-editor.preview-mode .editor-canvas-wrap{display:block;flex:1 1 0;min-height:0;height:auto;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
-.visual-editor.preview-mode .editor-canvas{min-height:100%;height:auto}
+/* Preview must have a viewport-bounded scrollport at every device width. */
+.visual-editor.preview-mode .editor-workspace{position:relative;display:block;flex:1 1 auto;height:calc(100vh - 62px);height:calc(100dvh - 62px);min-height:0;overflow:hidden}
+.visual-editor.preview-mode .editor-stage{position:absolute;inset:0;display:block;width:100%;height:100%;min-height:0;padding:0;overflow:hidden}
+.visual-editor.preview-mode .editor-canvas-wrap{position:absolute;inset:0;display:block;width:100%;height:100%;min-height:0;max-height:100%;padding:0;overflow-x:hidden;overflow-y:scroll;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.visual-editor.preview-mode .editor-canvas{width:100%;max-width:none;min-height:100%;height:auto;overflow:visible;box-shadow:none}
 @media(max-width:600px){
-  /* Keep a real, viewport-sized scroll area on narrow phones too. */
-  .visual-editor.preview-mode .editor-workspace{display:flex;height:auto;min-height:0;flex:1 1 0;overflow:hidden}
-  .visual-editor.preview-mode .editor-stage{display:flex;flex:1 1 0;width:100%;height:auto;min-height:0;padding:0;overflow:hidden}
-  .visual-editor.preview-mode .editor-canvas-wrap{display:block;flex:1 1 0;width:100%;height:auto;min-height:0;padding:0;overflow-x:hidden;overflow-y:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+  .visual-editor.preview-mode .editor-workspace{height:calc(100vh - 55px);height:calc(100dvh - 55px);flex:1 1 auto}
 }
