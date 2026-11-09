@@ -105,11 +105,21 @@ function App() {
     const document = createSiteFromTemplate(templateId, project.name, project.category)
     document.metadata.title = name
     document.metadata.description = aiPrompt.trim().slice(0, 160)
-    const pageNames = aiPages.split(',').map(value => value.trim()).filter(Boolean).slice(0, 8)
-    pageNames.forEach((pageName, index) => {
-      if (index === 0) return
+    if (aiTone.includes('Luxury')) { document.theme.primaryColor = '#171512'; document.theme.accentColor = '#c6a56b'; document.theme.backgroundColor = '#fbf8f1'; document.theme.headingFont = 'Georgia' }
+    else if (aiTone.includes('Bold')) { document.theme.primaryColor = '#22204a'; document.theme.accentColor = '#ef795e' }
+    else if (aiTone.includes('Minimal')) { document.theme.primaryColor = '#252525'; document.theme.accentColor = '#9a9a8d'; document.theme.backgroundColor = '#ffffff' }
+    else if (aiTone.includes('Warm')) { document.theme.primaryColor = '#49352b'; document.theme.accentColor = '#c77c50'; document.theme.backgroundColor = '#fbf4eb'; document.theme.headingFont = 'Georgia' }
+    const pageNames = [...new Set(aiPages.split(',').map(value => value.trim()).filter(Boolean))].slice(0, 8)
+    const usedSlugs = new Set(document.pages.map(page => page.slug))
+    pageNames.forEach(pageName => {
+      if (pageName.toLowerCase() === 'home') return
       const pageId = makeId()
-      document.pages.push({ id: pageId, name: pageName, isHomePage: false, slug: pageName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), sections: [
+      const baseSlug = pageName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'page'
+      let slug = baseSlug
+      let suffix = 2
+      while (usedSlugs.has(slug)) { slug = baseSlug + '-' + suffix; suffix += 1 }
+      usedSlugs.add(slug)
+      document.pages.push({ id: pageId, name: pageName, isHomePage: false, slug, sections: [
         { id: makeId(), kind: 'header', name: 'Header', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: name.toUpperCase(), visible: true, styles: {} }] },
         { id: makeId(), kind: 'hero', name: pageName, enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: pageName, visible: true, styles: {} }, { id: makeId(), kind: 'text', content: aiPrompt.trim(), visible: true, styles: {} }] },
         { id: makeId(), kind: 'contact', name: 'Contact', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: 'Let’s connect', visible: true, styles: {} }] },
