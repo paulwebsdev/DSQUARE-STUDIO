@@ -86,14 +86,14 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     const pageNumber = site.pages.length + 1
     const pageName = `New page ${pageNumber}`
     const newPage = {
-      id: globalThis.crypto?.randomUUID?.() ?? `page-${Date.now()}`,
+      id: freshEditorId('page'),
       name: pageName,
       slug: uniquePageSlug(pageName, site.pages),
       isHomePage: false,
       sections: [
-        { id: `header-${Date.now()}`, kind: 'header' as const, name: 'Header', enabled: true, styles: { padding: '24px 8%', backgroundColor: '#171717' }, components: [{ id: `brand-${Date.now()}`, kind: 'heading' as const, content: site.name, visible: true, styles: { color: '#ffffff', fontSize: '1.4rem' } }] },
-        { id: `hero-${Date.now()}`, kind: 'hero' as const, name: 'Page introduction', enabled: true, styles: { padding: '96px 8%', backgroundColor: '#f3eee5' }, components: [{ id: `title-${Date.now()}`, kind: 'heading' as const, content: pageName, visible: true, styles: { fontSize: '2.8rem', fontWeight: '700', color: '#171717' } }, { id: `copy-${Date.now()}`, kind: 'text' as const, content: 'Add the content for this page in the properties panel.', visible: true, styles: { fontSize: '1rem', color: '#666666' } }] },
-        { id: `footer-${Date.now()}`, kind: 'footer' as const, name: 'Footer', enabled: true, styles: { padding: '32px 8%', backgroundColor: '#171717' }, components: [{ id: `copyright-${Date.now()}`, kind: 'text' as const, content: '© ' + site.name + '. All rights reserved.', visible: true, styles: { color: '#ffffff' } }] },
+        { id: freshEditorId('section'), kind: 'header' as const, name: 'Header', enabled: true, styles: { padding: '24px 8%', backgroundColor: '#171717' }, components: [{ id: freshEditorId('element'), kind: 'heading' as const, content: site.name, visible: true, styles: { color: '#ffffff', fontSize: '1.4rem' } }] },
+        { id: freshEditorId('section'), kind: 'hero' as const, name: 'Page introduction', enabled: true, styles: { padding: '96px 8%', backgroundColor: '#f3eee5' }, components: [{ id: freshEditorId('element'), kind: 'heading' as const, content: pageName, visible: true, styles: { fontSize: '2.8rem', fontWeight: '700', color: '#171717' } }, { id: freshEditorId('element'), kind: 'text' as const, content: 'Add the content for this page in the properties panel.', visible: true, styles: { fontSize: '1rem', color: '#666666' } }] },
+        { id: freshEditorId('section'), kind: 'footer' as const, name: 'Footer', enabled: true, styles: { padding: '32px 8%', backgroundColor: '#171717' }, components: [{ id: freshEditorId('element'), kind: 'text' as const, content: '© ' + site.name + '. All rights reserved.', visible: true, styles: { color: '#ffffff' } }] },
       ],
     }
     commit({ ...site, pages: [...site.pages, newPage] })
@@ -112,7 +112,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
 
   const duplicatePage = () => {
     if (!page) return
-    const copy = { ...page, id: freshEditorId('page'), name: `${page.name} copy`, slug: uniquePageSlug(`${page.name} copy`, site.pages), isHomePage: false, sections: page.sections.map(section => ({ ...section, id: freshEditorId('section'), components: section.components.map(item => ({ ...item, id: freshEditorId('element') })) })) }
+    const copy = { ...page, id: freshEditorId('page'), name: `${page.name} copy`, slug: uniquePageSlug(`${page.name} copy`, site.pages), isHomePage: false, sections: page.sections.map(section => ({ ...section, id: freshEditorId('section'), styles: { ...section.styles }, components: section.components.map(item => ({ ...item, id: freshEditorId('element'), styles: { ...item.styles }, responsiveStyles: item.responsiveStyles ? Object.fromEntries(Object.entries(item.responsiveStyles).map(([mode, styles]) => [mode, { ...styles }])) : undefined })) })) }
     commit({ ...site, pages: [...site.pages, copy] })
     setActivePageId(copy.id)
     setSelectedId(copy.sections[1]?.id ?? copy.sections[0]?.id ?? '')
