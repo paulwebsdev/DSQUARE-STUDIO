@@ -12,7 +12,7 @@ import {
 type NavItem = { label: string; icon: typeof LayoutDashboard }
 type Client = { id: string; name: string; email: string; createdAt: string }
 type Project = { id: string; name: string; category: string; clientId: string; status: 'Draft' | 'Archived'; createdAt: string; updatedAt: string }
-type SiteTemplate = { id: string; baseId: string; name: string; category: string; description: string; style: string; pages: string[]; gradient: string; featured?: boolean }
+type SiteTemplate = { id: string; baseId?: string; name: string; category: string; description: string; style: string; pages: string[]; gradient: string; featured?: boolean }
 
 const mainNav: NavItem[] = [
   { label: 'Overview', icon: LayoutDashboard },
