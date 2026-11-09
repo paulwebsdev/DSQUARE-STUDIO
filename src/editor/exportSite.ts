@@ -7,9 +7,11 @@ const safeFileName = (value: string) => value.toLowerCase().normalize('NFKD').re
 const safeHref = (value: string, pageFiles: Map<string, string>) => {
   const trimmed = value.trim()
   if (!trimmed || /^(?:\/\/|javascript:|data:|vbscript:|file:|blob:)/i.test(trimmed)) return '#'
-  const internal = trimmed.replace(/^\//, '').replace(/\.html$/, '')
+  const path = trimmed.split(/[?#]/, 1)[0]
+  const suffix = trimmed.slice(path.length)
+  const internal = path.replace(/^\//, '').replace(/\.html$/i, '')
   const match = [...pageFiles.entries()].find(([slug]) => slug === internal)
-  if (match) return match[1]
+  if (match) return match[1] + suffix
   if (/^(?:https?:|mailto:|tel:|#|\.\.?\/)/i.test(trimmed)) return trimmed
   if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return '#'
   return trimmed
@@ -56,14 +58,14 @@ function renderSection(section: SiteSection, pageFiles: Map<string, string>, pag
 
 export function buildExportFiles(site: SiteDocument): ExportFiles {
   const pageFiles = new Map<string, string>()
-  const used = new Set<string>()
+  const used = new Set<string>(['index.html'])
   for (const page of site.pages) {
     if (page.isHomePage) { pageFiles.set(page.slug, 'index.html'); continue }
     const base = safeFileName(page.slug || page.name)
     let candidate = base + '.html'
     let suffix = 2
-    while (used.has(candidate) || candidate === 'index.html') candidate = base + '-' + suffix++ + '.html'
-    used.add(candidate)
+    while (used.has(candidate.toLowerCase())) candidate = base + '-' + suffix++ + '.html'
+    used.add(candidate.toLowerCase())
     pageFiles.set(page.slug, candidate)
   }
   const assets: Record<string, Uint8Array> = {}
