@@ -157,3 +157,10 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [ ] Connect a real AI provider through a secure server-side adapter; current generation is a built-in draft generator, not an AI model call.
 - [ ] Add AI-generated sitemap proposals, content generation, image suggestions and iterative edit requests.
 - [ ] Add validation and tests for generated multi-page site documents.
+
+
+## Secure AI integration design
+- [x] Document a provider-neutral server-side AI adapter contract for website generation and natural-language revisions.
+- [x] Define authentication, validation, sanitization, rate-limit, secret-management and failure-handling requirements.
+- [ ] Implement the adapter in the selected trusted backend after the hosting/database platform decision.
+- [ ] Add mock-provider tests and validate generated documents against the shared site schema.
