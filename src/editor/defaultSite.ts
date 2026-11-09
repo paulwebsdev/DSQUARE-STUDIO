@@ -101,6 +101,12 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     legal: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1600&q=85',
   }
   const categoryHeroImages: Record<string, string> = {
+    Photography: 'photo-1452587925148-ce544e77e70d',
+    'Fashion & Apparel': 'photo-1483985988355-763728e1935b',
+    'Church & Ministry': 'photo-1438032005730-c779502df39b',
+    Agriculture: 'photo-1500382017468-9049fed747ef',
+    'Logistics & Delivery': 'photo-1586528116311-ad8dd3c8310d',
+    'Interior Design': 'photo-1600210492486-724fe5c67fb0',
     Automotive: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=85',
     'Fitness & Sports': 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=85',
     Wedding: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=85',
@@ -312,6 +318,12 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     legal: { primary:'#252f3c', accent:'#988a76', background:'#fafaf8', text:'#303844', heading:'Georgia', body:'Inter', radius:'3px' },
   }
   const categoryThemes: Record<string, { primary: string; accent: string; background: string; text: string; heading: string; body: string; radius: string }> = {
+    Photography: { primary:'#272b32', accent:'#b58c65', background:'#faf9f6', text:'#383a40', heading:'Georgia', body:'Inter', radius:'2px' },
+    'Fashion & Apparel': { primary:'#30272a', accent:'#bd8f8a', background:'#fcf9f8', text:'#403638', heading:'Georgia', body:'Inter', radius:'3px' },
+    'Church & Ministry': { primary:'#293b48', accent:'#b49a68', background:'#f8fafb', text:'#35424a', heading:'Manrope', body:'Inter', radius:'8px' },
+    Agriculture: { primary:'#344333', accent:'#a6a36b', background:'#f8faf4', text:'#3d4939', heading:'Georgia', body:'Inter', radius:'6px' },
+    'Logistics & Delivery': { primary:'#253849', accent:'#d09a4a', background:'#f7f9fb', text:'#34424e', heading:'Manrope', body:'Inter', radius:'5px' },
+    'Interior Design': { primary:'#37332e', accent:'#a78f75', background:'#faf9f6', text:'#403b35', heading:'Georgia', body:'Inter', radius:'2px' },
     Automotive: { primary:'#202b35', accent:'#c18a45', background:'#f7f8f9', text:'#303943', heading:'Manrope', body:'Inter', radius:'5px' },
     'Fitness & Sports': { primary:'#172f2a', accent:'#a4bd62', background:'#f7faf6', text:'#2d3c36', heading:'Manrope', body:'Inter', radius:'12px' },
     Wedding: { primary:'#493b3a', accent:'#b88e83', background:'#fcf8f5', text:'#514541', heading:'Georgia', body:'Inter', radius:'3px' },
@@ -383,6 +395,12 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
   ]
   site.metadata.description = sections[0][2]
   const categoryPageLabels: Record<string, string[]> = {
+    Photography:['Home','Portfolio','Services','About','Packages','Contact'],
+    'Fashion & Apparel':['Home','Shop','Collections','Our Story','Size Guide','Contact'],
+    'Church & Ministry':['Home','About','Ministries','Services','Events','Give','Contact'],
+    Agriculture:['Home','Our Farm','Products','Our Process','Sustainability','Contact'],
+    'Logistics & Delivery':['Home','Services','Coverage','Track & Trace','About','Get a Quote'],
+    'Interior Design':['Home','Portfolio','Services','Our Studio','Process','Contact'],
     Automotive:['Home','Vehicles','Services','Finance','About','Contact'],
     'Fitness & Sports':['Home','Membership','Classes','Coaches','Timetable','Contact'],
     Wedding:['Home','Our Story','Gallery','Packages','FAQs','RSVP','Contact'],
@@ -399,6 +417,12 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
   }
   const labels = category === 'School' ? ['Home','About','Academics','Admissions','Student Life','News','Contact'] : (categoryPageLabels[category] ?? pageLabels[baseTemplateId] ?? ['Home','About','Services','Contact'])
   const innerPageHighlights: Record<string, [string, string, string, string]> = {
+    Photography:['Selected work','Explore portraits, events, commercial projects and carefully curated image stories.','Book a session','Find package information, availability and details for planning your shoot.'],
+    'Fashion & Apparel':['The latest collection','Discover considered pieces, seasonal edits and styles for every occasion.','Made to be worn','Find sizing, delivery and care information before choosing your favourites.'],
+    'Church & Ministry':['Life together','Discover our ministries, community groups and opportunities to grow and serve.','Plan your visit','Find service times, location details and ways to connect with the church family.'],
+    Agriculture:['From our land','Explore our produce, farming capabilities and the people behind each harvest.','Growing responsibly','Learn about our methods, seasonal availability and partnerships.'],
+    'Logistics & Delivery':['Solutions that move','Explore delivery, freight, warehousing and tailored transport services.','Keep things moving','Find coverage information, tracking guidance and a clear route to request a quote.'],
+    'Interior Design':['Spaces with purpose','Explore residential, commercial and hospitality projects shaped around people.','Start a project','Learn about our design process, services and initial consultation.'],
     Automotive: ['Vehicle collection', 'Browse new arrivals, featured models and carefully selected vehicles for different needs and budgets.', 'Support beyond the showroom', 'Find clear information about viewings, test drives, servicing and ownership support.'],
     'Fitness & Sports': ['Programmes and classes', 'Explore strength, conditioning, group sessions and coaching for different experience levels.', 'Progress with the right support', 'Meet the coaches, understand membership options and find a routine that works for you.'],
     Wedding: ['Planning and packages', 'Explore celebration styles, planning support and thoughtful details for your day.', 'Your day, your way', 'Find answers about dates, venues, suppliers and what happens next.'],
