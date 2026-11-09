@@ -44,7 +44,7 @@ function renderSection(section: SiteSection, pageFiles: Map<string, string>, pag
   const sectionStyles = { ...section.styles }
   const backgroundImage = sectionStyles.backgroundImage
   if (backgroundImage) {
-    const match = String(backgroundImage).match(/^url\\((['"]?)(data:image\\/[a-zA-Z0-9.+-]+;base64,[\\s\\S]+?)\\1\\)$/)
+    const match = String(backgroundImage).match(/^url\((['"]?)(data:image\/[a-zA-Z0-9.+-]+;base64,[\s\S]+?)\1\)$/)
     if (match) sectionStyles.backgroundImage = 'url("' + (assetPaths.get(match[2]) ?? match[2]) + '")'
   }
   const style = styleText(sectionStyles)
