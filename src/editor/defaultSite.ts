@@ -362,7 +362,8 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     events:['Home','Schedule','Speakers','Venue','Register'], construction:['Home','Services','Projects','About','Request a Quote'], legal:['Home','Practice Areas','Our Firm','People','Contact'],
   }
   const labels = category === 'School' ? ['Home','About','Academics','Admissions','Student Life','News','Contact'] : (categoryPageLabels[category] ?? pageLabels[baseTemplateId] ?? ['Home','About','Services','Contact'])
-  const innerPageHighlights: Record<string, [string, string, string, string]> = {\n    Automotive: ['Vehicle collection', 'Browse new arrivals, featured models and carefully selected vehicles for different needs and budgets.', 'Support beyond the showroom', 'Find clear information about viewings, test drives, servicing and ownership support.'],
+  const innerPageHighlights: Record<string, [string, string, string, string]> = {
+    Automotive: ['Vehicle collection', 'Browse new arrivals, featured models and carefully selected vehicles for different needs and budgets.', 'Support beyond the showroom', 'Find clear information about viewings, test drives, servicing and ownership support.'],
     'Fitness & Sports': ['Programmes and classes', 'Explore strength, conditioning, group sessions and coaching for different experience levels.', 'Progress with the right support', 'Meet the coaches, understand membership options and find a routine that works for you.'],
     Wedding: ['Planning and packages', 'Explore celebration styles, planning support and thoughtful details for your day.', 'Your day, your way', 'Find answers about dates, venues, suppliers and what happens next.'],
     'Pet Care': ['Care and services', 'Explore grooming, boarding, health support and other services for your companion.', 'A team you can trust', 'Meet the people, understand our care approach and prepare for your pet’s visit.'],
