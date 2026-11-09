@@ -153,3 +153,13 @@ This checklist records repeatable manual checks for the browser prototype. It is
 
 - [ ] On Android/iPhone, drag vertically on the preview canvas and confirm the page content visibly moves (not just the browser scroll indicator).
 - [ ] Confirm touch scrolling does not hijack typing in editable text or form fields.
+
+
+## Direct image manipulation — eight-handle resize
+- [ ] Select an uploaded image and drag its centre to move it; confirm the image position updates on the active device only.
+- [ ] Drag each of the four corner handles and confirm width and height update without collapsing below the minimum size.
+- [ ] Drag each of the four edge handles and confirm only the corresponding dimension changes.
+- [ ] Drag the north and west handles and confirm the image's opposite edge remains visually anchored.
+- [ ] Interrupt a drag with a touch/pointer cancellation and confirm no partial change is saved.
+- [ ] Switch between Desktop, Tablet and Mobile and confirm image transforms remain independent.
+- [ ] Repeat the checks in Preview mode and confirm resize handles are hidden and scrolling remains available.
