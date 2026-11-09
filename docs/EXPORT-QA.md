@@ -89,3 +89,18 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - [ ] Export with valid PNG/JPEG/WebP/GIF/SVG data URLs and malformed image data; verify malformed assets do not break the ZIP.
 - [ ] Verify exported image tags do not preserve javascript:, blob: or malformed data: sources.
 - [ ] Export with altered theme font/colour/button values; verify CSS remains syntactically valid.
+
+
+## Image replacement, keyboard editing and export dialog
+- [ ] Select an image, choose Replace image, and upload another file; confirm the same element is updated and its styles remain unchanged.
+- [ ] Cancel a replacement upload, then use Add image to section; confirm the next image is inserted rather than replacing the old one.
+- [ ] Replace an image on desktop and mobile; confirm the selection remains on the replaced element.
+- [ ] Insert a media-library image while the mobile media drawer is open; confirm the drawer closes and the image is selected.
+- [ ] Remove a media asset; confirm the warning explains existing page placements remain.
+- [ ] Use F2 to edit headings, paragraphs, buttons and containers; use Escape to leave editing.
+- [ ] Use Enter to finish heading and button edits without overriding keyboard selection behaviour.
+- [ ] Focus a section drag handle and use Alt+ArrowUp/Down; confirm that exact section moves.
+- [ ] Open Export; confirm keyboard focus moves to Close and Escape closes the dialog when idle.
+- [ ] Download individual files and ZIP on Android; confirm downloads complete before temporary URLs are revoked.
+- [ ] Export a project with malformed or unavailable background-image data; confirm export completes without broken data URLs.
+- [ ] Test exported links containing control characters and unsafe CSS URL values; confirm unsafe destinations are neutralized.
