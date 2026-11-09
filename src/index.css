@@ -653,3 +653,69 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .site-preview-section.section-contact:after{content:"";position:absolute;inset:auto -8% -65% 45%;height:100%;border:1px solid rgba(255,255,255,.14);border-radius:50%;pointer-events:none}
 @media(max-width:700px){.site-preview-section.section-gallery{grid-template-columns:minmax(0,1fr);gap:18px}.site-preview-section.section-gallery>*:first-child,.site-preview-section.section-gallery>*:nth-child(2){grid-column:auto}.site-preview-section.section-gallery .image-canvas-wrap{min-height:190px}}
 @media(prefers-reduced-motion:reduce){.site-preview-section.section-hero>*,.site-preview-section.section-hero:before{animation:none!important}.site-preview-section *{transition:none!important}}
+
+
+/* Template gallery refresh: standard portrait previews with richer page detail */
+.template-toolbar{gap:16px}
+.template-count{display:flex;align-items:baseline;flex-wrap:wrap;gap:5px}
+.template-count strong{color:#f2e9d9;font:700 13px Manrope,sans-serif}
+.template-filters{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:thin;scrollbar-color:#6f5934 transparent}
+.filter-chip{flex:0 0 auto;padding:9px 13px;font-size:10px}
+.template-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start}
+.template-card{border-radius:13px;background:linear-gradient(160deg,#171716,#101010);box-shadow:0 10px 28px rgba(0,0,0,.12)}
+.template-preview{height:auto;aspect-ratio:4/5;min-height:270px;padding:12px;background-image:radial-gradient(circle at 50% 20%,rgba(255,255,255,.11),transparent 55%),linear-gradient(145deg,rgba(0,0,0,.08),rgba(0,0,0,.35))}
+.mock-browser{width:min(78%,270px);height:88%;max-height:440px;display:flex;flex-direction:column;transform:none;border:1px solid rgba(255,255,255,.55);border-radius:9px;background:#f7f5ef;box-shadow:0 18px 45px rgba(0,0,0,.42);transition:transform .25s,box-shadow .25s}
+.template-card:hover .mock-browser{transform:translateY(-3px) scale(1.015);box-shadow:0 23px 52px rgba(0,0,0,.5)}
+.mock-browser-bar{height:13px;flex:0 0 13px;gap:3px}
+.mock-browser-bar i{width:4px;height:4px}
+.mock-browser-bar span{font-size:5px;letter-spacing:.8px}
+.mock-site-content{min-height:0;flex:1;display:flex;flex-direction:column;padding:0;background:#f7f5ef;overflow:hidden}
+.mock-site-nav{height:25px;flex:0 0 25px;display:flex;align-items:center;justify-content:space-between;gap:5px;margin:0;padding:0 9px;background:#fbfaf6;color:#24231f}
+.mock-site-nav b{max-width:75%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:800 6px Manrope,sans-serif;letter-spacing:.1px}
+.mock-site-nav span{font-size:5px;letter-spacing:1px;color:#777}
+.mock-site-hero{min-height:0;flex:1.2;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:6px;padding:13px 11px;color:#fff;background-color:#4c514b;background-size:cover;background-position:center}
+.mock-site-hero small{font-size:5px;font-weight:800;letter-spacing:1px;color:rgba(255,255,255,.84)}
+.mock-site-hero strong{max-width:96%;font:800 clamp(12px,1.2vw,19px)/1.08 Manrope,sans-serif;letter-spacing:-.45px;text-wrap:balance}
+.mock-site-hero p{max-width:95%;margin:0;color:rgba(255,255,255,.86);font-size:6px;line-height:1.45}
+.mock-site-hero>b{display:inline-flex;align-items:center;gap:8px;margin-top:2px;padding:5px 7px;border-radius:2px;color:#171511;background:#e2c58c;font-size:5px;letter-spacing:.55px}
+.mock-site-sections{flex:.72;min-height:60px;padding:10px 9px 8px;background:#fbfaf6}
+.mock-section-heading{display:grid;gap:4px;margin-bottom:8px}
+.mock-section-heading i{width:28%;height:3px;border-radius:3px;background:#b89455}
+.mock-section-heading b{width:68%;height:6px;border-radius:3px;background:#282722}
+.mock-section-heading span{width:82%;height:3px;border-radius:3px;background:#d6d1c6}
+.mock-section-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.mock-section-cards i{height:25px;border-radius:3px;background:linear-gradient(145deg,#ded8cb,#aaa18f)}
+.mock-section-cards i:nth-child(2){background:linear-gradient(145deg,#c7b58e,#8f7952)}
+.mock-site-footer{height:19px;flex:0 0 19px;display:flex;align-items:center;gap:5px;padding:0 9px;background:#22231f}
+.mock-site-footer span{margin-right:auto;color:#e6d8ba;font-size:5px;font-weight:800;letter-spacing:.7px}
+.mock-site-footer i{width:7px;height:2px;border-radius:2px;background:#a99b7c}
+.mock-business .mock-site-hero{background-position:center 48%}
+.mock-portfolio .mock-site-hero,.mock-agency .mock-site-hero{background-position:center}
+.mock-shop .mock-site-hero{background-position:center 40%}
+.mock-restaurant .mock-site-hero{background-position:center 55%}
+.mock-variant-1 .mock-site-hero{flex:1.35}
+.mock-variant-2 .mock-site-hero{align-items:center;text-align:center}
+.mock-variant-3 .mock-site-hero{flex-direction:column;align-items:flex-start}
+.mock-variant-4 .mock-site-hero{flex:1.05}
+.template-card-body{padding:15px}
+.template-card-body h3{font-size:13px}
+.template-card-body p{min-height:56px;font-size:9px;line-height:1.65}
+.template-card-footer{gap:8px;flex-wrap:wrap}
+.template-preview-modal{width:min(560px,100%);max-height:min(92vh,900px);overflow-y:auto}
+.large-template-preview{height:420px;aspect-ratio:4/5;max-width:360px;margin:0 auto 22px}
+.large-template-preview .mock-browser{width:76%;height:91%;max-width:300px}
+.large-template-preview .mock-site-hero strong{font-size:clamp(16px,2vw,24px)}
+@media(max-width:1000px){.template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){
+ .template-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .template-preview{min-height:220px;padding:8px}
+ .mock-browser{width:82%;height:88%}
+ .template-card-body{padding:10px}
+ .template-card-body h3{font-size:11px}
+ .template-card-body p{font-size:8px;min-height:0}
+ .template-meta{align-items:flex-start;flex-direction:column;gap:4px}
+ .template-card-footer span{font-size:8px}
+ .template-card-footer .text-button{font-size:8px}
+ .large-template-preview{height:380px;width:100%;max-width:330px}
+}
+@media(max-width:360px){.template-grid{grid-template-columns:1fr}.template-preview{min-height:250px}}
