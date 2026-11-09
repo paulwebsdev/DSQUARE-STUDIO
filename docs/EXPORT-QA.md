@@ -108,3 +108,10 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - [ ] Try missing, unsupported and oversized image files; confirm clear feedback and no accidental replacement on the next upload.
 - [ ] Open and close Export using the keyboard; confirm focus returns to the Export button.
 - [ ] Simulate source-file export failure; confirm a helpful status appears and the editor stays usable.
+
+
+## ZIP progress and handoff
+- [ ] Export a website with several pages and images; confirm ZIP progress updates from preparation through completion.
+- [ ] Open README.txt and verify all exported page filenames and packaged asset count are accurate.
+- [ ] Confirm the README clearly states that forms, hosting, domains, databases and payments are not connected.
+- [ ] Download the ZIP on Android and desktop; confirm the archive opens and contains all page, style, script and asset files.
