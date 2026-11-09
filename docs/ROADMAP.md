@@ -1,12 +1,20 @@
 # DSQUARE STUDIO — Roadmap
 
 ## Template marketplace expansion — 2026-11-09
-- [x] Expand the library to 27 website categories with 10 named starter options per category (270 options total).
+- [x] Expand the library to 33 website categories with 10 named starter options per category (330 options total).
 - [x] Add a dedicated School category with 10 school-specific starter concepts and school-focused page navigation.
 - [x] Give template variants distinct colour combinations, typography pairings, button shapes, spacing and selected section-order/layout treatments.
 - [x] Add category-matched hero imagery, differentiated homepage section orders, premium typography, colour palettes and responsive inner-page starter structures.
 - [x] Add category-specific homepage copy, page plans and inner-page guidance for Automotive, Fitness & Sports, Wedding, Pet Care, Music & Entertainment and Personal Services.\n- [ ] Build fully bespoke category-specific inner-page modules (for example product grids, school admissions, restaurant menus, property listings, vehicle inventories and class timetables).
-- [ ] Verify all 210 options can be selected and opened in the visual editor on desktop and Android.
+- [ ] Verify all 330 options can be selected and opened in the visual editor on desktop and Android.
+
+
+## Button library and interaction polish — 2026-11-09
+- [x] Add a searchable library of 20 ready-made social, contact and action buttons, plus a custom button preset.
+- [x] Allow button destinations, internal page links, email/telephone actions and optional new-tab behaviour.
+- [x] Add editable hover background, text colour, movement and shadow effects.
+- [x] Preserve the selected social/action library style in the style selector and add a one-tap hover-effect reset.
+- [ ] Verify button links, hover states and touch behaviour in desktop and Android browsers.
 
 
 ## Phase 1 — Foundation
@@ -70,7 +78,7 @@
 
 ## Current milestone
 
-The dashboard, browser-local project/client management, expanded premium template library and v1 provider-neutral site document schema are in place. The library now offers 270 named options across 21 categories, with category-matched imagery, differentiated homepage treatments and editable multi-page drafts. Inner pages currently use a shared premium structure with category-aware copy; fully bespoke modules remain planned. The visual editor supports section editing, individual text/heading/button selection and content editing, image rendering, responsive device previews and a scrollable preview where text can also be edited in place. Template preview cards are still illustrative rather than live renderings of the finished websites. Backend persistence, authentication and production publishing remain planned. All service-dependent features remain clearly marked as planned until their backend integrations exist.
+The dashboard, browser-local project/client management, expanded premium template library and v1 provider-neutral site document schema are in place. The library now offers 330 named options across 33 categories, with category-matched imagery, differentiated homepage treatments and editable multi-page drafts. Inner pages currently use a shared premium structure with category-aware copy; fully bespoke modules remain planned. The visual editor supports section editing, individual text/heading/button selection and content editing, image rendering, responsive device previews and a scrollable preview where text can also be edited in place. Template preview cards are still illustrative rather than live renderings of the finished websites. Backend persistence, authentication and production publishing remain planned. All service-dependent features remain clearly marked as planned until their backend integrations exist.
 
 
 ### Project-specific editor documents
