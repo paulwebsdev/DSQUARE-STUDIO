@@ -4,7 +4,7 @@ import { ArrowLeft, Eye, Monitor, Tablet, Smartphone, Undo2, Redo2, Plus, Type, 
 import { createStarterSite } from './defaultSite'
 import type { DeviceMode, SiteDocument, SiteSection } from './types'
 
-type Props = { onExit: () => void }
+type Props = { onExit: () => void; projectId: string; projectName: string; category: string }
 
 const sectionOptions: { kind: SiteSection['kind']; label: string; description: string }[] = [
   { kind: 'hero', label: 'Hero', description: 'A bold introduction and call to action' },
@@ -15,12 +15,13 @@ const sectionOptions: { kind: SiteSection['kind']; label: string; description: s
   { kind: 'contact', label: 'Contact', description: 'Help visitors get in touch' },
 ]
 
-export default function VisualEditor({ onExit }: Props) {
+export default function VisualEditor({ onExit, projectId, projectName, category }: Props) {
+  const storageKey = `dsquare-editor-document:${projectId}`
   const [site, setSite] = useState<SiteDocument>(() => {
     try {
-      const saved = localStorage.getItem('dsquare-editor-document')
-      return saved ? JSON.parse(saved) as SiteDocument : createStarterSite()
-    } catch { return createStarterSite() }
+      const saved = localStorage.getItem(storageKey)
+      return saved ? JSON.parse(saved) as SiteDocument : createStarterSite(projectName, category)
+    } catch { return createStarterSite(projectName, category) }
   })
   const [selectedId, setSelectedId] = useState(site.pages[0]?.sections[1]?.id ?? '')
   const [device, setDevice] = useState<DeviceMode>('desktop')
@@ -38,7 +39,7 @@ export default function VisualEditor({ onExit }: Props) {
   const selectedText = selectedComponent?.content ?? selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
 
   useEffect(() => {
-    localStorage.setItem('dsquare-editor-document', JSON.stringify(site))
+    localStorage.setItem(storageKey, JSON.stringify(site))
     setSavedAt('Saved just now')
   }, [site])
 
@@ -122,7 +123,7 @@ export default function VisualEditor({ onExit }: Props) {
         <button className="editor-tool" onClick={undo} disabled={!history.length} aria-label="Undo"><Undo2 size={17} /></button>
         <button className="editor-tool" onClick={redo} disabled={!future.length} aria-label="Redo"><Redo2 size={17} /></button>
         <button className="editor-preview" onClick={() => setPreviewMode(value => !value)}><Eye size={15} /> {previewMode ? "Exit preview" : "Preview"}</button>
-        <button className="primary-button editor-save" onClick={() => { localStorage.setItem('dsquare-editor-document', JSON.stringify(site)); setSavedAt('Saved just now') }}><Save size={14} /> Save</button>
+        <button className="primary-button editor-save" onClick={() => { localStorage.setItem(storageKey, JSON.stringify(site)); setSavedAt('Saved just now') }}><Save size={14} /> Save</button>
       </div>
     </header>
     <div className="editor-workspace">
