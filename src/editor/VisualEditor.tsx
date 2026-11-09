@@ -81,14 +81,12 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     if (!previewMode || !scrollport) return
     let startY = 0
     let startScrollTop = 0
-    let scrolling = false
     const onTouchStart = (event: TouchEvent) => {
       if (event.touches.length !== 1) return
       const target = event.target as HTMLElement | null
       if (target?.closest('[contenteditable="true"], input, textarea, select')) return
       startY = event.touches[0].clientY
       startScrollTop = scrollport.scrollTop
-      scrolling = false
     }
     const onTouchMove = (event: TouchEvent) => {
       if (event.touches.length !== 1) return
@@ -96,11 +94,10 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
       if (target?.closest('[contenteditable="true"], input, textarea, select')) return
       const deltaY = startY - event.touches[0].clientY
       if (Math.abs(deltaY) < 3) return
-      scrolling = true
       if (event.cancelable) event.preventDefault()
       scrollport.scrollTop = startScrollTop + deltaY
     }
-    const onTouchEnd = () => { scrolling = false }
+    const onTouchEnd = () => {}
     scrollport.addEventListener('touchstart', onTouchStart, { passive: true })
     scrollport.addEventListener('touchmove', onTouchMove, { passive: false })
     scrollport.addEventListener('touchend', onTouchEnd, { passive: true })
@@ -120,6 +117,18 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const selectedText = selectedComponent?.content ?? selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
   const visibleLayers = useMemo(() => page?.sections.map((section, index) => ({ section, index })).filter(({ section }) => `${section.name} ${section.kind}`.toLowerCase().includes(layerSearch.trim().toLowerCase())) ?? [], [page, layerSearch])
   const visibleAssets = useMemo(() => [...(site.assets ?? [])].filter(asset => `${asset.name} ${asset.altText}`.toLowerCase().includes(mediaSearch.trim().toLowerCase())).sort((a, b) => mediaSort === 'name' ? a.name.localeCompare(b.name) : mediaSort === 'largest' ? b.dataUrl.length - a.dataUrl.length : (b.createdAt ?? '').localeCompare(a.createdAt ?? '')), [site.assets, mediaSearch, mediaSort])
+
+  useEffect(() => {
+    const saveImmediately = () => {
+      try { localStorage.setItem(storageKey, JSON.stringify(site)) } catch { /* The visible autosave status reports storage failures. */ }
+    }
+    window.addEventListener('pagehide', saveImmediately)
+    window.addEventListener('beforeunload', saveImmediately)
+    return () => {
+      window.removeEventListener('pagehide', saveImmediately)
+      window.removeEventListener('beforeunload', saveImmediately)
+    }
+  }, [site, storageKey])
 
   useEffect(() => {
     setSavedAt('Saving…')
