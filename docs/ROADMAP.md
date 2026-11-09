@@ -132,3 +132,9 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Add image-specific fit modes: cover/crop, contain, stretch and original size.
 - [x] Add image focal positioning presets (centre, edges and corners).
 - [x] Store controls in per-device responsive styles so desktop/tablet/mobile can differ.
+
+
+## Element positioning controls
+- [x] Add normal-flow, relative, absolute and sticky positioning modes.
+- [x] Add top, right, bottom and left offsets plus layer-order control.
+- [x] Store positioning settings in per-device responsive styles.
