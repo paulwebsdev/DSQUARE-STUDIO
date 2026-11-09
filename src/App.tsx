@@ -119,9 +119,20 @@ function App() {
       let suffix = 2
       while (usedSlugs.has(slug)) { slug = baseSlug + '-' + suffix; suffix += 1 }
       usedSlugs.add(slug)
+      const pageKey = pageName.toLowerCase()
+      const pageCopy = pageKey.includes('about') ? 'Get to know ' + name + ', what we believe in and the people behind our work.' :
+        pageKey.includes('service') ? 'Explore how ' + name + ' can help, from the first conversation to the finished result.' :
+        pageKey.includes('contact') ? 'Tell us what you have in mind. We would love to hear from you and discuss the next step.' :
+        pageKey.includes('portfolio') || pageKey.includes('work') || pageKey.includes('project') ? 'A selection of work, ideas and results that show what is possible.' :
+        pageKey.includes('shop') || pageKey.includes('product') ? 'Discover the collection, find your favourites and choose what works for you.' :
+        pageKey.includes('menu') ? 'Explore our menu, made with care and designed to make every visit memorable.' :
+        pageKey.includes('program') || pageKey.includes('course') ? 'Explore learning opportunities designed to build knowledge, confidence and practical skills.' :
+        pageKey.includes('event') ? 'Find upcoming experiences, connect with others and see what is happening next.' :
+        pageKey.includes('faq') ? 'Find clear answers to common questions and helpful information before you get started.' :
+        aiPrompt.trim()
       document.pages.push({ id: pageId, name: pageName, isHomePage: false, slug, sections: [
         { id: makeId(), kind: 'header', name: 'Header', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: name.toUpperCase(), visible: true, styles: {} }] },
-        { id: makeId(), kind: 'hero', name: pageName, enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: pageName, visible: true, styles: {} }, { id: makeId(), kind: 'text', content: aiPrompt.trim(), visible: true, styles: {} }] },
+        { id: makeId(), kind: 'hero', name: pageName, enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: pageName, visible: true, styles: {} }, { id: makeId(), kind: 'text', content: pageCopy, visible: true, styles: {} }] },
         { id: makeId(), kind: 'contact', name: 'Contact', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: 'Let’s connect', visible: true, styles: {} }] },
         { id: makeId(), kind: 'footer', name: 'Footer', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'text', content: '© ' + name + '. All rights reserved.', visible: true, styles: {} }] },
       ] })
