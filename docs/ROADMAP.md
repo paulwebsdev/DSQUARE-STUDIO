@@ -121,3 +121,8 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Open editor panels in a scrollable mobile drawer with a close control.
 - [x] Keep the desktop/tablet side-panel layout unchanged.
 - [ ] Validate interactions on a range of physical Android and iOS devices.
+
+
+### Responsive element layout controls
+- [x] Add per-device width, maximum width, height, padding, margin and corner-radius controls for selected elements.
+- [x] Store layout overrides independently for desktop, tablet and mobile.
