@@ -344,7 +344,7 @@ function App() {
   )
 }
 
-function TemplateMock() { return <div className="mock-browser"><div className="mock-browser-bar"><i /><i /><i /><span>YOUR BRAND</span></div><div className="mock-site-content"><div className="mock-site-nav" /><div className="mock-site-heading" /><div className="mock-site-copy" /><div className="mock-site-button" /><div className="mock-site-image" /></div></div> }
+function TemplateMock() { return <div className="mock-browser"><div className="mock-browser-bar"><i /><i /><i /><span>YOUR BRAND</span></div><div className="mock-site-content"><div className="mock-site-nav"><b /><i /><i /><i /></div><div className="mock-site-layout"><div className="mock-site-copy-block"><div className="mock-site-kicker" /><div className="mock-site-heading" /><div className="mock-site-copy" /><div className="mock-site-copy short" /><div className="mock-site-button" /></div><div className="mock-site-image" /></div><div className="mock-site-proof"><i /><i /><i /></div></div></div> }
 function PageTitle({ eyebrow, title, subtitle, action }: { eyebrow: string; title: string; subtitle: string; action?: ReactNode }) {
   return <section className="welcome-row page-title-row"><div><div className="eyebrow"><span className="eyebrow-line" /> {eyebrow}</div><h1>{title}</h1><p className="welcome-subtitle">{subtitle}</p></div>{action}</section>
 }
