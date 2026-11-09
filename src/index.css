@@ -371,3 +371,11 @@ h1,h2,h3,h4,p { margin-top: 0; }
   .mobile-panel-close{display:grid!important;place-items:center;width:27px;height:27px;margin:3px;border:1px solid #51432d;border-radius:5px;color:#e5d1a6;background:#211e18}
   .editor-panel-tabs{grid-template-columns:repeat(5,minmax(0,1fr))}
 }
+
+
+/* Preview remains interactive: scroll the page and edit text in place. */
+.visual-editor.preview-mode .site-preview-section{cursor:pointer}
+.visual-editor.preview-mode .site-preview-section.is-selected{outline:2px solid #c39b56;outline-offset:-2px}
+.visual-editor.preview-mode .section-selection-label{display:block;opacity:1}
+.visual-editor.preview-mode .component-selected{outline:2px solid #d2a64f;outline-offset:3px;cursor:text}
+.visual-editor.preview-mode [contenteditable="true"]{outline:2px solid #d2a64f;outline-offset:3px;cursor:text}
