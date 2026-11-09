@@ -109,6 +109,19 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     'Personal Services': 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=85',
   }
   const heroImage = categoryHeroImages[category] ?? templateHeroImages[baseTemplateId] ?? templateHeroImages.business
+  const galleryImageSets: Record<string, string[]> = {
+    shop: ['photo-1490481651871-ab68de25d43d','photo-1542291026-7eec264c27ff','photo-1523275335684-37898b6baf30'],
+    restaurant: ['photo-1517248135467-4c7edcad34c4','photo-1414235077428-338989a2e8c0','photo-1555396273-367ea4eb4db5'],
+    education: ['photo-1509062522246-3755977927d7','photo-1503676260728-1c00da094a0b','photo-1427504494785-3a9ca7044f45'],
+    realestate: ['photo-1600607687939-ce8a6c25118c','photo-1600566753086-00f18fb6b3ea','photo-1600047509807-ba8f99d2cdde'],
+    fitness: ['photo-1534438327276-14e5300c3a48','photo-1517836357463-d25dfeac3438','photo-1518611012118-696072aa579a'],
+    wedding: ['photo-1519741497674-611481863552','photo-1511285560929-80b456fea0bc','photo-1464366400600-7168b8af9bc3'],
+    automotive: ['photo-1503376780353-7e6692767b70','photo-1492144534655-ae79c964c9d7','photo-1503736334956-4c8f8e92946d'],
+    pets: ['photo-1552053831-71594a27632d','photo-1517849845537-4d257902454a','photo-1548199973-03cce0bbc9b3'],
+    music: ['photo-1506157786151-b8491531f063','photo-1501386761578-eac5c94b800a','photo-1470229722913-7c0e2dbbafd3'],
+  }
+  const galleryKey = category === 'E-commerce' ? 'shop' : category === 'Restaurant' ? 'restaurant' : category === 'School' || category === 'Education' ? 'education' : category === 'Real Estate' ? 'realestate' : category === 'Fitness & Sports' ? 'fitness' : category === 'Wedding' ? 'wedding' : category === 'Automotive' ? 'automotive' : category === 'Pet Care' ? 'pets' : category === 'Music & Entertainment' ? 'music' : baseTemplateId
+  const galleryImages = galleryImageSets[galleryKey] ?? [heroImage, 'photo-1497366754035-f200968a6e72', 'photo-1497366811353-6870744d04b2']
   const makeSection = (kind: SiteSection['kind'], title: string, body: string, button?: string, tone = '#ffffff'): SiteSection => ({
     id: createId('section'),
     kind,
@@ -125,7 +138,13 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
         content: heroImage,
         visible: true,
         styles: { width: '100%', height: 'min(48vw, 440px)', maxWidth: '1120px', objectFit: 'cover', borderRadius: '18px', margin: '36px auto 0' },
-      }] : []),
+      }] : kind === 'gallery' ? galleryImages.map((imageId, index) => ({
+        id: createId('image'),
+        kind: 'image' as const,
+        content: `https://images.unsplash.com/${imageId}?auto=format&fit=crop&w=900&q=82`,
+        visible: true,
+        styles: { width: '100%', height: 'clamp(180px, 22vw, 280px)', objectFit: 'cover', borderRadius: '16px', margin: '12px 0', gridColumn: 'span 1' },
+      })) : []),
     ],
   })
   const content: Record<string, Array<[SiteSection['kind'], string, string, string?]>> = {
@@ -338,8 +357,8 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
           ...block.styles,
           padding: isHero ? (layoutVariant === 8 ? '164px 10%' : '144px 8%') : layoutVariant === 9 ? '92px 9%' : '84px 8%',
           textAlign: (isHero ? heroAlign : 'left') as 'left' | 'center',
-          layout: kind === 'features' && layoutVariant % 2 === 0 ? 'grid' : 'stacked',
-          gridColumns: kind === 'features' && layoutVariant % 2 === 0 ? (layoutVariant === 6 ? '4' : '3') : '2',
+          layout: kind === 'gallery' || (kind === 'features' && layoutVariant % 2 === 0) ? 'grid' : 'stacked',
+          gridColumns: kind === 'gallery' ? '3' : kind === 'features' && layoutVariant % 2 === 0 ? (layoutVariant === 6 ? '4' : '3') : '2',
           borderTop: !isHero && index % 2 === 0 ? '1px solid #e9e4dc' : 'none',
         },
         components: block.components.map(item => ({
