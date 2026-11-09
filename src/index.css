@@ -866,3 +866,65 @@ h1,h2,h3,h4,p { margin-top: 0; }
 @keyframes dsJournalHeadline{from{opacity:.3;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:760px){.portfolio-template .site-preview-section.section-hero,.commerce-template .site-preview-section.section-hero{display:block!important;min-height:0!important}.portfolio-template .site-preview-section.section-gallery,.commerce-template .site-preview-section.section-gallery,.journal-template .site-preview-section.section-gallery{grid-template-columns:1fr!important}.portfolio-template .site-preview-section,.commerce-template .site-preview-section,.journal-template .site-preview-section{padding-left:6%!important;padding-right:6%!important}}
 @media(prefers-reduced-motion:reduce){.portfolio-template *,.commerce-template *,.journal-template *{animation:none!important;transition:none!important}}
+
+
+/* Five new category design systems: restaurant, education, property, agency and launch */
+.restaurant-template .site-preview-section.section-hero{background-image:linear-gradient(115deg,rgba(25,18,13,.35),transparent);background-blend-mode:multiply}
+.restaurant-template .site-preview-section.section-gallery{background:#f7f1e8}
+.restaurant-template .site-preview-section.section-gallery .image-canvas-wrap{border-radius:3px;overflow:hidden}
+.restaurant-template .site-preview-section.section-gallery img{transition:transform .6s,filter .4s}
+.restaurant-template .site-preview-section.section-gallery img:hover{transform:scale(1.06);filter:saturate(1.15)}
+.restaurant-variant-2 .site-preview-section.section-hero h2,.restaurant-variant-7 .site-preview-section.section-hero h2{font-family:Georgia,serif;font-style:italic}
+.restaurant-variant-4 .site-preview-section.section-hero{text-align:right}
+.restaurant-variant-5 .site-preview-section.section-gallery{background:#171714;color:#fff}
+.restaurant-variant-6 .site-preview-section.section-hero{border-radius:0 0 90px 0}
+.restaurant-variant-8 .site-preview-section.section-gallery img{border-radius:50% 50% 8px 8px}
+.restaurant-variant-9 .site-preview-section.section-features>*{border-left:3px solid var(--ds-accent);padding-left:20px}
+.restaurant-variant-10 .site-preview-section.section-contact{margin:0 4% 4%;border-radius:26px}
+.education-template .site-preview-section.section-hero{background-image:radial-gradient(circle at 88% 15%,rgba(90,160,190,.2),transparent 35%)}
+.education-template .site-preview-section.section-gallery{background:#f0f5f2}
+.education-template .site-preview-section.section-features>*{border-radius:18px;transition:transform .3s,box-shadow .3s}
+.education-variant-2 .site-preview-section.section-hero{text-align:center}
+.education-variant-3 .site-preview-section.section-hero{border-radius:0 0 100px 0}
+.education-variant-4 .site-preview-section.section-hero h2{font-family:Georgia,serif}
+.education-variant-5 .site-preview-section.section-gallery{background:#172d45;color:white}
+.education-variant-7 .site-preview-section.section-gallery img{border-radius:50%}
+.education-variant-8 .site-preview-section.section-hero{border-left:8px solid var(--ds-accent)}
+.education-variant-9 .site-preview-section.section-features>*{border-bottom:2px solid var(--ds-accent)}
+.education-variant-10 .site-preview-section.section-contact{border-radius:36px 4px}
+.realestate-template .site-preview-section.section-hero{background:#202b27;color:white}
+.realestate-template .site-preview-section.section-gallery{background:#f2f0e9}
+.realestate-template .site-preview-section.section-gallery>*{transition:transform .3s,box-shadow .3s}
+.realestate-variant-2 .site-preview-section.section-hero{text-align:center}
+.realestate-variant-3 .site-preview-section.section-gallery img{border-radius:0}
+.realestate-variant-4 .site-preview-section.section-hero h2{font-family:Georgia,serif;font-weight:500}
+.realestate-variant-5 .site-preview-section.section-gallery{background:#1b2925;color:white}
+.realestate-variant-6 .site-preview-section.section-gallery img{border-radius:24px 24px 4px 4px}
+.realestate-variant-7 .site-preview-section.section-hero{border-bottom:8px solid var(--ds-accent)}
+.realestate-variant-8 .site-preview-section.section-features>*{border:1px solid #ddd8cc;padding:24px}
+.realestate-variant-9 .site-preview-section.section-gallery{background:#eee8df}
+.realestate-variant-10 .site-preview-section.section-contact{margin:0 4% 4%;border-radius:24px}
+.agency-template .site-preview-section.section-hero{background:#15191f;color:white;overflow:hidden}
+.agency-template .site-preview-section.section-gallery{background:#f4f2ee}
+.agency-template .site-preview-section.section-gallery img{transition:transform .5s,filter .4s}
+.agency-variant-2 .site-preview-section.section-hero{text-align:center}
+.agency-variant-3 .site-preview-section.section-hero h2{text-transform:uppercase;letter-spacing:-.06em}
+.agency-variant-4 .site-preview-section.section-gallery img{border-radius:0}
+.agency-variant-5 .site-preview-section.section-hero{background:linear-gradient(135deg,#111,#31254a)}
+.agency-variant-6 .site-preview-section.section-features>*{border-top:3px solid var(--ds-accent);padding-top:24px}
+.agency-variant-7 .site-preview-section.section-gallery{background:#e9eef4}
+.agency-variant-8 .site-preview-section.section-hero{border-radius:0 0 0 120px}
+.agency-variant-9 .site-preview-section.section-gallery img{filter:grayscale(1)}
+.agency-variant-10 .site-preview-section.section-contact{border-radius:0;margin:0}
+.landing-template .site-preview-section.section-hero{min-height:560px;display:flex;flex-direction:column;justify-content:center;background:radial-gradient(circle at 82% 20%,rgba(120,130,255,.25),transparent 35%),#17192e;color:#fff}
+.landing-template .site-preview-section.section-features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.landing-template .site-preview-section.section-features>*{padding:24px;border:1px solid rgba(100,100,150,.16);border-radius:18px;background:#fff}
+.landing-variant-2 .site-preview-section.section-hero{text-align:center}
+.landing-variant-3 .site-preview-section.section-hero{background:linear-gradient(135deg,#0e4b48,#152c45)}
+.landing-variant-5 .site-preview-section.section-hero h2{font-family:Georgia,serif}
+.landing-variant-6 .site-preview-section.section-features>*{border-radius:4px}
+.landing-variant-7 .site-preview-section.section-hero{background:linear-gradient(120deg,#f1e7d8,#fff)}
+.landing-variant-8 .site-preview-section.section-features{grid-template-columns:1fr}
+.landing-variant-9 .site-preview-section.section-hero{background:radial-gradient(circle at 50% 40%,#555b91,#15172d)}
+@media(max-width:700px){.landing-template .site-preview-section.section-features{grid-template-columns:1fr}.restaurant-template .site-preview-section.section-hero,.education-template .site-preview-section.section-hero,.realestate-template .site-preview-section.section-hero,.agency-template .site-preview-section.section-hero,.landing-template .site-preview-section.section-hero{min-height:0;display:block}.restaurant-template .site-preview-section,.education-template .site-preview-section,.realestate-template .site-preview-section,.agency-template .site-preview-section,.landing-template .site-preview-section{padding-left:6%!important;padding-right:6%!important}}
+@media(prefers-reduced-motion:reduce){.restaurant-template *,.education-template *,.realestate-template *,.agency-template *,.landing-template *{animation:none!important;transition:none!important}}
