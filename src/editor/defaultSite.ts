@@ -151,7 +151,32 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
   const palette: Record<string, string> = {
     agency: '#f3eee5', business: '#edf3f4', portfolio: '#f5eeee', shop: '#f4f0e6',
     restaurant: '#f7eee8', launch: '#f0effb', education: '#edf4ef', journal: '#f3f0e9', community: '#edf2f6',
+    realestate: '#f2f0e9', healthcare: '#edf5f2', beauty: '#f8eff2', travel: '#edf4f1', finance: '#edf1f6',
+    saas: '#f0f0fb', nonprofit: '#eff4eb', events: '#f8eee8', construction: '#f2f0e9', legal: '#f0f0ed',
   }
+  const themes: Record<string, { primary: string; accent: string; background: string; text: string; heading: string; body: string; radius: string }> = {
+    agency: { primary:'#24211d', accent:'#b18a51', background:'#f8f5ef', text:'#34312c', heading:'Georgia', body:'Inter', radius:'4px' },
+    business: { primary:'#17323a', accent:'#a77d45', background:'#f7f9f8', text:'#273438', heading:'Manrope', body:'Inter', radius:'6px' },
+    portfolio: { primary:'#35252d', accent:'#b16d68', background:'#fffafa', text:'#30282b', heading:'Georgia', body:'Inter', radius:'2px' },
+    shop: { primary:'#29251e', accent:'#b59a63', background:'#fbf9f3', text:'#373127', heading:'Georgia', body:'Inter', radius:'3px' },
+    restaurant: { primary:'#3b251d', accent:'#b97851', background:'#fff9f4', text:'#3c2c24', heading:'Georgia', body:'Inter', radius:'4px' },
+    launch: { primary:'#24264d', accent:'#7778bd', background:'#fafaff', text:'#292b42', heading:'Manrope', body:'Inter', radius:'12px' },
+    education: { primary:'#234237', accent:'#6c967b', background:'#f8fbf8', text:'#2d3d35', heading:'Manrope', body:'Inter', radius:'8px' },
+    journal: { primary:'#332f29', accent:'#a18e6d', background:'#fbfaf6', text:'#38342e', heading:'Georgia', body:'Georgia', radius:'2px' },
+    community: { primary:'#293744', accent:'#7193a5', background:'#f8fafc', text:'#303b46', heading:'Manrope', body:'Inter', radius:'8px' },
+    realestate: { primary:'#34362f', accent:'#a99b7c', background:'#faf9f5', text:'#383a33', heading:'Georgia', body:'Inter', radius:'3px' },
+    healthcare: { primary:'#21413e', accent:'#78a59b', background:'#f7fbf9', text:'#30413e', heading:'Manrope', body:'Inter', radius:'8px' },
+    beauty: { primary:'#503640', accent:'#bd8f9a', background:'#fff9fb', text:'#49353d', heading:'Georgia', body:'Inter', radius:'8px' },
+    travel: { primary:'#29434a', accent:'#7c9d91', background:'#f7faf8', text:'#304348', heading:'Georgia', body:'Inter', radius:'5px' },
+    finance: { primary:'#1d3048', accent:'#8e806d', background:'#f8fafc', text:'#2c3948', heading:'Manrope', body:'Inter', radius:'4px' },
+    saas: { primary:'#28294e', accent:'#7779c5', background:'#fafaff', text:'#30314b', heading:'Manrope', body:'Inter', radius:'10px' },
+    nonprofit: { primary:'#2b4234', accent:'#89a47c', background:'#f9fbf6', text:'#354237', heading:'Manrope', body:'Inter', radius:'8px' },
+    events: { primary:'#482f29', accent:'#bd815e', background:'#fff9f5', text:'#3e302b', heading:'Manrope', body:'Inter', radius:'5px' },
+    construction: { primary:'#39362f', accent:'#a58b5f', background:'#faf9f5', text:'#38352f', heading:'Manrope', body:'Inter', radius:'4px' },
+    legal: { primary:'#252f3c', accent:'#988a76', background:'#fafaf8', text:'#303844', heading:'Georgia', body:'Inter', radius:'3px' },
+  }
+  const selectedTheme = themes[templateId] ?? themes.business
+  site.theme = { primaryColor:selectedTheme.primary, accentColor:selectedTheme.accent, backgroundColor:selectedTheme.background, textColor:selectedTheme.text, headingFont:selectedTheme.heading, bodyFont:selectedTheme.body, buttonRadius:selectedTheme.radius }
   const sections = content[templateId] ?? content.business
   const header = site.pages[0].sections[0]
   const footer = site.pages[0].sections[site.pages[0].sections.length - 1]
@@ -161,5 +186,61 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     { ...footer, components: [{ ...component('text', '© ' + name + '. All rights reserved.'), id: createId('copyright') }] },
   ]
   site.metadata.description = sections[0][2]
+  const pageLabels: Record<string, string[]> = {
+    agency:['Home','About','Services','Work','Contact'], business:['Home','About','Services','Contact'], portfolio:['Home','Work','About','Contact'], shop:['Home','Shop','About','Contact'],
+    restaurant:['Home','Menu','Our Story','Visit'], launch:['Home','FAQ','Contact'], education:['Home','Programs','Admissions','About','Contact'], journal:['Home','Stories','Topics','About'], community:['Home','About','Events','Join','Contact'],
+    realestate:['Home','Properties','About','Contact'], healthcare:['Home','Services','Our Team','Patient Info','Contact'], beauty:['Home','Treatments','About','Gallery','Contact'], travel:['Home','Stay','Experiences','Gallery','Contact'],
+    finance:['Home','Solutions','About','Insights','Contact'], saas:['Home','Features','Pricing','Resources','Contact'], nonprofit:['Home','Our Mission','Programs','Impact','Get Involved'],
+    events:['Home','Schedule','Speakers','Venue','Register'], construction:['Home','Services','Projects','About','Request a Quote'], legal:['Home','Practice Areas','Our Firm','People','Contact'],
+  }
+  const labels = pageLabels[templateId] ?? ['Home','About','Services','Contact']
+  const pageDescriptions: Record<string,string> = {
+    About: 'Meet the people, purpose and principles behind ' + name + '. Discover our story and what makes our approach different.',
+    Services: 'Explore our services, expertise and the practical ways we can help you move forward with confidence.',
+    Work: 'A considered selection of projects, ideas and outcomes that demonstrate our craft and attention to detail.',
+    Contact: 'Have a question or a project in mind? Share a few details and our team will help you take the next step.',
+    Shop: 'Explore the collection, discover featured pieces and find the right fit for your needs.',
+    Menu: 'Discover signature favourites, seasonal selections and carefully prepared options from our kitchen.',
+    'Our Story': 'A little about our beginnings, our values and the care that goes into everything we do.',
+    Visit: 'Find our location, opening hours and the best way to plan your visit.',
+    Programs: 'Explore learning paths designed to build confidence, practical skills and lasting progress.',
+    Admissions: 'Everything you need to understand the application process and take your next step.',
+    Stories: 'Fresh perspectives, thoughtful features and stories selected for curious readers.',
+    Topics: 'Browse the subjects and conversations that matter to our readers and community.',
+    Events: 'Discover upcoming gatherings, shared experiences and ways to take part.',
+    Properties: 'Explore featured properties and discover spaces selected for quality, comfort and potential.',
+    'Our Team': 'Get to know the professionals committed to thoughtful, dependable care.',
+    Treatments: 'Explore our treatments and services, thoughtfully designed around your needs.',
+    Stay: 'Find a place to pause, recharge and enjoy a memorable stay.',
+    Experiences: 'Discover local highlights, curated activities and moments worth travelling for.',
+    Solutions: 'Practical expertise and clear guidance, shaped around your goals and priorities.',
+    Insights: 'Ideas, guidance and useful perspectives to help you make informed decisions.',
+    Features: 'A closer look at the tools, workflows and thoughtful details that make the product useful.',
+    Pricing: 'Choose the plan that fits your needs, with clear options and room to grow.',
+    Resources: 'Helpful guides, answers and resources to help you get more from the platform.',
+    'Our Mission': 'The purpose that guides our work and the future we are working together to create.',
+    Impact: 'See the progress, stories and meaningful outcomes made possible by people like you.',
+    Schedule: 'Plan your experience with a clear overview of sessions, timings and key moments.',
+    Speakers: 'Meet the voices, experts and special guests bringing this event to life.',
+    Venue: 'Everything you need to find the venue and plan a smooth event-day experience.',
+    'Practice Areas': 'Focused legal support across the matters that affect people and businesses.',
+    'Our Firm': 'Learn about our principles, experience and commitment to clear professional advice.',
+    People: 'Meet the team and learn about the experience behind our practice.',
+    'Request a Quote': 'Tell us about your project and receive a clear, considered next step.',
+  }
+  site.pages = labels.map((label, index) => {
+    if (index === 0) return site.pages[0]
+    const slug = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'page'
+    const pageHeading = label === 'Contact' ? 'Let’s start a conversation.' : label === 'Home' ? 'Welcome to ' + name + '.' : label
+    const pageBody = pageDescriptions[label] ?? 'Discover more about ' + name + ', our approach and how we can help you take the next step.'
+    const pageSections: SiteSection[] = [
+      { id:createId('section'), kind:'header', name:'Navigation', enabled:true, styles:{padding:'22px 7%',backgroundColor:'#ffffff'}, components:[{...component('heading',name.toUpperCase()),id:createId('brand')}] },
+      { id:createId('section'), kind:'hero', name:label + ' introduction', enabled:true, styles:{padding:'88px 8%',backgroundColor:palette[templateId] ?? '#edf3f4'}, components:[{...component('heading',pageHeading),id:createId('heading')},{...component('text',pageBody),id:createId('text')}] },
+      { id:createId('section'), kind:'features', name:'More to discover', enabled:true, styles:{padding:'66px 8%',backgroundColor:'#ffffff'}, components:[{...component('heading','Thoughtfully designed around you'),id:createId('heading')},{...component('text','Clear information, considered details and a helpful experience from the first visit to the next step.'),id:createId('text')}] },
+      { id:createId('section'), kind:'contact', name:'Next step', enabled:true, styles:{padding:'66px 8%',backgroundColor:selectedTheme.primary}, components:[{...component('heading','Ready to find out more?'),id:createId('heading')},{...component('text','Get in touch with ' + name + ' and let’s make a plan.'),id:createId('text')},{...component('button','Contact us'),id:createId('button')}] },
+      { id:createId('section'), kind:'footer', name:'Footer', enabled:true, styles:{padding:'28px 7%',backgroundColor:'#171717'}, components:[{...component('text','© ' + name + '. All rights reserved.'),id:createId('copyright')}] },
+    ]
+    return { id:createId('page'), name:label, slug, isHomePage:false, sections:pageSections }
+  })
   return site
 }
