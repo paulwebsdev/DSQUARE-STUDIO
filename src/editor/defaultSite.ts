@@ -77,7 +77,7 @@ export function createStarterSite(name = 'Untitled website', category = 'Busines
 /** Build a complete editable homepage from one of the studio's starter templates. */
 export function createSiteFromTemplate(templateId: string, name: string, category: string): SiteDocument {
   const variantNumber = Number(templateId.match(/-v(\d+)$/)?.[1] ?? '1')
-  const baseTemplateId = templateId.replace(/-v\d+$/, '')
+  const baseTemplateId = (templateId.includes('--') ? templateId.split('--').pop()! : templateId).replace(/-v\d+$/, '')
   const site = createStarterSite(name, category)
   const templateHeroImages: Record<string, string> = {
     agency: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=85',
