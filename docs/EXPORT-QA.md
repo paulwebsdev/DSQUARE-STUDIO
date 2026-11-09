@@ -129,3 +129,12 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - [ ] Confirm active section count excludes disabled sections.
 - [ ] Confirm media count reflects the project media library and the ZIP contains packaged assets only when referenced.
 - [ ] Confirm the service limitation note is visible at desktop and mobile widths.
+
+
+## Layer and media library navigation
+- [ ] Search Page layers by a section's name and type; confirm non-matching sections are hidden and the count updates.
+- [ ] Clear the layer search; confirm all sections return and selecting a result selects the correct canvas section.
+- [ ] Search media by filename and alt description; confirm matching images remain available to insert.
+- [ ] Sort media by newest, name and largest; confirm sorting changes only the library order and not asset/page content.
+- [ ] Search for a missing term in both panels; confirm helpful empty states appear without errors.
+- [ ] Repeat on a narrow Android viewport and with a large media library.
