@@ -395,3 +395,6 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .mobile-properties-close{display:grid;place-items:center;width:27px;height:27px;margin-left:auto;border:1px solid #51432d;border-radius:5px;color:#e5d1a6;background:#211e18}
 .editor-properties-heading{display:flex;align-items:center;gap:8px}
 }
+
+
+.image-layout-controls{display:grid;gap:8px;padding:10px;margin:8px 0;border:1px solid #39342a;border-radius:7px;background:#191814}.image-layout-controls>strong{font-size:10px;color:#d8bd87}.image-layout-controls select{width:100%;padding:7px;border:1px solid #494237;border-radius:5px;background:#171612;color:#f0e7d8;font-size:10px}
