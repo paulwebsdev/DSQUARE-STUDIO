@@ -101,3 +101,15 @@ The dashboard, browser-local project/client management, initial template library
 - [x] Offer individual HTML, CSS and JavaScript source downloads.
 - [ ] Add a managed asset library and copy image files into an assets folder during export.
 - [ ] Add a production form-service integration and automated export tests.
+
+
+## Media library, SEO and export assets
+- [x] Add a project-level media library for uploaded images with preview, insert and remove actions.
+- [x] Keep existing image components compatible while registering uploaded images as managed site assets.
+- [x] Add website title, meta description and language controls.
+- [x] Export uploaded image data into an assets folder and rewrite exported image paths.
+- [ ] Add image alt-text editing and asset size/format optimization.
+- [ ] Add Open Graph/social sharing metadata and an optional social preview image.
+- [ ] Add automated tests for multi-page export and media asset packaging.
+
+Note: media assets remain in browser-local project storage for this prototype; a future authenticated storage adapter will replace this before production.
