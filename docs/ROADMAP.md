@@ -221,3 +221,17 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Allow headings, text, buttons and containers to be edited in the scrollable preview mode.
 - [x] Document physical-device touch-reordering checks in the editor/export QA checklist.
 - [ ] Validate touch reordering on physical Android and iOS devices and add automated editor interaction tests.
+
+
+## Project data reliability batch — 2026-11-09
+- [x] Guard browser-local project and client persistence against storage quota and availability errors.
+- [x] Display a dismissible warning when browser storage cannot save workspace data.
+- [x] Duplicate a project together with its saved editable website document when available.
+- [x] Update the copied website title to match the duplicated project name.
+- [x] Keep duplicated projects in Draft status with fresh creation and update timestamps.
+- [x] Remove a project's browser-local editor document when the project is permanently deleted.
+- [x] Return to the project list if the currently open project is deleted.
+- [x] Refresh project update timestamps when archiving or restoring.
+- [x] Refresh linked project timestamps when a client is deleted and projects become unassigned.
+- [x] Normalize client names and email addresses when saving new client records.
+- [ ] Add workspace backup/restore and cloud persistence after the secure storage adapter is selected.
