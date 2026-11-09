@@ -145,3 +145,7 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - [ ] Confirm the preview scroll area, not the browser page, moves smoothly and reaches the final section.
 - [ ] Confirm page navigation and inline text editing still work after scrolling.
 - [ ] Repeat in desktop and tablet viewport modes.
+
+
+- [ ] On a narrow Android/iPhone viewport (including the compact/mobile preview width), open Preview and verify the canvas still has a non-zero viewport height and scrolls from header to footer.
+- [ ] Repeat with the editor in its normal/expanded width and verify scrolling remains available; selecting and editing text must still work in both sizes.
