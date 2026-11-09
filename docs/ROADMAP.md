@@ -235,3 +235,16 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Refresh linked project timestamps when a client is deleted and projects become unassigned.
 - [x] Normalize client names and email addresses when saving new client records.
 - [ ] Add workspace backup/restore and cloud persistence after the secure storage adapter is selected.
+
+
+## Image accessibility and editor consistency batch — 2026-11-09
+- [x] Show each uploaded image's saved alt text in the editor canvas instead of a generic placeholder.
+- [x] Edit the selected image's alt text directly in its properties panel.
+- [x] Add a decorative-image option that intentionally stores empty alt text.
+- [x] Keep image descriptions synchronized with the media-library asset record.
+- [x] Generate collision-resistant IDs for newly added sections and their starter components.
+- [x] Generate collision-resistant IDs for newly inserted image and general components.
+- [x] Deep-copy responsive style maps when duplicating an element.
+- [x] Generate collision-resistant IDs for saved and inserted reusable elements.
+- [x] Clear stale component selection and close mobile panels when switching website pages.
+- [ ] Verify keyboard-only editor selection and screen-reader announcements in a real browser accessibility pass.
