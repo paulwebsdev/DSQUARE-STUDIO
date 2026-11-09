@@ -149,3 +149,7 @@ This checklist records repeatable manual checks for the browser prototype. It is
 
 - [ ] On a narrow Android/iPhone viewport (including the compact/mobile preview width), open Preview and verify the canvas still has a non-zero viewport height and scrolls from header to footer.
 - [ ] Repeat with the editor in its normal/expanded width and verify scrolling remains available; selecting and editing text must still work in both sizes.
+
+
+- [ ] On Android/iPhone, drag vertically on the preview canvas and confirm the page content visibly moves (not just the browser scroll indicator).
+- [ ] Confirm touch scrolling does not hijack typing in editable text or form fields.
