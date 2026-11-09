@@ -16,7 +16,7 @@ const styleText = (styles: StyleMap = {}) => Object.entries(styles)
   .map(([key, value]) => key.replace(/[A-Z]/g, letter => '-' + letter.toLowerCase()) + ':' + String(value).replace(/[;{}]/g, ''))
   .join(';')
 
-function renderComponent(component: SiteComponent, pageFiles: Map<string, string>, assetPaths: Map<string, string>): string {
+function renderComponent(component: SiteComponent, pageFiles: Map<string, string>, assetPaths: Map<string, string>, assetAltTexts: Map<string, string>): string {
   const className = 'ds-element ds-element-' + component.id.replace(/[^a-zA-Z0-9_-]/g, '')
   const style = styleText(component.styles)
   const attrs = 'class="' + className + '"' + (style ? ' style="' + escapeHtml(style) + '"' : '')
@@ -25,16 +25,16 @@ function renderComponent(component: SiteComponent, pageFiles: Map<string, string
   if (component.kind === 'heading') return '<h2 ' + attrs + '>' + content + '</h2>'
   if (component.kind === 'text') return '<p ' + attrs + '>' + content + '</p>'
   if (component.kind === 'button') return href ? '<a ' + attrs + ' href="' + escapeHtml(href) + '">' + content + '</a>' : '<span ' + attrs + '>' + content + '</span>'
-  if (component.kind === 'image') return '<img ' + attrs + ' src="' + escapeHtml(assetPaths.get(component.content) ?? component.content) + '" alt="Website image" loading="lazy">'
+  if (component.kind === 'image') return '<img ' + attrs + ' src="' + escapeHtml(assetPaths.get(component.content) ?? component.content) + '" alt="' + escapeHtml(assetAltTexts.get(component.content) || 'Website image') + '" loading="lazy">'
   if (component.kind === 'form') return '<form class="ds-contact-form"><label>Your name<input name="name" autocomplete="name" required></label><label>Email address<input name="email" type="email" autocomplete="email" required></label><label>Your message<textarea name="message" rows="5" required></textarea></label><button type="submit">Send message</button><p class="ds-form-note" aria-live="polite"></p></form>'
   if (component.kind === 'container') return '<div ' + attrs + '>' + content + '</div>'
   return ''
 }
 
-function renderSection(section: SiteSection, pageFiles: Map<string, string>, pages: SitePage[], currentPage: SitePage, assetPaths: Map<string, string>): string {
+function renderSection(section: SiteSection, pageFiles: Map<string, string>, pages: SitePage[], currentPage: SitePage, assetPaths: Map<string, string>, assetAltTexts: Map<string, string>): string {
   if (!section.enabled) return ''
   const id = section.id.replace(/[^a-zA-Z0-9_-]/g, '')
-  const content = section.components.filter(item => item.visible).map(item => renderComponent(item, pageFiles, assetPaths)).join('\n')
+  const content = section.components.filter(item => item.visible).map(item => renderComponent(item, pageFiles, assetPaths, assetAltTexts)).join('\n')
   const navigation = section.kind === 'header' && pages.length > 1
     ? '<nav class="ds-navigation" aria-label="Main navigation">' + pages.map(page => {
       const file = pageFiles.get(page.slug) ?? 'index.html'
@@ -59,6 +59,7 @@ export function buildExportFiles(site: SiteDocument): ExportFiles {
   }
   const assets: Record<string, Uint8Array> = {}
   const assetPaths = new Map<string, string>()
+  const assetAltTexts = new Map((site.assets ?? []).map(asset => [asset.dataUrl, asset.altText]))
   let assetIndex = 0
   const allImages = site.pages.flatMap(page => page.sections.flatMap(section => section.components.filter(component => component.kind === 'image')))
   for (const image of allImages) {
@@ -73,7 +74,7 @@ export function buildExportFiles(site: SiteDocument): ExportFiles {
   const htmlFiles: Record<string, string> = {}
   for (const page of site.pages) {
     const fileName = pageFiles.get(page.slug) ?? (page.isHomePage ? 'index.html' : safeFileName(page.name) + '.html')
-    const body = page.sections.map(section => renderSection(section, pageFiles, site.pages, page, assetPaths)).join('\n')
+    const body = page.sections.map(section => renderSection(section, pageFiles, site.pages, page, assetPaths, assetAltTexts)).join('\n')
     const title = escapeHtml(page.isHomePage ? (site.metadata.title || site.name) : page.name + ' | ' + site.name)
     htmlFiles[fileName] = '<!doctype html>\n<html lang="' + escapeHtml(site.metadata.language || 'en') + '">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <meta name="description" content="' + escapeHtml(site.metadata.description || '') + '">\n  <title>' + title + '</title>\n  <link rel="stylesheet" href="styles.css">\n</head>\n<body>\n  <main class="ds-site">\n' + body + '\n  </main>\n  <script src="script.js" defer></script>\n</body>\n</html>'
   }
