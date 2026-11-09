@@ -436,3 +436,20 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .ai-builder-tips span{font-size:10px;letter-spacing:.16em;color:#d8b878}
 .ai-builder-tips p{margin:8px 0 0;color:#aaa49a;font-size:13px;line-height:1.6}
 @media(max-width:650px){.ai-builder-fields{grid-template-columns:1fr}.ai-builder-card{padding:17px}.ai-builder-intro h1{font-size:36px}}
+
+
+/* Natural-language quick edit panel */
+.ai-edit-note{margin:0 0 14px;color:#aaa49a;font-size:11px;line-height:1.6;padding:10px;border:1px solid #403827;border-radius:7px;background:#211e18}
+.ai-edit-form{display:grid;gap:10px}
+.ai-edit-form textarea{width:100%;min-height:86px;resize:vertical;padding:10px;border:1px solid #494237;border-radius:6px;background:#171612;color:#f0e7d8;font:inherit;font-size:12px;line-height:1.5}
+.ai-edit-submit{display:flex;align-items:center;justify-content:center;gap:7px;min-height:38px;border:1px solid #a98449;border-radius:6px;background:#c6a56b;color:#171512;font-size:11px;font-weight:700;cursor:pointer}
+.ai-edit-submit:disabled{opacity:.45;cursor:not-allowed}
+.ai-edit-message{padding:10px;border-radius:6px;background:#242d22;color:#c8e4bc;font-size:11px;line-height:1.5}
+.ai-edit-examples{display:grid;gap:7px;margin-top:18px}
+.ai-edit-examples strong{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#d8bd87}
+.ai-edit-examples button{padding:9px;text-align:left;border:1px solid #39342a;border-radius:6px;background:#191814;color:#d8d0c2;font-size:10px;cursor:pointer}
+.ai-edit-examples button:hover{border-color:#a98449}
+.editor-panel-tabs{overflow-x:auto}
+.editor-panel-tabs>button{flex:0 0 auto}
+.editor-mobile-add{overflow-x:auto}
+.editor-mobile-add>button{flex:0 0 auto}
