@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
-import { ArrowLeft, Eye, Monitor, Tablet, Smartphone, Undo2, Redo2, Plus, Type, Image, MousePointer2, Layers3, Settings2, Trash2, Save, Sparkles } from 'lucide-react'
+import { ArrowLeft, Eye, Monitor, Tablet, Smartphone, Undo2, Redo2, Plus, Type, Image, MousePointer2, Layers3, Settings2, Trash2, Save, Sparkles, Download, X } from 'lucide-react'
+import JSZip from 'jszip'
+import { buildExportFiles } from './exportSite'
 import { createStarterSite } from './defaultSite'
 import type { DeviceMode, SiteDocument, SiteSection } from './types'
 
@@ -32,6 +34,9 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const [showAdd, setShowAdd] = useState(false)
   const [savedAt, setSavedAt] = useState('Just saved')
   const [previewMode, setPreviewMode] = useState(false)
+  const [exportOpen, setExportOpen] = useState(false)
+  const [exportBusy, setExportBusy] = useState(false)
+  const [exportMessage, setExportMessage] = useState('')
   const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null)
   const [draggedSectionId, setDraggedSectionId] = useState<string | null>(null)
   const imageInputRef = useRef<HTMLInputElement>(null)
@@ -213,6 +218,54 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     setSite(next)
   }
 
+
+  const downloadTextFile = (fileName: string, content: string, mimeType: string) => {
+    const url = URL.createObjectURL(new Blob([content], { type: mimeType }))
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = fileName
+    document.body.appendChild(anchor)
+    anchor.click()
+    anchor.remove()
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
+
+  const downloadSourceFile = (kind: 'html' | 'css' | 'js') => {
+    const files = buildExportFiles(site)
+    if (kind === 'html') downloadTextFile('index.html', files.htmlFiles['index.html'] ?? Object.values(files.htmlFiles)[0] ?? '', 'text/html')
+    if (kind === 'css') downloadTextFile('styles.css', files.css, 'text/css')
+    if (kind === 'js') downloadTextFile('script.js', files.js, 'text/javascript')
+    setExportMessage(kind.toUpperCase() + ' source file downloaded.')
+  }
+
+  const downloadWebsiteZip = async () => {
+    setExportBusy(true)
+    setExportMessage('')
+    try {
+      const files = buildExportFiles(site)
+      const zip = new JSZip()
+      Object.entries(files.htmlFiles).forEach(([name, content]) => zip.file(name, content))
+      zip.file('styles.css', files.css)
+      zip.file('script.js', files.js)
+      zip.file('README.txt', 'Website source files for ' + site.name + '\n\nOpen index.html to view the website.\nAll pages, styles and scripts are included.\nContact forms are front-end previews and need a form service to receive submissions.\nImages stored in the website document are embedded in the HTML.\n\nCreated with DSQUARE STUDIO.\n')
+      const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } })
+      const safeName = site.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'website'
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = safeName + '-website-source.zip'
+      document.body.appendChild(anchor)
+      anchor.click()
+      anchor.remove()
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+      setExportMessage('Your complete website source ZIP is ready.')
+    } catch {
+      setExportMessage('The export could not be created. Please try again.')
+    } finally {
+      setExportBusy(false)
+    }
+  }
+
   const canvasClass = useMemo(() => `editor-canvas device-${device}`, [device])
 
   return <div className={`visual-editor ${previewMode ? "preview-mode" : ""}`}>
@@ -223,6 +276,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         <button className="editor-tool" onClick={undo} disabled={!history.length} aria-label="Undo"><Undo2 size={17} /></button>
         <button className="editor-tool" onClick={redo} disabled={!future.length} aria-label="Redo"><Redo2 size={17} /></button>
         <button className="editor-preview" onClick={() => setPreviewMode(value => !value)}><Eye size={15} /> {previewMode ? "Exit preview" : "Preview"}</button>
+        <button className="editor-preview editor-export" onClick={() => { setExportMessage(""); setExportOpen(true) }}><Download size={15} /> Export</button>
         <button className="primary-button editor-save" onClick={() => { localStorage.setItem(storageKey, JSON.stringify(site)); setSavedAt('Saved just now') }}><Save size={14} /> Save</button>
       </div>
     </header>
@@ -267,6 +321,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
       </div> : <p className="editor-no-selection">Choose a section on the canvas.</p>}</aside>
     </div>
     <div className="editor-mobile-add"><button onClick={() => setShowAdd(true)}><Plus size={16} /> Add section</button><button onClick={() => setPanel('layers')}><Layers3 size={16} /> Layers</button><button onClick={() => setPanel('settings')}><Settings2 size={16} /> Settings</button></div>
+    {exportOpen && <div className="export-backdrop" role="presentation" onClick={() => !exportBusy && setExportOpen(false)}><section className="export-dialog" role="dialog" aria-modal="true" aria-labelledby="export-title" onClick={event => event.stopPropagation()}><button className="export-close" aria-label="Close export" onClick={() => setExportOpen(false)} disabled={exportBusy}><X size={18} /></button><div className="export-kicker">YOUR WEBSITE · SOURCE CODE</div><h2 id="export-title">Download your website</h2><p>Get the actual HTML, CSS and JavaScript files. The complete ZIP includes every page, styling and scripts needed to run the website.</p><button className="export-zip-button" onClick={downloadWebsiteZip} disabled={exportBusy}><Download size={17} /> {exportBusy ? "Preparing ZIP..." : "Download complete website ZIP"}</button><div className="export-file-heading">Or download individual source files</div><div className="export-file-grid"><button onClick={() => downloadSourceFile("html")}>index.html <span>Website structure</span></button><button onClick={() => downloadSourceFile("css")}>styles.css <span>Design and layout</span></button><button onClick={() => downloadSourceFile("js")}>script.js <span>Interactions</span></button></div>{exportMessage && <div className="export-status" role="status">{exportMessage}</div>}<small>Contact forms are exported as front-end previews. Connect a form service before using them to receive messages.</small></section></div>}
     {showAdd && <div className="editor-add-sheet"><div><strong>Add a section</strong><button onClick={() => setShowAdd(false)}>Close</button></div>{sectionOptions.map(item => <button key={item.kind} onClick={() => addSection(item.kind)}>{item.label}<Plus size={15} /></button>)}</div>}
   </div>
 }
