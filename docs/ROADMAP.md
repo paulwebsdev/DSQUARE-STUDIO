@@ -148,3 +148,12 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Add expanded component typography controls including font family, line height, letter spacing and text transform.
 - [x] Save selected elements as reusable project-library elements and insert them into other sections.
 - [ ] Validate touch interactions and exported layout/effect styling on physical devices before production.
+
+
+## AI website builder — first intake and draft milestone
+- [x] Add an AI-builder workspace with a structured website brief, brand name, category, design direction and requested page list.
+- [x] Create a multi-page editable starter project from the brief and open it directly in the visual editor.
+- [x] Preserve the brief as site metadata and starter page copy for further editing.
+- [ ] Connect a real AI provider through a secure server-side adapter; current generation is a built-in draft generator, not an AI model call.
+- [ ] Add AI-generated sitemap proposals, content generation, image suggestions and iterative edit requests.
+- [ ] Add validation and tests for generated multi-page site documents.
