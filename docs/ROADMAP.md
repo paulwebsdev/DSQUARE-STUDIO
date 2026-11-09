@@ -333,3 +333,8 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Block unsafe external/data URLs in exported CSS values.
 - [x] Fall back safely when an embedded section background image cannot be packaged.
 - [ ] Verify image replacement, keyboard editing and downloads on physical Android devices.
+
+- [x] Validate missing, unsupported and oversized image uploads with clear feedback.
+- [x] Clear replacement mode after cancelled or failed image reads and rejected uploads.
+- [x] Restore keyboard focus to the Export button when the export dialog closes.
+- [x] Handle individual source-file export errors without crashing the editor.
