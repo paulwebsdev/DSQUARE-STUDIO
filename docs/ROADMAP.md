@@ -4,7 +4,8 @@
 - [x] Expand the library to 21 website categories with 10 named starter options per category (210 options total).
 - [x] Add a dedicated School category with 10 school-specific starter concepts and school-focused page navigation.
 - [x] Give template variants distinct colour combinations, typography pairings, button shapes, spacing and selected section-order/layout treatments.
-- [ ] Continue developing category-specific section compositions, imagery and complete inner-page designs so each option feels purpose-built.
+- [x] Add category-matched hero imagery, differentiated homepage section orders, premium typography, colour palettes and responsive inner-page starter structures.
+- [ ] Build fully bespoke category-specific inner-page modules (for example product grids, school admissions, restaurant menus and property listings).
 - [ ] Verify all 210 options can be selected and opened in the visual editor on desktop and Android.
 
 
@@ -67,7 +68,7 @@
 
 ## Current milestone
 
-The dashboard, browser-local project/client management, expanded premium template library and v1 provider-neutral site document schema are in place. The library now covers 19 website categories and generates editable multi-page drafts with category-specific brand styling and starter copy. The visual editor supports section editing, individual text/heading/button selection and content editing, image rendering, responsive device previews and a scrollable preview where text can also be edited in place. Template preview cards are still illustrative rather than live renderings of the finished websites. Backend persistence, authentication and production publishing remain planned. All service-dependent features remain clearly marked as planned until their backend integrations exist.
+The dashboard, browser-local project/client management, expanded premium template library and v1 provider-neutral site document schema are in place. The library now offers 210 named options across 21 categories, with category-matched imagery, differentiated homepage treatments and editable multi-page drafts. Inner pages currently use a shared premium structure with category-aware copy; fully bespoke modules remain planned. The visual editor supports section editing, individual text/heading/button selection and content editing, image rendering, responsive device previews and a scrollable preview where text can also be edited in place. Template preview cards are still illustrative rather than live renderings of the finished websites. Backend persistence, authentication and production publishing remain planned. All service-dependent features remain clearly marked as planned until their backend integrations exist.
 
 
 ### Project-specific editor documents
@@ -167,6 +168,8 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Add expanded component typography controls including font family, line height, letter spacing and text transform.
 - [x] Save selected elements as reusable project-library elements and insert them into other sections.
 - [ ] Validate touch interactions and exported layout/effect styling on physical devices before production.
+- [x] Add eight direct image-resize handles for corner and edge sizing, with per-device dimensions and position adjustments.
+- [x] Cancel an interrupted image gesture cleanly instead of saving a partial pointer-cancel movement.
 
 
 ## AI website builder — first intake and draft milestone
