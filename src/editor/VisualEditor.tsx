@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import type { MouseEvent } from 'react'
 import { ArrowLeft, Eye, Monitor, Tablet, Smartphone, Undo2, Redo2, Plus, Type, Image, MousePointer2, Layers3, Settings2, Trash2, ChevronDown, Save, Sparkles } from 'lucide-react'
 import { createStarterSite } from './defaultSite'
 import type { DeviceMode, SiteDocument, SiteSection } from './types'
@@ -29,10 +30,12 @@ export default function VisualEditor({ onExit }: Props) {
   const [showAdd, setShowAdd] = useState(false)
   const [savedAt, setSavedAt] = useState('Just saved')
   const [previewMode, setPreviewMode] = useState(false)
+  const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null)
 
   const page = site.pages[0]
   const selected = page?.sections.find(section => section.id === selectedId) ?? page?.sections[0]
-  const selectedText = selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
+  const selectedComponent = selected?.components.find(item => item.id === selectedComponentId)
+  const selectedText = selectedComponent?.content ?? selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
 
   useEffect(() => {
     localStorage.setItem('dsquare-editor-document', JSON.stringify(site))
@@ -132,8 +135,8 @@ export default function VisualEditor({ onExit }: Props) {
       <main className="editor-stage">
         <div className="editor-stage-toolbar"><div><span className="editor-page-pill">Home page <ChevronDown size={13} /></span><span className="editor-stage-muted">/</span><span className="editor-stage-muted">Editing</span></div><div className="device-switch"><button className={device === 'desktop' ? 'selected' : ''} onClick={() => setDevice('desktop')} aria-label="Desktop preview"><Monitor size={16} /></button><button className={device === 'tablet' ? 'selected' : ''} onClick={() => setDevice('tablet')} aria-label="Tablet preview"><Tablet size={16} /></button><button className={device === 'mobile' ? 'selected' : ''} onClick={() => setDevice('mobile')} aria-label="Mobile preview"><Smartphone size={16} /></button></div></div>
         <div className="editor-canvas-wrap"><div className={canvasClass}>
-          {page.sections.filter(section => section.enabled).map(section => <section key={section.id} onClick={() => setSelectedId(section.id)} className={`site-preview-section ${selected?.id === section.id ? 'is-selected' : ''} section-${section.kind}`} style={section.styles}>
-            {section.components.filter(item => item.visible).map(item => item.kind === 'heading' ? <h2 key={item.id} style={item.styles}>{item.content}</h2> : item.kind === 'text' ? <p key={item.id} style={item.styles}>{item.content}</p> : item.kind === 'button' ? <button key={item.id} style={item.styles}>{item.content}</button> : null)}
+          {page.sections.filter(section => section.enabled).map(section => <section key={section.id} onClick={() => { setSelectedId(section.id); setSelectedComponentId(null) }} className={`site-preview-section ${selected?.id === section.id ? 'is-selected' : ''} section-${section.kind}`} style={section.styles}>
+            {section.components.filter(item => item.visible).map(item => { const selectItem = (event: MouseEvent) => { event.stopPropagation(); setSelectedId(section.id); setSelectedComponentId(item.id) }; const selectedClass = selectedComponentId === item.id ? 'component-selected' : ''; return item.kind === 'heading' ? <h2 key={item.id} className={selectedClass} onClick={selectItem} style={item.styles}>{item.content}</h2> : item.kind === 'text' ? <p key={item.id} className={selectedClass} onClick={selectItem} style={item.styles}>{item.content}</p> : item.kind === 'button' ? <button key={item.id} className={selectedClass} onClick={selectItem} style={item.styles}>{item.content}</button> : item.kind === 'image' ? <img key={item.id} className={selectedClass} onClick={selectItem} style={item.styles} src={item.content} alt="Website content" /> : null })}
             {section.components.length === 0 && <span className="site-preview-placeholder">{section.name}</span>}
             <span className="section-selection-label">{section.name}</span>
           </section>)}
@@ -141,7 +144,7 @@ export default function VisualEditor({ onExit }: Props) {
       </main>
       <aside className="editor-right-panel"><div className="editor-properties-heading"><div><Settings2 size={16} /><strong>Properties</strong></div><span>SECTION</span></div>{selected ? <div className="editor-properties">
         <label className="property-label">Section name<input value={selected.name} onChange={e => updateSection(selected.id, section => ({ ...section, name: e.target.value }))} /></label>
-        <label className="property-label">Heading text<textarea rows={3} value={selectedText} onChange={e => updateHeading(e.target.value)} /></label>
+        <label className="property-label">{selectedComponent ? `${selectedComponent.kind} content` : 'Heading text'}<textarea rows={3} value={selectedText} onChange={e => updateHeading(e.target.value)} /></label>
         <label className="property-label">Background colour<div className="colour-input"><input type="color" value={selected.styles.backgroundColor ?? '#ffffff'} onChange={e => updateSection(selected.id, section => ({ ...section, styles: { ...section.styles, backgroundColor: e.target.value } }))} /><span>{selected.styles.backgroundColor ?? '#ffffff'}</span></div></label>
         <label className="property-label">Section spacing<select value={selected.styles.padding ?? '72px 8%'} onChange={e => updateSection(selected.id, section => ({ ...section, styles: { ...section.styles, padding: e.target.value } }))}><option value="40px 6%">Compact</option><option value="72px 8%">Comfortable</option><option value="112px 8%">Spacious</option></select></label>
         <div className="property-actions"><button onClick={() => moveSection(-1)} title="Move up">↑ Move up</button><button onClick={() => moveSection(1)} title="Move down">↓ Move down</button></div>
