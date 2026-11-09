@@ -26,7 +26,7 @@ const quickStarts = [
   { title: 'Build visually', description: 'Create your layout with sections and drag-and-drop blocks.', icon: LayoutDashboard, tag: 'VISUAL EDITOR' },
   { title: 'Generate with AI', description: 'Describe your idea and shape it into a website.', icon: Sparkles, tag: 'AI WEBSITE BUILDER' },
 ]
-const categories = ['Business', 'Portfolio', 'E-commerce', 'Blog / Magazine', 'Landing page', 'Agency', 'Restaurant', 'Education', 'School', 'Community', 'Real Estate', 'Healthcare', 'Beauty & Wellness', 'Hotel & Travel', 'Finance', 'Technology / SaaS', 'Non-profit', 'Events', 'Construction', 'Legal', 'Other', 'Automotive', 'Fitness & Sports', 'Wedding', 'Pet Care', 'Music & Entertainment', 'Personal Services']
+const categories = ['Business', 'Portfolio', 'E-commerce', 'Blog / Magazine', 'Landing page', 'Agency', 'Restaurant', 'Education', 'School', 'Community', 'Real Estate', 'Healthcare', 'Beauty & Wellness', 'Hotel & Travel', 'Finance', 'Technology / SaaS', 'Non-profit', 'Events', 'Construction', 'Legal', 'Automotive', 'Fitness & Sports', 'Wedding', 'Pet Care', 'Music & Entertainment', 'Personal Services', 'Other']
 const baseTemplates: SiteTemplate[] = [
   { id:'agency', name:'Atelier Creative', category:'Agency', description:'A refined agency experience with a confident hero, services, selected work, proof and a strong enquiry journey.', style:'Editorial · Premium', pages:['Home','About','Services','Work','Contact'], gradient:'linear-gradient(135deg,#25231f,#b18a51 52%,#171614)', featured:true },
   { id:'business', name:'Northstar Corporate', category:'Business', description:'A complete, polished company website with clear positioning, service detail, trust signals and contact paths.', style:'Corporate · Refined', pages:['Home','About','Services','Contact'], gradient:'linear-gradient(135deg,#172b35,#648b91 55%,#111a20)', featured:true },
@@ -103,7 +103,7 @@ const templates: SiteTemplate[] = categories.flatMap(category => {
   const profile = templateProfiles[category];
   const base = baseTemplates.find(item => item.id === profile.base)!;
   return profile.names.map((name, index) => ({
-    id: `${profile.base}-v${String(index + 1).padStart(2, '0')}`,
+    id: `${category.toLowerCase().replace(/[^a-z0-9]+/g, '-') }--${profile.base}-v${String(index + 1).padStart(2, '0')}`,
     baseId: profile.base,
     name,
     category,
