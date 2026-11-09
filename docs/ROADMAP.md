@@ -338,3 +338,10 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Clear replacement mode after cancelled or failed image reads and rejected uploads.
 - [x] Restore keyboard focus to the Export button when the export dialog closes.
 - [x] Handle individual source-file export errors without crashing the editor.
+
+
+## Export package usability batch — 2026-11-09
+- [x] Show live percentage progress while the website ZIP is being compressed.
+- [x] Expand the exported README with getting-started steps, included page filenames, asset count and clear service limitations.
+- [x] Keep the ZIP download object URL alive longer to improve download handoff reliability on mobile browsers.
+- [ ] Verify ZIP progress, README contents and completed downloads on Android and desktop browsers.
