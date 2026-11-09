@@ -327,3 +327,6 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .add-image-control{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;margin:8px 0 14px}
 .visually-hidden-image-input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)}
 @media(max-width:600px){.site-page-navigation{gap:8px}.site-page-navigation button{font-size:10px}.site-preview-section[draggable="true"]{cursor:default}}
+
+/* Professional editor batch 2 */
+.component-insert-tools{margin:8px 0 16px;padding:12px;border:1px solid #34312b;border-radius:7px;background:#1b1a18}.component-insert-tools>strong{display:block;margin-bottom:9px;color:#e5d4ae;font-size:9px}.component-insert-tools>div{display:grid;grid-template-columns:1fr 1fr;gap:6px}.component-insert-tools button{padding:8px 5px;border:1px solid #51432d;border-radius:5px;color:#e5d1a6;background:#211e18;font-size:8px}.site-preview-form{display:grid;gap:10px;max-width:480px;padding:18px;border:1px solid #ddd;border-radius:8px;background:#fafafa}.site-preview-form input,.site-preview-form textarea{width:100%;padding:11px;border:1px solid #ccc;border-radius:5px;font:inherit}.site-preview-form button{padding:11px 16px;border-radius:5px;color:white;background:#24211d}
