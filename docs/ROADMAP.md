@@ -126,3 +126,9 @@ Note: media assets remain in browser-local project storage for this prototype; a
 ### Responsive element layout controls
 - [x] Add per-device width, maximum width, height, padding, margin and corner-radius controls for selected elements.
 - [x] Store layout overrides independently for desktop, tablet and mobile.
+
+
+## Image layout controls
+- [x] Add image-specific fit modes: cover/crop, contain, stretch and original size.
+- [x] Add image focal positioning presets (centre, edges and corners).
+- [x] Store controls in per-device responsive styles so desktop/tablet/mobile can differ.
