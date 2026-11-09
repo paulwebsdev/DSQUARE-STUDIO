@@ -621,13 +621,13 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
                 const destination = item.linkTo.trim()
                 if (destination.startsWith('/') || destination.startsWith('#')) {
                   event.preventDefault()
-                  const targetSlug = destination.replace(/^\\//, '').replace(/\\/$/, '')
-                  const targetPage = site.pages.find(candidate => candidate.slug.replace(/^\\//, '').replace(/\\/$/, '') === targetSlug || (targetSlug === '' && candidate.isHomePage))
+                  const targetSlug = destination.startsWith('#') ? '' : destination.split('/').filter(Boolean).join('/')
+                  const targetPage = site.pages.find(candidate => candidate.slug.split('/').filter(Boolean).join('/') === targetSlug || (targetSlug === '' && candidate.isHomePage))
                   if (targetPage) { setActivePageId(targetPage.id); setSelectedId(targetPage.sections[1]?.id ?? targetPage.sections[0]?.id ?? '') }
                   else if (destination.startsWith('#')) document.getElementById(destination.slice(1))?.scrollIntoView({behavior:'smooth'})
                   return
                 }
-                if (/^https?:\\/\\//i.test(destination) || destination.startsWith('mailto:') || destination.startsWith('tel:')) {
+                if (destination.startsWith('https://') || destination.startsWith('http://') || destination.startsWith('mailto:') || destination.startsWith('tel:')) {
                   event.preventDefault()
                   if (item.openInNewTab) window.open(destination, '_blank', 'noopener,noreferrer')
                   else window.location.href = destination
