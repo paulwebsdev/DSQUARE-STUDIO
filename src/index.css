@@ -570,3 +570,9 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .button-hover-controls small{font-size:9px;line-height:1.5;color:#a99d87}
 .site-preview-section button{transition:background-color .18s ease,color .18s ease,transform .18s ease,box-shadow .18s ease}
 @media(max-width:420px){.button-library-grid{grid-template-columns:1fr}}
+
+/* Premium template gallery responsiveness */
+.site-preview-section.section-gallery{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start}
+.site-preview-section.section-gallery>img{width:100%;height:clamp(150px,22vw,280px);object-fit:cover;border-radius:inherit}
+@media(max-width:760px){.site-preview-section.section-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.site-preview-section.section-gallery>img{height:190px}}
+@media(max-width:420px){.site-preview-section.section-gallery{grid-template-columns:1fr;gap:10px}.site-preview-section.section-gallery>img{height:220px}}
