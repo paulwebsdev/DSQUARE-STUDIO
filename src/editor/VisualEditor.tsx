@@ -97,16 +97,11 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
       if (event.cancelable) event.preventDefault()
       scrollport.scrollTop = startScrollTop + deltaY
     }
-    const onTouchEnd = () => {}
     scrollport.addEventListener('touchstart', onTouchStart, { passive: true })
     scrollport.addEventListener('touchmove', onTouchMove, { passive: false })
-    scrollport.addEventListener('touchend', onTouchEnd, { passive: true })
-    scrollport.addEventListener('touchcancel', onTouchEnd, { passive: true })
     return () => {
       scrollport.removeEventListener('touchstart', onTouchStart)
       scrollport.removeEventListener('touchmove', onTouchMove)
-      scrollport.removeEventListener('touchend', onTouchEnd)
-      scrollport.removeEventListener('touchcancel', onTouchEnd)
     }
   }, [previewMode])
 
