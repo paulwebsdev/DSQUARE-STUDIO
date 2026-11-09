@@ -79,6 +79,8 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
   const variantNumber = Number(templateId.match(/-v(\d+)$/)?.[1] ?? '1')
   const baseTemplateId = (templateId.includes('--') ? templateId.split('--').pop()! : templateId).replace(/-v\d+$/, '')
   const site = createStarterSite(name, category)
+  site.metadata.templateVariant = variantNumber
+  site.metadata.motionProfile = category === 'Business' ? 'business-' + variantNumber : category.toLowerCase().replace(/[^a-z0-9]+/g, '-')
   const templateHeroImages: Record<string, string> = {
     agency: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=85',
     business: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1600&q=85',
@@ -395,14 +397,16 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
   if (category === 'Business') Object.assign(selectedTheme, businessArtDirections[(variantNumber - 1) % businessArtDirections.length])
   const accentVariants = ['#b18a51','#6d8f9a','#b16d68','#8a9a6a','#9a82b5','#b17e58','#648c83','#8c789e','#b59a63','#7186a1']
   const primaryVariants = ['#24211d','#243b45','#35252d','#263b30','#302b43','#3d2b24','#243d3b','#342d3b','#29251e','#25344a']
-  selectedTheme.accent = accentVariants[(variantNumber - 1) % accentVariants.length]
-  selectedTheme.primary = primaryVariants[(variantNumber - 1) % primaryVariants.length]
   const headingFonts = ['Georgia', 'Manrope', 'Inter', 'Playfair Display', 'Arial', 'Georgia', 'Manrope', 'Inter', 'DM Sans', 'Georgia']
   const bodyFonts = ['Inter', 'Arial', 'Manrope', 'Inter', 'DM Sans', 'Lato', 'Inter', 'Arial', 'Manrope', 'Inter']
   const radiusVariants = ['4px', '12px', '0px', '18px', '8px', '2px', '24px', '6px', '14px', '999px']
-  selectedTheme.heading = headingFonts[(variantNumber - 1) % headingFonts.length]
-  selectedTheme.body = bodyFonts[(variantNumber - 1) % bodyFonts.length]
-  selectedTheme.radius = radiusVariants[(variantNumber - 1) % radiusVariants.length]
+  if (category !== 'Business') {
+    selectedTheme.accent = accentVariants[(variantNumber - 1) % accentVariants.length]
+    selectedTheme.primary = primaryVariants[(variantNumber - 1) % primaryVariants.length]
+    selectedTheme.heading = headingFonts[(variantNumber - 1) % headingFonts.length]
+    selectedTheme.body = bodyFonts[(variantNumber - 1) % bodyFonts.length]
+    selectedTheme.radius = radiusVariants[(variantNumber - 1) % radiusVariants.length]
+  }
   site.theme = { primaryColor:selectedTheme.primary, accentColor:selectedTheme.accent, backgroundColor:selectedTheme.background, textColor:selectedTheme.text, headingFont:selectedTheme.heading, bodyFont:selectedTheme.body, buttonRadius:selectedTheme.radius }
   const sections: Array<[SiteSection['kind'], string, string, string?]> = [...(categoryContent[category] ?? content[baseTemplateId] ?? content.business)]
 
