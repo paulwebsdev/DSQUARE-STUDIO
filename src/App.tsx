@@ -109,7 +109,7 @@ function App() {
     pageNames.forEach((pageName, index) => {
       if (index === 0) return
       const pageId = makeId()
-      document.pages.push({ id: pageId, name: pageName, slug: pageName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), sections: [
+      document.pages.push({ id: pageId, name: pageName, isHomePage: false, slug: pageName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), sections: [
         { id: makeId(), kind: 'header', name: 'Header', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: name.toUpperCase(), visible: true, styles: {} }] },
         { id: makeId(), kind: 'hero', name: pageName, enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: pageName, visible: true, styles: {} }, { id: makeId(), kind: 'text', content: aiPrompt.trim(), visible: true, styles: {} }] },
         { id: makeId(), kind: 'contact', name: 'Contact', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: 'Let’s connect', visible: true, styles: {} }] },
