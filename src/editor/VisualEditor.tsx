@@ -32,7 +32,6 @@ export default function VisualEditor({ onExit }: Props) {
 
   const page = site.pages[0]
   const selected = page?.sections.find(section => section.id === selectedId) ?? page?.sections[0]
-  const selectedComponent = selected?.components.find(item => item.id === selectedComponentId)
   const selectedText = selectedComponent?.content ?? selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
 
   useEffect(() => {
@@ -142,7 +141,7 @@ export default function VisualEditor({ onExit }: Props) {
       </main>
       <aside className="editor-right-panel"><div className="editor-properties-heading"><div><Settings2 size={16} /><strong>Properties</strong></div><span>SECTION</span></div>{selected ? <div className="editor-properties">
         <label className="property-label">Section name<input value={selected.name} onChange={e => updateSection(selected.id, section => ({ ...section, name: e.target.value }))} /></label>
-        <label className="property-label">{selectedComponent ? `${selectedComponent.kind} content` : "Heading text"}<textarea rows={3} value={selectedText} onChange={e => updateHeading(e.target.value)} /></label>
+        <label className="property-label">Heading text<textarea rows={3} value={selectedText} onChange={e => updateHeading(e.target.value)} /></label>
         <label className="property-label">Background colour<div className="colour-input"><input type="color" value={selected.styles.backgroundColor ?? '#ffffff'} onChange={e => updateSection(selected.id, section => ({ ...section, styles: { ...section.styles, backgroundColor: e.target.value } }))} /><span>{selected.styles.backgroundColor ?? '#ffffff'}</span></div></label>
         <label className="property-label">Section spacing<select value={selected.styles.padding ?? '72px 8%'} onChange={e => updateSection(selected.id, section => ({ ...section, styles: { ...section.styles, padding: e.target.value } }))}><option value="40px 6%">Compact</option><option value="72px 8%">Comfortable</option><option value="112px 8%">Spacious</option></select></label>
         <div className="property-actions"><button onClick={() => moveSection(-1)} title="Move up">↑ Move up</button><button onClick={() => moveSection(1)} title="Move down">↓ Move down</button></div>
