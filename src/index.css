@@ -301,3 +301,9 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .visual-editor.preview-mode .site-preview-section.is-selected{outline:0}
 .visual-editor.preview-mode .section-selection-label{display:none}
 @media(max-width:600px){.visual-editor.preview-mode .editor-stage{height:calc(100vh - 55px)}}
+
+
+/* Individual canvas element selection */
+.site-preview-section .component-selected{outline:2px solid #d2a64f;outline-offset:3px;border-radius:2px;cursor:text}
+.site-preview-section img{display:block;max-width:100%;height:auto;object-fit:cover}
+.visual-editor.preview-mode .component-selected{outline:0}
