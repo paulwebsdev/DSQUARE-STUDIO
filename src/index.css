@@ -285,3 +285,19 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .editor-mobile-add,.editor-add-sheet{display:none}
 @media(max-width:900px){.editor-workspace{grid-template-columns:205px minmax(0,1fr)}.editor-right-panel{display:none}.editor-topbar{padding:0 10px}.editor-project-name{display:none}}
 @media(max-width:600px){.editor-topbar{height:55px}.editor-back span{display:none}.editor-back{width:34px;height:34px;padding:0}.editor-top-actions{gap:4px}.editor-preview{font-size:0;width:34px;height:33px;padding:0}.editor-preview svg{width:16px;height:16px}.editor-save{font-size:0;width:35px;padding:0}.editor-save svg{width:15px}.editor-workspace{display:block;position:relative}.editor-left-panel{display:none}.editor-stage{height:100%;padding-bottom:49px}.editor-canvas-wrap{padding:12px 7px}.editor-stage-toolbar{height:43px;padding:0 9px}.editor-mobile-add{height:49px;position:absolute;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #302e28;background:#141413}.editor-mobile-add button{display:flex;align-items:center;justify-content:center;gap:6px;border:0;color:#c9b98f;background:transparent;font-size:9px}.editor-add-sheet{position:absolute;z-index:5;bottom:49px;left:8px;right:8px;display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:13px;border:1px solid #5b4b31;border-radius:10px;background:#171614;box-shadow:0 10px 40px #000}.editor-add-sheet>div{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;color:#eee9df;font-size:11px}.editor-add-sheet>div button{border:0;color:#d7bd88;background:transparent;font-size:9px}.editor-add-sheet>button{display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid #34312b;border-radius:6px;color:#e5ddcf;background:#201f1c;font-size:9px}}
+
+
+/* Editor preview mode */
+.visual-editor.preview-mode .editor-workspace{display:block;background:#fff}
+.visual-editor.preview-mode .editor-left-panel,
+.visual-editor.preview-mode .editor-right-panel,
+.visual-editor.preview-mode .editor-stage-toolbar,
+.visual-editor.preview-mode .editor-mobile-add,
+.visual-editor.preview-mode .editor-add-sheet{display:none!important}
+.visual-editor.preview-mode .editor-stage{height:calc(100vh - 62px);background:#fff;padding:0}
+.visual-editor.preview-mode .editor-canvas-wrap{display:block;overflow:auto;height:100%;padding:0;background:#fff}
+.visual-editor.preview-mode .editor-canvas{width:100%;max-width:none;min-height:100%;box-shadow:none}
+.visual-editor.preview-mode .site-preview-section{cursor:default}
+.visual-editor.preview-mode .site-preview-section.is-selected{outline:0}
+.visual-editor.preview-mode .section-selection-label{display:none}
+@media(max-width:600px){.visual-editor.preview-mode .editor-stage{height:calc(100vh - 55px)}}
