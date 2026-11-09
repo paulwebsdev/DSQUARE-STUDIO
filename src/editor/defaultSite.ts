@@ -100,6 +100,15 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     construction: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=85',
     legal: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1600&q=85',
   }
+  const categoryHeroImages: Record<string, string> = {
+    Automotive: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=85',
+    'Fitness & Sports': 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=85',
+    Wedding: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=85',
+    'Pet Care': 'https://images.unsplash.com/photo-1548199973-03cce0BBC?auto=format&fit=crop&w=1600&q=85',
+    'Music & Entertainment': 'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=1600&q=85',
+    'Personal Services': 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=85',
+  }
+  const heroImage = categoryHeroImages[category] ?? templateHeroImages[baseTemplateId] ?? templateHeroImages.business
   const makeSection = (kind: SiteSection['kind'], title: string, body: string, button?: string, tone = '#ffffff'): SiteSection => ({
     id: createId('section'),
     kind,
@@ -113,7 +122,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
       ...(kind === 'hero' ? [{
         id: createId('image'),
         kind: 'image' as const,
-        content: templateHeroImages[baseTemplateId] ?? templateHeroImages.business,
+        content: heroImage,
         visible: true,
         styles: { width: '100%', height: 'min(48vw, 440px)', maxWidth: '1120px', objectFit: 'cover', borderRadius: '18px', margin: '36px auto 0' },
       }] : []),
@@ -283,7 +292,15 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     construction: { primary:'#39362f', accent:'#a58b5f', background:'#faf9f5', text:'#38352f', heading:'Manrope', body:'Inter', radius:'4px' },
     legal: { primary:'#252f3c', accent:'#988a76', background:'#fafaf8', text:'#303844', heading:'Georgia', body:'Inter', radius:'3px' },
   }
-  const selectedTheme = themes[baseTemplateId] ?? themes.business
+  const categoryThemes: Record<string, { primary: string; accent: string; background: string; text: string; heading: string; body: string; radius: string }> = {
+    Automotive: { primary:'#202b35', accent:'#c18a45', background:'#f7f8f9', text:'#303943', heading:'Manrope', body:'Inter', radius:'5px' },
+    'Fitness & Sports': { primary:'#172f2a', accent:'#a4bd62', background:'#f7faf6', text:'#2d3c36', heading:'Manrope', body:'Inter', radius:'12px' },
+    Wedding: { primary:'#493b3a', accent:'#b88e83', background:'#fcf8f5', text:'#514541', heading:'Georgia', body:'Inter', radius:'3px' },
+    'Pet Care': { primary:'#35443a', accent:'#d19b64', background:'#fbfaf5', text:'#3e4940', heading:'Manrope', body:'Inter', radius:'12px' },
+    'Music & Entertainment': { primary:'#28243b', accent:'#c17a52', background:'#faf8f7', text:'#383443', heading:'Manrope', body:'Inter', radius:'5px' },
+    'Personal Services': { primary:'#293b49', accent:'#b18a51', background:'#f8fafb', text:'#34414a', heading:'Manrope', body:'Inter', radius:'6px' },
+  }
+  const selectedTheme = { ...(categoryThemes[category] ?? themes[baseTemplateId] ?? themes.business) }
   const accentVariants = ['#b18a51','#6d8f9a','#b16d68','#8a9a6a','#9a82b5','#b17e58','#648c83','#8c789e','#b59a63','#7186a1']
   const primaryVariants = ['#24211d','#243b45','#35252d','#263b30','#302b43','#3d2b24','#243d3b','#342d3b','#29251e','#25344a']
   selectedTheme.accent = accentVariants[(variantNumber - 1) % accentVariants.length]
@@ -430,6 +447,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     const slug = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'page'
     const pageHeading = label === 'Contact' ? 'Let’s start a conversation.' : label === 'Home' ? 'Welcome to ' + name + '.' : label
     const pageBody = categoryPageDescriptions[category]?.[label] ?? pageDescriptions[label] ?? 'Discover more about ' + name + ', our approach and how we can help you take the next step.'
+    const pageHighlights = innerPageHighlights[category] ?? innerPageHighlights[baseTemplateId] ?? ['Thoughtful expertise','A considered experience shaped around your needs.','Clear information','Helpful guidance for your next step.']
     const pageSections: SiteSection[] = [
       {
         id:createId('section'), kind:'header', name:'Navigation', enabled:true,
@@ -443,7 +461,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
           {...component('text','DISCOVER  /  '+label.toUpperCase()),id:createId('eyebrow'),styles:{fontSize:'0.75rem',fontWeight:'800',letterSpacing:'0.18em',color:selectedTheme.accent,maxWidth:'100%'}},
           {...component('heading',pageHeading),id:createId('heading'),styles:{fontFamily:selectedTheme.heading,fontSize:'clamp(2.5rem, 5.5vw, 4.8rem)',fontWeight:'750',lineHeight:'1.08',color:selectedTheme.primary,maxWidth:'900px'}},
           {...component('text',pageBody),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.1rem',lineHeight:'1.8',color:selectedTheme.text,maxWidth:'720px'}},
-          {id:createId('image'),kind:'image',content:templateHeroImages[baseTemplateId] ?? templateHeroImages.business,visible:true,styles:{width:'100%',height:'min(42vw, 360px)',maxWidth:'1120px',objectFit:'cover',borderRadius:selectedTheme.radius,margin:'30px auto 0'}},
+          {id:createId('image'),kind:'image',content:heroImage,visible:true,styles:{width:'100%',height:'min(42vw, 360px)',maxWidth:'1120px',objectFit:'cover',borderRadius:selectedTheme.radius,margin:'30px auto 0'}},
         ],
       },
       {
@@ -451,9 +469,9 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
         styles:{padding:'clamp(56px, 7vw, 88px) 8%',backgroundColor:selectedTheme.background,layout:'grid',gridColumns:'2'},
         components:[
           {...component('heading',label==='About'?'The thinking behind '+name:'A closer look'),id:createId('heading'),styles:{fontFamily:selectedTheme.heading,fontSize:'clamp(1.8rem, 3vw, 2.8rem)',fontWeight:'750',color:selectedTheme.primary,maxWidth:'760px'}},
-          {...component('text',(innerPageHighlights[category] ?? innerPageHighlights[baseTemplateId] ?? ['','A considered experience, shaped around what matters most.','','Discover useful information and find the right next step with '+name+'.'])[1]),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.05rem',lineHeight:'1.8',color:selectedTheme.text,maxWidth:'680px'}},
-          {...component('text',(innerPageHighlights[baseTemplateId] ?? ['Thoughtful expertise','A considered experience shaped around your needs.','Clear information','Helpful guidance for your next step.'])[0]),id:createId('feature-one'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
-          {...component('text',(innerPageHighlights[baseTemplateId] ?? ['Thoughtful expertise','A considered experience shaped around your needs.','Clear information','Helpful guidance for your next step.'])[2]),id:createId('feature-two'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
+          {...component('text',pageHighlights[1]),id:createId('text'),styles:{fontFamily:selectedTheme.body,fontSize:'1.05rem',lineHeight:'1.8',color:selectedTheme.text,maxWidth:'680px'}},
+          {...component('text',pageHighlights[0]),id:createId('feature-one'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
+          {...component('text',pageHighlights[2]),id:createId('feature-two'),styles:{fontWeight:'750',fontSize:'1.1rem',color:selectedTheme.primary,backgroundColor:palette[baseTemplateId] ?? '#f3eee5',padding:'24px',borderRadius:selectedTheme.radius}},
         ],
       },
       {
