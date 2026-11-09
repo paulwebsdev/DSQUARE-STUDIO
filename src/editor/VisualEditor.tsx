@@ -32,7 +32,7 @@ export default function VisualEditor({ onExit }: Props) {
 
   const page = site.pages[0]
   const selected = page?.sections.find(section => section.id === selectedId) ?? page?.sections[0]
-  const selectedText = selectedComponent?.content ?? selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
+  const selectedText = selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
 
   useEffect(() => {
     localStorage.setItem('dsquare-editor-document', JSON.stringify(site))
