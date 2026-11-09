@@ -32,6 +32,7 @@ export type SiteComponent = {
   styles: StyleMap
   visible: boolean
   linkTo?: string
+  openInNewTab?: boolean
   responsiveStyles?: Partial<Record<DeviceMode, StyleMap>>
 }
 
