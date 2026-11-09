@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
 import { ArrowLeft, Eye, Monitor, Tablet, Smartphone, Undo2, Redo2, Plus, Type, Image, MousePointer2, Layers3, Settings2, Trash2, Save, Sparkles } from 'lucide-react'
 import { createStarterSite } from './defaultSite'
@@ -33,6 +33,8 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const [savedAt, setSavedAt] = useState('Just saved')
   const [previewMode, setPreviewMode] = useState(false)
   const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null)
+  const [draggedSectionId, setDraggedSectionId] = useState<string | null>(null)
+  const imageInputRef = useRef<HTMLInputElement>(null)
 
   const page = site.pages.find(item => item.id === activePageId) ?? site.pages[0]
   const selected = page?.sections.find(section => section.id === selectedId) ?? page?.sections[0]
@@ -118,6 +120,36 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     setShowAdd(false)
   }
 
+  const moveSectionTo = (sourceId: string, targetId: string) => {
+    if (!page || sourceId === targetId) return
+    const from = page.sections.findIndex(section => section.id === sourceId)
+    const to = page.sections.findIndex(section => section.id === targetId)
+    if (from <= 0 || to <= 0 || from >= page.sections.length - 1 || to >= page.sections.length - 1) return
+    const reordered = [...page.sections]
+    const moving = reordered.splice(from, 1)[0]
+    reordered.splice(to, 0, moving)
+    commit({ ...site, pages: site.pages.map(item => item.id === page.id ? { ...item, sections: reordered } : item) })
+  }
+
+  const updateSelectedComponentStyle = (key: string, value: string) => {
+    if (!selected || !selectedComponent) return
+    updateSection(selected.id, section => ({ ...section, components: section.components.map(item => item.id === selectedComponent.id ? { ...item, styles: { ...item.styles, [key]: value } } : item) }))
+  }
+
+  const addUploadedImage = (file?: File) => {
+    if (!file || !selected || !file.type.startsWith('image/')) return
+    if (file.size > 5 * 1024 * 1024) { window.alert('Please choose an image smaller than 5 MB.'); return }
+    const reader = new FileReader()
+    reader.onload = () => {
+      const dataUrl = typeof reader.result === 'string' ? reader.result : ''
+      if (!dataUrl) return
+      const imageComponent = { id: 'image-' + Date.now(), kind: 'image' as const, content: dataUrl, visible: true, styles: { width: '100%', maxWidth: '520px', borderRadius: '8px' } }
+      updateSection(selected.id, section => ({ ...section, components: [...section.components, imageComponent] }))
+      setSelectedComponentId(imageComponent.id)
+    }
+    reader.readAsDataURL(file)
+  }
+
   const updateHeading = (value: string) => {
     if (!selected) return
     updateSection(selected.id, section => ({
@@ -185,8 +217,9 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
       <main className="editor-stage">
         <div className="editor-stage-toolbar"><div><select className="editor-page-select" aria-label="Choose page" value={page.id} onChange={event => { const nextPage = site.pages.find(item => item.id === event.target.value); if (nextPage) { setActivePageId(nextPage.id); setSelectedId(nextPage.sections[1]?.id ?? nextPage.sections[0]?.id ?? ''); setSelectedComponentId(null) } }}>{site.pages.map(item => <option key={item.id} value={item.id}>{item.name}{item.isHomePage ? ' (Home)' : ''}</option>)}</select><button className="editor-page-action" onClick={addPage}>+ Page</button><button className="editor-page-action" onClick={renamePage}>Rename</button><button className="editor-page-action" onClick={duplicatePage}>Duplicate</button><button className="editor-page-action" onClick={deletePage} disabled={page.isHomePage || site.pages.length <= 1}>Delete</button><span className="editor-stage-muted">/</span><span className="editor-stage-muted">Editing</span></div><div className="device-switch"><button className={device === 'desktop' ? 'selected' : ''} onClick={() => setDevice('desktop')} aria-label="Desktop preview"><Monitor size={16} /></button><button className={device === 'tablet' ? 'selected' : ''} onClick={() => setDevice('tablet')} aria-label="Tablet preview"><Tablet size={16} /></button><button className={device === 'mobile' ? 'selected' : ''} onClick={() => setDevice('mobile')} aria-label="Mobile preview"><Smartphone size={16} /></button></div></div>
         <div className="editor-canvas-wrap"><div className={canvasClass}>
-          {page.sections.filter(section => section.enabled).map(section => <section key={section.id} onClick={() => { setSelectedId(section.id); setSelectedComponentId(null) }} className={`site-preview-section ${selected?.id === section.id ? 'is-selected' : ''} section-${section.kind}`} style={section.styles}>
+          {page.sections.filter(section => section.enabled).map(section => <section key={section.id} draggable={!previewMode && !['header','footer'].includes(section.kind)} onDragStart={event => { if (['header','footer'].includes(section.kind)) { event.preventDefault(); return } setDraggedSectionId(section.id); event.dataTransfer.effectAllowed = 'move'; event.dataTransfer.setData('text/plain', section.id) }} onDragOver={event => { if (draggedSectionId) event.preventDefault() }} onDrop={event => { event.preventDefault(); const sourceId = event.dataTransfer.getData('text/plain') || draggedSectionId; if (sourceId) moveSectionTo(sourceId, section.id); setDraggedSectionId(null) }} onDragEnd={() => setDraggedSectionId(null)} onClick={() => { setSelectedId(section.id); setSelectedComponentId(null) }} className={'site-preview-section ' + (selected?.id === section.id ? 'is-selected ' : '') + (draggedSectionId === section.id ? 'is-dragging ' : '') + 'section-' + section.kind} style={section.styles}>
             {section.components.filter(item => item.visible).map(item => { const selectItem = (event: MouseEvent) => { event.stopPropagation(); setSelectedId(section.id); setSelectedComponentId(item.id) }; const selectedClass = selectedComponentId === item.id ? 'component-selected' : ''; return item.kind === 'heading' ? <h2 key={item.id} className={selectedClass} onClick={selectItem} style={item.styles}>{item.content}</h2> : item.kind === 'text' ? <p key={item.id} className={selectedClass} onClick={selectItem} style={item.styles}>{item.content}</p> : item.kind === 'button' ? <button key={item.id} className={selectedClass} onClick={selectItem} style={item.styles}>{item.content}</button> : item.kind === 'image' ? <img key={item.id} className={selectedClass} onClick={selectItem} style={item.styles} src={item.content} alt="Website content" /> : null })}
+            {section.kind === 'header' && site.pages.length > 1 && <nav className="site-page-navigation" aria-label="Website pages">{site.pages.map(navPage => <button key={navPage.id} type="button" className={navPage.id === page.id ? 'active' : ''} onClick={event => { event.stopPropagation(); setActivePageId(navPage.id); setSelectedId(navPage.sections[1]?.id ?? navPage.sections[0]?.id ?? ''); setSelectedComponentId(null) }}>{navPage.name}</button>)}</nav>}
             {section.components.length === 0 && <span className="site-preview-placeholder">{section.name}</span>}
             <span className="section-selection-label">{section.name}</span>
           </section>)}
@@ -197,6 +230,15 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         <label className="property-label">{selectedComponent ? `${selectedComponent.kind} content` : 'Heading text'}<textarea rows={3} value={selectedText} onChange={e => updateHeading(e.target.value)} /></label>
         <label className="property-label">Background colour<div className="colour-input"><input type="color" value={selected.styles.backgroundColor ?? '#ffffff'} onChange={e => updateSection(selected.id, section => ({ ...section, styles: { ...section.styles, backgroundColor: e.target.value } }))} /><span>{selected.styles.backgroundColor ?? '#ffffff'}</span></div></label>
         <label className="property-label">Section spacing<select value={selected.styles.padding ?? '72px 8%'} onChange={e => updateSection(selected.id, section => ({ ...section, styles: { ...section.styles, padding: e.target.value } }))}><option value="40px 6%">Compact</option><option value="72px 8%">Comfortable</option><option value="112px 8%">Spacious</option></select></label>
+        {selectedComponent && <div className="component-style-controls"><strong>Element styling</strong>
+          <label className="property-label">Text colour<div className="colour-input"><input type="color" value={selectedComponent.styles.color ?? '#171717'} onChange={e => updateSelectedComponentStyle('color', e.target.value)} /><span>{selectedComponent.styles.color ?? '#171717'}</span></div></label>
+          <label className="property-label">Font size<select value={selectedComponent.styles.fontSize ?? '1rem'} onChange={e => updateSelectedComponentStyle('fontSize', e.target.value)}><option value="0.85rem">Small</option><option value="1rem">Normal</option><option value="1.25rem">Large</option><option value="2rem">Extra large</option><option value="2.8rem">Display</option></select></label>
+          <label className="property-label">Alignment<select value={selectedComponent.styles.textAlign ?? 'left'} onChange={e => updateSelectedComponentStyle('textAlign', e.target.value)}><option value="left">Left</option><option value="center">Centre</option><option value="right">Right</option></select></label>
+          <label className="property-label">Font weight<select value={selectedComponent.styles.fontWeight ?? '400'} onChange={e => updateSelectedComponentStyle('fontWeight', e.target.value)}><option value="400">Regular</option><option value="500">Medium</option><option value="600">Semi-bold</option><option value="700">Bold</option></select></label>
+        </div>}
+        {selectedComponent?.kind === 'image' && <div className="image-control-actions"><button type="button" onClick={() => imageInputRef.current?.click()}>Replace image</button><button type="button" onClick={() => { updateSection(selected.id, section => ({ ...section, components: section.components.filter(item => item.id !== selectedComponent.id) })); setSelectedComponentId(null) }}>Remove image</button></div>}
+        <input ref={imageInputRef} className="visually-hidden-image-input" type="file" accept="image/*" onChange={event => { addUploadedImage(event.target.files?.[0]); event.currentTarget.value = '' }} />
+        <button className="add-image-control" type="button" onClick={() => imageInputRef.current?.click()}><Image size={14} /> Add image to section</button>
         <div className="property-actions"><button onClick={() => moveSection(-1)} title="Move up">↑ Move up</button><button onClick={() => moveSection(1)} title="Move down">↓ Move down</button></div>
         <button className="remove-section" onClick={removeSection} disabled={['header','footer'].includes(selected.kind)}><Trash2 size={14} /> Remove section</button>
       </div> : <p className="editor-no-selection">Choose a section on the canvas.</p>}</aside>
