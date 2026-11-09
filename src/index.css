@@ -555,3 +555,18 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .image-resize-handle.handle-s{left:50%;bottom:-8px;transform:translateX(-50%);cursor:ns-resize}
 .image-resize-handle.handle-sw{left:-8px;bottom:-8px;cursor:nesw-resize}
 .image-resize-handle.handle-w{left:-8px;top:50%;transform:translateY(-50%);cursor:ew-resize}
+
+
+/* One-tap social and action button library */
+.button-library-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0 16px}
+.button-library-grid>button{display:flex;align-items:center;gap:8px;min-width:0;padding:9px 7px;border:1px solid #3d382e;border-radius:8px;background:#201e1a;color:#eee5d5;text-align:left;cursor:pointer}
+.button-library-grid>button:hover{border-color:#b58b4c;background:#29251e}
+.button-library-grid>button>span:nth-child(2){display:grid;gap:3px;min-width:0;flex:1}
+.button-library-grid strong{font-size:9px;white-space:nowrap}
+.button-library-grid small{font-size:8px;color:#9f9789}
+.button-library-swatch{display:grid;place-items:center;flex:0 0 27px;width:27px;height:27px;border-radius:7px;font-size:12px;font-weight:800}
+.button-hover-controls{display:grid;gap:10px;margin:12px 0;padding:11px;border:1px solid #49402f;border-radius:8px;background:#211e18}
+.button-hover-controls>strong{font-size:10px;color:#d8bd87}
+.button-hover-controls small{font-size:9px;line-height:1.5;color:#a99d87}
+.site-preview-section button{transition:background-color .18s ease,color .18s ease,transform .18s ease,box-shadow .18s ease}
+@media(max-width:420px){.button-library-grid{grid-template-columns:1fr}}
