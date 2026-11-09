@@ -109,8 +109,15 @@ The dashboard, browser-local project/client management, initial template library
 - [x] Add website title, meta description and language controls.
 - [x] Export uploaded image data into an assets folder and rewrite exported image paths.
 - [x] Add editable image alt text and include descriptions in exported image markup.
-- [ ] Add asset size/format optimization.
+- [x] Resize and compress supported large raster uploads while preserving PNG transparency and leaving SVG/GIF originals unchanged.
 - [ ] Add Open Graph/social sharing metadata and an optional social preview image.
 - [ ] Add automated tests for multi-page export and media asset packaging.
 
 Note: media assets remain in browser-local project storage for this prototype; a future authenticated storage adapter will replace this before production.
+
+
+## Mobile editor usability update
+- [x] Add a mobile bottom navigation entry for Add, Layers, Media and SEO.
+- [x] Open editor panels in a scrollable mobile drawer with a close control.
+- [x] Keep the desktop/tablet side-panel layout unchanged.
+- [ ] Validate interactions on a range of physical Android and iOS devices.
