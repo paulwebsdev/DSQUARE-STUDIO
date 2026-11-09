@@ -26,6 +26,8 @@ const uniquePageSlug = (name: string, pages: SiteDocument['pages'], excludePageI
   return candidate
 }
 
+const freshEditorId = (prefix: string) => `${prefix}-${globalThis.crypto?.randomUUID?.() ?? Date.now() + '-' + Math.random().toString(36).slice(2, 8)}`
+
 export default function VisualEditor({ onExit, projectId, projectName, category }: Props) {
   const storageKey = `dsquare-editor-document:${projectId}`
   const [site, setSite] = useState<SiteDocument>(() => {
@@ -109,7 +111,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
 
   const duplicatePage = () => {
     if (!page) return
-    const copy = { ...page, id: `page-${Date.now()}`, name: `${page.name} copy`, slug: uniquePageSlug(`${page.name} copy`, site.pages), isHomePage: false, sections: page.sections.map(section => ({ ...section, id: `${section.id}-copy-${Date.now()}`, components: section.components.map(item => ({ ...item, id: `${item.id}-copy-${Date.now()}` })) })) }
+    const copy = { ...page, id: freshEditorId('page'), name: `${page.name} copy`, slug: uniquePageSlug(`${page.name} copy`, site.pages), isHomePage: false, sections: page.sections.map(section => ({ ...section, id: freshEditorId('section'), components: section.components.map(item => ({ ...item, id: freshEditorId('element') })) })) }
     commit({ ...site, pages: [...site.pages, copy] })
     setActivePageId(copy.id)
     setSelectedId(copy.sections[1]?.id ?? copy.sections[0]?.id ?? '')
