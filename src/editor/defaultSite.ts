@@ -468,7 +468,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     { order:[0,2,1,3,4], hero:'editorial', footer:'split' },
     { order:[0,1,2,4,3], hero:'minimal', footer:'four-column' },
     { order:[0,3,1,2,4], hero:'centered', footer:'statement' },
-    { order:[0,1,2,3,4], hero:'product', footer:'compact' },
+    { order:[0,1,2,3,4], hero:'bold', footer:'compact' },
     { order:[0,2,3,1,4], hero:'editorial', footer:'editorial' },
     { order:[0,1,3,2,4], hero:'split', footer:'statement' },
     { order:[0,2,1,3,4], hero:'minimal', footer:'split' },
