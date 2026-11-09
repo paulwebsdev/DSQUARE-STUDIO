@@ -41,7 +41,13 @@ function renderSection(section: SiteSection, pageFiles: Map<string, string>, pag
       return '<a href="' + escapeHtml(file) + '"' + (page.id === currentPage.id ? ' aria-current="page"' : '') + '>' + escapeHtml(page.name) + '</a>'
     }).join('') + '</nav>'
     : ''
-  const style = styleText(section.styles)
+  const sectionStyles = { ...section.styles }
+  const backgroundImage = sectionStyles.backgroundImage
+  if (backgroundImage) {
+    const match = String(backgroundImage).match(/^url\\((['"]?)(data:image\\/[a-zA-Z0-9.+-]+;base64,[\\s\\S]+?)\\1\\)$/)
+    if (match) sectionStyles.backgroundImage = 'url("' + (assetPaths.get(match[2]) ?? match[2]) + '")'
+  }
+  const style = styleText(sectionStyles)
   return '<section id="section-' + id + '" class="ds-section ds-section-' + escapeHtml(section.kind) + '"' + (style ? ' style="' + escapeHtml(style) + '"' : '') + '>\n' + content + '\n' + navigation + '\n</section>'
 }
 
