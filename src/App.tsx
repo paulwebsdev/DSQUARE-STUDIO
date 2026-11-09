@@ -115,16 +115,20 @@ function App() {
       if (backup.format !== 'dsquare-studio-workspace' || backup.version !== 1 || !Array.isArray(backup.projects) || !Array.isArray(backup.clients) || !backup.documents || typeof backup.documents !== 'object') {
         throw new Error('This is not a supported DSQUARE STUDIO backup file.')
       }
-      const validProjects = backup.projects.every(project => project && typeof project.id === 'string' && typeof project.name === 'string' && typeof project.category === 'string' && typeof project.clientId === 'string' && (project.status === 'Draft' || project.status === 'Archived'))
-      const validClients = backup.clients.every(client => client && typeof client.id === 'string' && typeof client.name === 'string' && typeof client.email === 'string')
-      const projectIds = new Set(backup.projects.map(project => project.id))
+      const clientIds = new Set(backup.clients.map(client => client?.id))
+      const projectIds = new Set(backup.projects.map(project => project?.id))
+      const validProjects = backup.projects.every(project => project && typeof project.id === 'string' && project.id.length > 0 && typeof project.name === 'string' && typeof project.category === 'string' && typeof project.clientId === 'string' && (!project.clientId || clientIds.has(project.clientId)) && (project.status === 'Draft' || project.status === 'Archived') && typeof project.createdAt === 'string' && typeof project.updatedAt === 'string') && projectIds.size === backup.projects.length
+      const validClients = backup.clients.every(client => client && typeof client.id === 'string' && client.id.length > 0 && typeof client.name === 'string' && typeof client.email === 'string' && typeof client.createdAt === 'string') && clientIds.size === backup.clients.length
       const validDocuments = Object.entries(backup.documents).every(([key, value]) => {
         if (!key.startsWith('dsquare-editor-document:') || typeof value !== 'string') return false
         const projectId = key.slice('dsquare-editor-document:'.length)
         if (!projectIds.has(projectId)) return false
-        try { const parsed = JSON.parse(value); return parsed && typeof parsed === 'object' && Array.isArray(parsed.pages) } catch { return false }
+        try {
+          const parsed = JSON.parse(value)
+          return parsed && typeof parsed === 'object' && parsed.schemaVersion === 1 && typeof parsed.id === 'string' && typeof parsed.name === 'string' && Array.isArray(parsed.pages) && parsed.pages.length > 0 && parsed.pages.every((page: { id?: unknown; slug?: unknown; sections?: unknown }) => typeof page.id === 'string' && typeof page.slug === 'string' && Array.isArray(page.sections) && page.sections.every((section: { id?: unknown; components?: unknown }) => typeof section.id === 'string' && Array.isArray(section.components)))
+        } catch { return false }
       })
-      if (!validProjects || !validClients || !validDocuments) throw new Error('The backup contains invalid or incomplete workspace data.')
+      if (!validProjects || !validClients || !validDocuments) throw new Error('The backup contains invalid, duplicate or incomplete workspace data.')
       if (!window.confirm('Restore this backup? Your current projects, clients and saved website drafts in this browser will be replaced. Download a backup of your current workspace first if you want to keep it.')) return
       const oldDocumentKeys = Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index)).filter((key): key is string => Boolean(key?.startsWith('dsquare-editor-document:')))
       const previousValues = new Map<string, string | null>([
