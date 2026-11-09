@@ -584,7 +584,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
             ...[
               '“The team brought clarity to a complex project and made every next step feel manageable.”',
               '“Responsive, thoughtful and consistently professional. We always knew where things stood.”',
-            ].map((quote, quoteIndex) => ({
+            ].map(quote => ({
               ...component('text', quote),
               id: createId('business-quote'),
               styles: { color: selectedTheme.primary, backgroundColor: '#ffffff', borderLeft: '3px solid ' + selectedTheme.accent, borderRadius: '10px', padding: '22px', minHeight: '105px', fontSize: '1rem', lineHeight: '1.75', boxShadow: '0 12px 32px rgba(20,32,38,.06)', gridColumn: 'span 1' },
