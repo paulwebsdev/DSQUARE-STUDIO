@@ -62,6 +62,12 @@ function App() {
   const [templateCategory, setTemplateCategory] = useState('All templates')
   const [selectedTemplate, setSelectedTemplate] = useState<SiteTemplate | null>(null)
   const [editorProject, setEditorProject] = useState<Project | null>(null)
+  const [aiPrompt, setAiPrompt] = useState('')
+  const [aiBrandName, setAiBrandName] = useState('')
+  const [aiCategory, setAiCategory] = useState('Business')
+  const [aiTone, setAiTone] = useState('Modern and professional')
+  const [aiPages, setAiPages] = useState('Home, About, Services, Contact')
+  const [aiGenerated, setAiGenerated] = useState(false)
 
   useEffect(() => { localStorage.setItem('dsquare-projects', JSON.stringify(projects)) }, [projects])
   useEffect(() => { localStorage.setItem('dsquare-clients', JSON.stringify(clients)) }, [clients])
@@ -90,6 +96,38 @@ function App() {
     }
     setProjectName(''); setProjectCategory('Business'); setProjectClient(''); setProjectTemplateId(null); setShowCreate(false)
   }
+  const generateAiDraft = (event: FormEvent) => {
+    event.preventDefault()
+    if (!aiPrompt.trim()) return
+    const templateId = aiCategory === 'Portfolio' ? 'portfolio' : aiCategory === 'E-commerce' ? 'shop' : aiCategory === 'Restaurant' ? 'restaurant' : aiCategory === 'Education' ? 'education' : aiCategory === 'Agency' ? 'agency' : aiCategory === 'Blog / Magazine' ? 'journal' : aiCategory === 'Community' ? 'community' : aiCategory === 'Landing page' ? 'launch' : 'business'
+    const name = aiBrandName.trim() || 'New website'
+    const now = new Date().toISOString()
+    const project: Project = { id: makeId(), name: name + ' website', category: aiCategory, clientId: '', status: 'Draft', createdAt: now, updatedAt: now }
+    const document = createSiteFromTemplate(templateId, project.name, project.category)
+    document.metadata.title = name
+    document.metadata.description = aiPrompt.trim().slice(0, 160)
+    const pageNames = aiPages.split(',').map(value => value.trim()).filter(Boolean).slice(0, 8)
+    pageNames.forEach((pageName, index) => {
+      if (index === 0) return
+      const pageId = makeId()
+      document.pages.push({ id: pageId, name: pageName, slug: pageName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), sections: [
+        { id: makeId(), kind: 'header', name: 'Header', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: name.toUpperCase(), styles: {} }] },
+        { id: makeId(), kind: 'hero', name: pageName, enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: pageName, styles: {} }, { id: makeId(), kind: 'text', content: aiPrompt.trim(), styles: {} }] },
+        { id: makeId(), kind: 'contact', name: 'Contact', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: 'Let’s connect', styles: {} }] },
+        { id: makeId(), kind: 'footer', name: 'Footer', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'text', content: '© ' + name + '. All rights reserved.', styles: {} }] },
+      ] })
+    })
+    document.pages[0].sections.forEach(section => section.components.forEach(component => {
+      if (component.kind === 'heading' && /hello|better way|find something|good food|learning opens|stories worth|better, together|meet your next/i.test(component.content)) component.content = name + ' — ' + (aiTone.toLowerCase().includes('bold') ? 'Bold ideas. Real results.' : 'A better way forward.')
+      if (component.kind === 'text' && component.content.length > 35) component.content = aiPrompt.trim()
+    }))
+    setProjects(current => [project, ...current])
+    localStorage.setItem(`dsquare-editor-document:${project.id}`, JSON.stringify(document))
+    setEditorProject(project)
+    setActive('Visual editor')
+    setAiGenerated(true)
+  }
+
   const createClient = (event: FormEvent) => {
     event.preventDefault()
     if (!clientName.trim()) return
@@ -124,7 +162,16 @@ function App() {
       <main className="main-area">
         <header className="topbar"><div className="topbar-left"><button className="icon-button mobile-menu" aria-label="Open navigation" onClick={() => setMenuOpen(true)}><Menu size={20} /></button><div className="breadcrumb">Workspace <span>/</span> <strong>{active}</strong></div></div><div className="topbar-actions"><label className="search-box"><Search size={16} /><input aria-label="Search projects and clients" placeholder="Search projects..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} /></label><button className="icon-button notification-button" aria-label="Notifications"><Bell size={18} /><i /></button><div className="top-avatar">D</div></div></header>
         <div className="page-content">
-          {active === 'Visual editor' ? <VisualEditor key={editorProject?.id ?? 'scratch'} projectId={editorProject?.id ?? 'scratch'} projectName={editorProject?.name ?? 'Untitled website'} category={editorProject?.category ?? 'Business'} onExit={() => { setEditorProject(null); selectNav('My projects') }} /> : active === 'Overview' ? <>
+          {active === 'AI website builder' ? <section className="ai-builder-page">
+            <div className="ai-builder-intro"><div className="eyebrow"><span className="eyebrow-line" /> YOUR WEBSITE STARTS WITH AN IDEA</div><h1>Turn your brief into a <em>website draft.</em></h1><p>Describe the website you want. DSQUARE will prepare an editable starting project for you to refine in the visual editor.</p><div className="ai-builder-badge"><Sparkles size={14} /> Guided website generator · Provider connection pending</div></div>
+            <form className="ai-builder-card" onSubmit={generateAiDraft}>
+              <label className="form-label">What website should we create?<textarea required minLength={15} maxLength={3000} value={aiPrompt} onChange={e => setAiPrompt(e.target.value)} placeholder="Example: Create a premium website for a Lagos-based interior design company. Show our services, recent projects, customer reviews and a clear way to request a consultation." /></label>
+              <div className="ai-builder-fields"><label className="form-label">Brand or business name<input value={aiBrandName} maxLength={80} onChange={e => setAiBrandName(e.target.value)} placeholder="e.g. DSquare Interiors" /></label><label className="form-label">Website category<select value={aiCategory} onChange={e => setAiCategory(e.target.value)}>{categories.map(c => <option key={c}>{c}</option>)}</select></label><label className="form-label">Design direction<select value={aiTone} onChange={e => setAiTone(e.target.value)}><option>Modern and professional</option><option>Luxury and elegant</option><option>Bold and creative</option><option>Minimal and clean</option><option>Warm and welcoming</option></select></label><label className="form-label">Pages (comma-separated)<input value={aiPages} maxLength={300} onChange={e => setAiPages(e.target.value)} placeholder="Home, About, Services, Contact" /></label></div>
+              <div className="ai-builder-note"><strong>What happens next?</strong><span>We create a multi-page editable draft using your brief and selected design direction. You can change every section in the visual editor.</span><small>This first version uses DSQUARE’s built-in draft generator. A real AI provider will be connected securely in a later step; no external AI service is being called yet.</small></div>
+              <button className="primary-button ai-generate-button" type="submit"><WandSparkles size={17} /> Generate website draft <ArrowRight size={15} /></button>
+            </form>
+            <div className="ai-builder-tips"><span>TRY A CLEAR BRIEF</span><p>Include your business type, audience, services, preferred style, pages and the main action visitors should take.</p></div>
+          </section> :           {active === 'Visual editor' ? <VisualEditor key={editorProject?.id ?? 'scratch'} projectId={editorProject?.id ?? 'scratch'} projectName={editorProject?.name ?? 'Untitled website'} category={editorProject?.category ?? 'Business'} onExit={() => { setEditorProject(null); selectNav('My projects') }} /> : active === 'Overview' ? <>
             <section className="welcome-row"><div><div className="eyebrow"><span className="eyebrow-line" /> YOUR PRIVATE CREATIVE SPACE</div><h1>Make something <em>remarkable.</em></h1><p className="welcome-subtitle">Your ideas, your clients, your websites. Everything starts here.</p></div><button className="primary-button create-button" onClick={() => setShowCreate(true)}><Plus size={17} /> Create a website</button></section>
             <section className="hero-panel"><div className="hero-copy"><div className="hero-kicker"><Sparkles size={14} /> THE STUDIO IS YOURS</div><h2>From first idea<br />to <span>live website.</span></h2><p>Build without limits. Start with a template, design every detail yourself, or let AI bring your vision to life.</p><button className="hero-button" onClick={() => setShowCreate(true)}>Start creating <ArrowRight size={16} /></button></div><div className="hero-art" aria-hidden="true"><div className="art-orbit orbit-one" /><div className="art-orbit orbit-two" /><div className="art-glow" /><div className="art-window"><div className="window-top"><span /><span /><span /><div>dsquare.studio</div></div><div className="window-content"><div className="window-side" /><div className="window-main"><div className="window-line short" /><div className="window-title" /><div className="window-line" /><div className="window-line tiny" /><div className="window-cta" /><div className="window-image" /></div></div></div><div className="floating-chip chip-top"><Sparkles size={13} /> AI assisted</div><div className="floating-chip chip-bottom"><Activity size={13} /> Your next big idea</div></div><div className="hero-grain" /></section>
             <section className="section-heading"><div><h3>Choose your starting point</h3><p>Three ways to bring your next website to life.</p></div><button className="text-button" onClick={() => selectNav('Templates')}>Explore all <ArrowRight size={14} /></button></section>
