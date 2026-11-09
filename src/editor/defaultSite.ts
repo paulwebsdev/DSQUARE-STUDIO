@@ -858,11 +858,6 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     Finance:['Home','Our Approach','Services','Who We Help','Insights','Meet the Team','Book a Consultation'],
     'Technology / SaaS':['Home','Platform','Features','Integrations','Use Cases','Pricing','Resources','Book a Demo'],
     'Non-profit':['Home','Our Mission','Our Programs','Our Impact','Stories','Get Involved','Donate','Contact'],
-    Finance:['Financial clarity for the road ahead','Explore practical advice, services and resources designed to support confident decisions.','A relationship built on trust','Meet the people, understand our approach and arrange a conversation about your priorities.'],
-    'Technology / SaaS':['A clearer way to work','See how the platform, integrations and workflows fit together to solve real team challenges.','Find the right plan','Compare capabilities, explore the product and book a walkthrough with our team.'],
-    'Non-profit':['The mission in action','Discover the programmes, people and partnerships turning shared purpose into measurable progress.','Make a difference with us','Find a meaningful way to volunteer, partner or support the work.'],
-    Events:['Your event experience starts here','Explore the programme, guests and practical details for planning your visit.','Be part of the day','Find registration information and answers to the questions attendees ask most.'],
-    Construction:['The work behind the result','Explore our services, project experience and standards from planning through completion.','Start with a clear estimate','Tell us about your site, scope and timeline so we can discuss the right next step.'],
 
     Events:['Home','About the Event','Schedule','Speakers & Guests','Venue','Tickets & Registration','FAQs'],
     Construction:['Home','Services','Our Projects','Sectors','Our Process','About Us','Request a Quote'],
