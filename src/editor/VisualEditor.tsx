@@ -17,6 +17,18 @@ const sectionOptions: { kind: SiteSection['kind']; label: string; description: s
   { kind: 'contact', label: 'Contact', description: 'Help visitors get in touch' },
 ]
 
+const uniquePageName = (baseName: string, pages: SiteDocument['pages'], excludePageId?: string) => {
+  const used = new Set(pages.filter(item => item.id !== excludePageId).map(item => item.name.toLowerCase()))
+  const clean = baseName.trim().slice(0, 60) || 'Untitled page'
+  let candidate = clean
+  let suffix = 2
+  while (used.has(candidate.toLowerCase())) {
+    const ending = ' ' + suffix++
+    candidate = clean.slice(0, 60 - ending.length) + ending
+  }
+  return candidate
+}
+
 const uniquePageSlug = (name: string, pages: SiteDocument['pages'], excludePageId?: string) => {
   const base = name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'page'
   const used = new Set(pages.filter(item => item.id !== excludePageId).map(item => item.slug))
@@ -83,7 +95,8 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   }
 
   const addPage = () => {
-    const pageNumber = site.pages.length + 1
+    let pageNumber = site.pages.length + 1
+    while (site.pages.some(item => item.name.toLowerCase() === (`New page ${pageNumber}`).toLowerCase())) pageNumber++
     const pageName = `New page ${pageNumber}`
     const newPage = {
       id: freshEditorId('page'),
@@ -107,15 +120,17 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
 
   const renamePage = () => {
     if (!page) return
-    const name = window.prompt('Enter a name for this page', page.name)?.trim()
-    if (!name) return
+    const enteredName = window.prompt('Enter a name for this page', page.name)?.trim()
+    if (!enteredName) return
+    const name = uniquePageName(enteredName, site.pages, page.id)
     const slug = uniquePageSlug(name, site.pages, page.id)
     commit({ ...site, pages: site.pages.map(item => item.id === page.id ? { ...item, name, slug: item.isHomePage ? '' : slug } : item) })
   }
 
   const duplicatePage = () => {
     if (!page) return
-    const copy = { ...page, id: freshEditorId('page'), name: `${page.name} copy`, slug: uniquePageSlug(`${page.name} copy`, site.pages), isHomePage: false, sections: page.sections.map(section => ({ ...section, id: freshEditorId('section'), styles: { ...section.styles }, components: section.components.map(item => ({ ...item, id: freshEditorId('element'), styles: { ...item.styles }, responsiveStyles: item.responsiveStyles ? Object.fromEntries(Object.entries(item.responsiveStyles).map(([mode, styles]) => [mode, { ...styles }])) : undefined })) })) }
+    const copyName = uniquePageName(page.name + ' copy', site.pages)
+    const copy = { ...page, id: freshEditorId('page'), name: copyName, slug: uniquePageSlug(copyName, site.pages), isHomePage: false, sections: page.sections.map(section => ({ ...section, id: freshEditorId('section'), styles: { ...section.styles }, components: section.components.map(item => ({ ...item, id: freshEditorId('element'), styles: { ...item.styles }, responsiveStyles: item.responsiveStyles ? Object.fromEntries(Object.entries(item.responsiveStyles).map(([mode, styles]) => [mode, { ...styles }])) : undefined })) })) }
     commit({ ...site, pages: [...site.pages, copy] })
     setActivePageId(copy.id)
     setSelectedId(copy.sections[1]?.id ?? copy.sections[0]?.id ?? '')
@@ -139,7 +154,8 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   }
 
   const updateSection = (sectionId: string, updater: (section: SiteSection) => SiteSection) => {
-    commit({ ...site, pages: site.pages.map(p => ({ ...p, sections: p.sections.map(s => s.id === sectionId ? updater(s) : s) })) })
+    if (!page || !page.sections.some(section => section.id === sectionId)) return
+    commit({ ...site, pages: site.pages.map(p => p.id === page.id ? { ...p, sections: p.sections.map(section => section.id === sectionId ? updater(section) : section) } : p) })
   }
 
   const addSection = (kind: SiteSection['kind']) => {
@@ -154,7 +170,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         { id: freshEditorId('text'), kind: 'text', content: 'Add your own content here to tell your story.', visible: true, styles: { fontSize: '1rem', color: '#666666' } },
       ],
     }
-    commit({ ...site, pages: site.pages.map(p => ({ ...p, sections: [...p.sections.slice(0, -1), section, p.sections[p.sections.length - 1]] })) })
+    commit({ ...site, pages: site.pages.map(p => p.id === page.id ? { ...p, sections: [...p.sections.slice(0, -1), section, p.sections[p.sections.length - 1]] } : p) })
     setSelectedId(section.id)
     setSelectedComponentId(null)
     setEditingComponentId(null)
@@ -335,7 +351,13 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     const copy: SiteSection = {
       ...selected,
       id: freshEditorId('section'),
-      name: selected.name + ' copy',
+      name: (() => {
+        const names = new Set(page.sections.map(section => section.name.toLowerCase()))
+        let name = selected.name + ' copy'
+        let suffix = 2
+        while (names.has(name.toLowerCase())) name = selected.name + ' copy ' + suffix++
+        return name
+      })(),
       styles: { ...selected.styles },
       components: selected.components.map(item => ({
         ...item,
@@ -370,7 +392,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const undo = () => {
     const previous = history[history.length - 1]
     if (!previous) return
-    setFuture(items => [site, ...items])
+    setFuture(items => [site, ...items].slice(0, 30))
     setHistory(items => items.slice(0, -1))
     setSite({ ...previous, updatedAt: new Date().toISOString() })
   }
@@ -384,8 +406,16 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
 
   useEffect(() => {
     const handleEditorShortcut = (event: KeyboardEvent) => {
-      if (!(event.ctrlKey || event.metaKey)) return
       const target = event.target as HTMLElement | null
+      if (event.key === 'Escape') {
+        if (editingComponentId) setEditingComponentId(null)
+        else if (exportOpen) setExportOpen(false)
+        else if (mobilePropertiesOpen) setMobilePropertiesOpen(false)
+        else if (mobilePanelOpen) setMobilePanelOpen(false)
+        else if (previewMode) setPreviewMode(false)
+        return
+      }
+      if (!(event.ctrlKey || event.metaKey)) return
       if (target?.isContentEditable || target?.closest('input, textarea, select, [contenteditable="true"]')) return
       const key = event.key.toLowerCase()
       if (key === 'z') {
@@ -399,7 +429,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     }
     window.addEventListener('keydown', handleEditorShortcut)
     return () => window.removeEventListener('keydown', handleEditorShortcut)
-  }, [history, future, site])
+  }, [history, future, site, editingComponentId, exportOpen, mobilePropertiesOpen, mobilePanelOpen, previewMode])
 
 
   const downloadTextFile = (fileName: string, content: string, mimeType: string) => {
@@ -459,7 +489,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
       <div className="editor-top-actions">
         <button className="editor-tool" onClick={undo} disabled={!history.length} aria-label="Undo"><Undo2 size={17} /></button>
         <button className="editor-tool" onClick={redo} disabled={!future.length} aria-label="Redo"><Redo2 size={17} /></button>
-        <button className="editor-preview" onClick={() => setPreviewMode(value => !value)}><Eye size={15} /> {previewMode ? "Exit preview" : "Preview"}</button>
+        <button className="editor-preview" onClick={() => { setEditingComponentId(null); setPreviewMode(value => !value) }} aria-pressed={previewMode}><Eye size={15} /> {previewMode ? "Exit preview" : "Preview"}</button>
         <button className="editor-preview editor-export" onClick={() => { setExportMessage(""); setExportOpen(true) }}><Download size={15} /> Export</button>
         <button className="primary-button editor-save" onClick={() => { try { localStorage.setItem(storageKey, JSON.stringify(site)); setSavedAt('Saved just now') } catch { setSavedAt('Could not save — storage is full') } }}><Save size={14} /> Save</button>
       </div>
@@ -477,7 +507,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         <div className="editor-panel-foot"><Sparkles size={14} /> Select a section to edit its content.</div>
       </aside>
       <main className="editor-stage">
-        <div className="editor-stage-toolbar"><div><select className="editor-page-select" aria-label="Choose page" value={page.id} onChange={event => { const nextPage = site.pages.find(item => item.id === event.target.value); if (nextPage) { setActivePageId(nextPage.id); setSelectedId(nextPage.sections[1]?.id ?? nextPage.sections[0]?.id ?? ''); setSelectedComponentId(null); setEditingComponentId(null); setMobilePanelOpen(false); setMobilePropertiesOpen(false) } }}>{site.pages.map(item => <option key={item.id} value={item.id}>{item.name}{item.isHomePage ? ' (Home)' : ''}</option>)}</select><button className="editor-page-action" onClick={addPage}>+ Page</button><button className="editor-page-action" onClick={renamePage}>Rename</button><button className="editor-page-action" onClick={duplicatePage}>Duplicate</button><button className="editor-page-action" onClick={deletePage} disabled={page.isHomePage || site.pages.length <= 1}>Delete</button><span className="editor-stage-muted">/</span><span className="editor-stage-muted">Editing</span></div><div className="device-switch"><button className={device === 'desktop' ? 'selected' : ''} onClick={() => setDevice('desktop')} aria-label="Desktop preview"><Monitor size={16} /></button><button className={device === 'tablet' ? 'selected' : ''} onClick={() => setDevice('tablet')} aria-label="Tablet preview"><Tablet size={16} /></button><button className={device === 'mobile' ? 'selected' : ''} onClick={() => setDevice('mobile')} aria-label="Mobile preview"><Smartphone size={16} /></button></div></div>
+        <div className="editor-stage-toolbar"><div><select className="editor-page-select" aria-label="Choose page" value={page.id} onChange={event => { const nextPage = site.pages.find(item => item.id === event.target.value); if (nextPage) { setActivePageId(nextPage.id); setSelectedId(nextPage.sections[1]?.id ?? nextPage.sections[0]?.id ?? ''); setSelectedComponentId(null); setEditingComponentId(null); setMobilePanelOpen(false); setMobilePropertiesOpen(false) } }}>{site.pages.map(item => <option key={item.id} value={item.id}>{item.name}{item.isHomePage ? ' (Home)' : ''}</option>)}</select><button className="editor-page-action" onClick={addPage}>+ Page</button><button className="editor-page-action" onClick={renamePage}>Rename</button><button className="editor-page-action" onClick={duplicatePage}>Duplicate</button><button className="editor-page-action" onClick={deletePage} disabled={page.isHomePage || site.pages.length <= 1}>Delete</button><span className="editor-stage-muted">/</span><span className="editor-stage-muted">Editing</span></div><div className="device-switch"><button className={device === 'desktop' ? 'selected' : ''} onClick={() => setDevice('desktop')} aria-label="Desktop preview" aria-pressed={device === 'desktop'}><Monitor size={16} /></button><button className={device === 'tablet' ? 'selected' : ''} onClick={() => setDevice('tablet')} aria-label="Tablet preview" aria-pressed={device === 'tablet'}><Tablet size={16} /></button><button className={device === 'mobile' ? 'selected' : ''} onClick={() => setDevice('mobile')} aria-label="Mobile preview" aria-pressed={device === 'mobile'}><Smartphone size={16} /></button></div></div>
         <div className="editor-canvas-wrap"><div className={canvasClass}>
           {page.sections.filter(section => section.enabled).map(section => <section key={section.id} tabIndex={0} aria-label={section.name + ' section'} aria-selected={selected?.id === section.id} onKeyDown={event => { if (event.target !== event.currentTarget) return; if (event.altKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) { event.preventDefault(); setSelectedId(section.id); moveSection(event.key === 'ArrowUp' ? -1 : 1, section.id) } else if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setSelectedId(section.id); setSelectedComponentId(null) } }} draggable={!previewMode && !['header','footer'].includes(section.kind)} onDragStart={event => { if (['header','footer'].includes(section.kind)) { event.preventDefault(); return } setDraggedSectionId(section.id); event.dataTransfer.effectAllowed = 'move'; event.dataTransfer.setData('text/plain', section.id) }} onDragOver={event => { if (draggedSectionId) event.preventDefault() }} onDrop={event => { event.preventDefault(); const sourceId = event.dataTransfer.getData('text/plain') || draggedSectionId; if (sourceId) moveSectionTo(sourceId, section.id); setDraggedSectionId(null) }} onDragEnd={() => setDraggedSectionId(null)} data-section-id={section.id} onTouchMove={event => { if (draggedSectionId) event.preventDefault() }} onTouchEnd={event => { if (!draggedSectionId) return; const touch = event.changedTouches[0]; const target = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('[data-section-id]') as HTMLElement | null; const targetId = target?.dataset.sectionId; if (targetId && targetId !== draggedSectionId) moveSectionTo(draggedSectionId, targetId); setDraggedSectionId(null) }} onClick={() => { setSelectedId(section.id); setSelectedComponentId(null); setEditingComponentId(null) }} className={'site-preview-section ' + (selected?.id === section.id ? 'is-selected ' : '') + (draggedSectionId === section.id ? 'is-dragging ' : '') + 'section-' + section.kind} style={section.styles}>
             {section.components.filter(item => item.visible).map(item => { const selectItem = (event: MouseEvent) => { event.stopPropagation(); setSelectedId(section.id); setSelectedComponentId(item.id) }; const selectedClass = selectedComponentId === item.id ? 'component-selected' : ''; const elementStyle = { ...item.styles, ...(item.responsiveStyles?.[device] ?? {}) }; const handleElementClick = (event: MouseEvent) => { selectItem(event) }; const handleElementKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.stopPropagation(); setSelectedId(section.id); setSelectedComponentId(item.id) } else if (event.key === 'F2' && ['heading','text','button','container'].includes(item.kind)) { event.preventDefault(); setSelectedId(section.id); setSelectedComponentId(item.id); setEditingComponentId(item.id) } }; return item.kind === 'heading' ? <h2 key={item.id} tabIndex={0} aria-label={'Select heading: ' + item.content} onKeyDown={handleElementKeyDown} className={selectedClass} onClick={handleElementClick} onDoubleClick={() => setEditingComponentId(item.id)} contentEditable={editingComponentId === item.id} suppressContentEditableWarning onBlur={event => editingComponentId === item.id && finishInlineEdit(item.id, event.currentTarget.textContent ?? '')} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); event.currentTarget.blur() } }} style={elementStyle}>{item.content}</h2> : item.kind === 'text' ? <p key={item.id} tabIndex={0} aria-label={'Select text: ' + item.content} onKeyDown={handleElementKeyDown} className={selectedClass} onClick={handleElementClick} onDoubleClick={() => setEditingComponentId(item.id)} contentEditable={editingComponentId === item.id} suppressContentEditableWarning onBlur={event => editingComponentId === item.id && finishInlineEdit(item.id, event.currentTarget.textContent ?? '')} style={elementStyle}>{item.content}</p> : item.kind === 'button' ? <button key={item.id} onKeyDown={handleElementKeyDown} aria-label={'Select button: ' + item.content} className={selectedClass} onClick={handleElementClick} onDoubleClick={() => setEditingComponentId(item.id)} contentEditable={editingComponentId === item.id} suppressContentEditableWarning onBlur={event => editingComponentId === item.id && finishInlineEdit(item.id, event.currentTarget.textContent ?? '')} style={elementStyle}>{item.content}</button> : item.kind === 'image' ? <img key={item.id} tabIndex={0} aria-label="Select image element" onKeyDown={handleElementKeyDown} className={selectedClass} onClick={handleElementClick} style={elementStyle} src={item.content} alt={(site.assets ?? []).find(asset => asset.dataUrl === item.content)?.altText ?? ''} /> : item.kind === 'form' ? <form key={item.id} className="site-preview-form" onSubmit={event => { event.preventDefault(); if (previewMode) window.alert('Form preview only. Connect a form service before publishing to receive submissions.') }} onClick={selectItem}><input aria-label="Your name" placeholder="Your name" required /><input aria-label="Email address" type="email" placeholder="Email address" required /><textarea aria-label="Your message" placeholder="Your message" required /><button type="submit">Send message</button></form> : item.kind === 'container' ? <div key={item.id} tabIndex={0} aria-label={'Select container: ' + item.content} onKeyDown={handleElementKeyDown} className={selectedClass} onClick={handleElementClick} onDoubleClick={() => setEditingComponentId(item.id)} contentEditable={editingComponentId === item.id} suppressContentEditableWarning onBlur={event => editingComponentId === item.id && finishInlineEdit(item.id, event.currentTarget.textContent ?? '')} style={elementStyle}>{item.content}</div> : null })}
