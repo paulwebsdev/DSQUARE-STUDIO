@@ -6,14 +6,17 @@ const escapeHtml = (value: string) => value.replace(/[&<>"']/g, character => ({ 
 const safeFileName = (value: string) => value.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'page'
 const safeHref = (value: string, pageFiles: Map<string, string>) => {
   const trimmed = value.trim()
-  if (!trimmed || /^(javascript|data|vbscript):/i.test(trimmed)) return '#'
+  if (!trimmed || /^(?:\/\/|javascript:|data:|vbscript:|file:|blob:)/i.test(trimmed)) return '#'
   const internal = trimmed.replace(/^\//, '').replace(/\.html$/, '')
   const match = [...pageFiles.entries()].find(([slug]) => slug === internal)
-  return match ? match[1] : trimmed
+  if (match) return match[1]
+  if (/^(?:https?:|mailto:|tel:|#|\.\.?\/)/i.test(trimmed)) return trimmed
+  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return '#'
+  return trimmed
 }
 const styleText = (styles: StyleMap = {}) => Object.entries(styles)
   .filter(([key, value]) => value !== undefined && /^[a-zA-Z-]+$/.test(key))
-  .map(([key, value]) => key.replace(/[A-Z]/g, letter => '-' + letter.toLowerCase()) + ':' + String(value).replace(/[;{}]/g, ''))
+  .map(([key, value]) => key.replace(/[A-Z]/g, letter => '-' + letter.toLowerCase()) + ':' + String(value).replace(/[;{}<>\u0000-\u001f]/g, ''))
   .join(';')
 
 function renderComponent(component: SiteComponent, pageFiles: Map<string, string>, assetPaths: Map<string, string>, assetAltTexts: Map<string, string>): string {
