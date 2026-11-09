@@ -184,3 +184,12 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Add independent border colour, width and style controls.
 - [x] Add selectable shadow presets without changing other elements.
 - [ ] Add richer custom shadow and border-radius presets after usability testing.
+
+## Export fidelity and reusable element batch — 2026-11-09
+- [x] Include section background images in exported asset packages and rewrite their references to local asset files.
+- [x] Deduplicate repeated image assets during export to reduce ZIP size.
+- [x] Preserve heading and body theme fonts in generated website CSS.
+- [x] Include the editor's fade, slide and zoom entrance animation keyframes in exported CSS.
+- [x] Respect reduced-motion preferences and collapse CSS-grid sections to one column on narrow screens.
+- [x] Preserve per-device responsive styles when saving and inserting reusable elements.
+- [ ] Add automated export regression tests and verify exported sites in desktop and mobile browsers.
