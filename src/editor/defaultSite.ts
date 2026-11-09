@@ -638,7 +638,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
             ...(kind==='features'?{layout:'grid',gridColumns:layoutVariant%2===0?'3':'2',gap:'18px'}:{}),
             ...(kind==='testimonials'?{layout:'grid',gridColumns:'2',gap:'18px'}:{}),
           } : category === 'Blog / Magazine' ? {
-            ...(isHero?{textAlign:layoutVariant%2===0?'center':'left',padding:layoutVariant%3===0?'clamp(100px,14vw,180px) 10%':'clamp(76px,9vw,124px) 8%',minHeight:layoutVariant%3===0?'480px':'360px',borderBottom:'1px solid color-mix(in srgb,'+selectedTheme.accent+' 35%,transparent)'}:{}),
+            ...(isHero?{textAlign:(layoutVariant%2===0?'center':'left') as 'left'|'center',padding:layoutVariant%3===0?'clamp(100px,14vw,180px) 10%':'clamp(76px,9vw,124px) 8%',minHeight:layoutVariant%3===0?'480px':'360px',borderBottom:'1px solid color-mix(in srgb,'+selectedTheme.accent+' 35%,transparent)'}:{}),
             ...(kind==='gallery'?{layout:'grid',gridColumns:layoutVariant%3===0?'2':layoutVariant%3===1?'3':'2',gap:'clamp(16px,2.4vw,30px)'}:{}),
             ...(kind==='features'?{layout:'grid',gridColumns:layoutVariant%2===0?'3':'2',gap:'20px'}:{}),
           } : {}),
@@ -932,7 +932,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
       },
       {
         id:createId('section'), kind:'hero', name:label + ' introduction', enabled:true,
-        styles:{padding:category==='Blog / Magazine'?'clamp(76px, 11vw, 148px) 9%':'clamp(64px, 9vw, 112px) 8%',backgroundColor:palette[baseTemplateId] ?? '#edf3f4',...(category==='Portfolio'?{display:'grid',gridTemplateColumns:variantNumber%2===0?'minmax(0,1.1fr) minmax(260px,.9fr)':'1fr',alignItems:'center',gap:'clamp(20px,4vw,52px)'}:category==='E-commerce'?{display:'grid',gridTemplateColumns:variantNumber%2===0?'minmax(0,1fr) minmax(260px,1fr)':'1fr',alignItems:'center',gap:'clamp(20px,4vw,52px)'}:category==='Blog / Magazine'?{textAlign:variantNumber%2===0?'center':'left',borderBottom:'1px solid color-mix(in srgb,'+selectedTheme.accent+' 35%,transparent)'}:{})},
+        styles:{padding:category==='Blog / Magazine'?'clamp(76px, 11vw, 148px) 9%':'clamp(64px, 9vw, 112px) 8%',backgroundColor:palette[baseTemplateId] ?? '#edf3f4',...(category==='Portfolio'?{display:'grid',gridTemplateColumns:variantNumber%2===0?'minmax(0,1.1fr) minmax(260px,.9fr)':'1fr',alignItems:'center',gap:'clamp(20px,4vw,52px)'}:category==='E-commerce'?{display:'grid',gridTemplateColumns:variantNumber%2===0?'minmax(0,1fr) minmax(260px,1fr)':'1fr',alignItems:'center',gap:'clamp(20px,4vw,52px)'}:category==='Blog / Magazine'?{textAlign:(variantNumber%2===0?'center':'left') as 'left'|'center',borderBottom:'1px solid color-mix(in srgb,'+selectedTheme.accent+' 35%,transparent)'}:{})},
         components:[
           {...component('text','DISCOVER  /  '+label.toUpperCase()),id:createId('eyebrow'),styles:{fontSize:'0.75rem',fontWeight:'800',letterSpacing:'0.18em',color:selectedTheme.accent,maxWidth:'100%'}},
           {...component('heading',pageHeading),id:createId('heading'),styles:{fontFamily:selectedTheme.heading,fontSize:'clamp(2.5rem, 5.5vw, 4.8rem)',fontWeight:'750',lineHeight:'1.08',color:selectedTheme.primary,maxWidth:'900px'}},
