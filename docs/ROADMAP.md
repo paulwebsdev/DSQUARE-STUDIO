@@ -358,3 +358,12 @@ Note: media assets remain in browser-local project storage for this prototype; a
 ## Export experience improvements
 - [x] Show a pre-download inventory of pages, active sections and media assets.
 - [x] Explain that the package contains the current design while forms and connected services still require integration.
+
+
+## Editor navigation improvements — 2026-11-09
+- [x] Add live search to Page layers by section name and type.
+- [x] Show matching versus total section counts and a clear empty-search state.
+- [x] Add media-library search across image filenames and alt descriptions.
+- [x] Add media sorting by newest, filename and approximate file size.
+- [x] Keep media search and sorting local to the editor without changing exported website content.
+- [ ] Verify search, sorting and selection behaviour with large media libraries on desktop and Android.
