@@ -127,10 +127,29 @@ function App() {
       if (!validProjects || !validClients || !validDocuments) throw new Error('The backup contains invalid or incomplete workspace data.')
       if (!window.confirm('Restore this backup? Your current projects, clients and saved website drafts in this browser will be replaced. Download a backup of your current workspace first if you want to keep it.')) return
       const oldDocumentKeys = Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index)).filter((key): key is string => Boolean(key?.startsWith('dsquare-editor-document:')))
-      oldDocumentKeys.forEach(key => localStorage.removeItem(key))
-      Object.entries(backup.documents).forEach(([key, value]) => localStorage.setItem(key, value))
-      localStorage.setItem('dsquare-projects', JSON.stringify(backup.projects))
-      localStorage.setItem('dsquare-clients', JSON.stringify(backup.clients))
+      const previousValues = new Map<string, string | null>([
+        ['dsquare-projects', localStorage.getItem('dsquare-projects')],
+        ['dsquare-clients', localStorage.getItem('dsquare-clients')],
+        ...oldDocumentKeys.map(key => [key, localStorage.getItem(key)] as [string, string | null]),
+      ])
+      try {
+        oldDocumentKeys.forEach(key => localStorage.removeItem(key))
+        Object.entries(backup.documents).forEach(([key, value]) => localStorage.setItem(key, value))
+        localStorage.setItem('dsquare-projects', JSON.stringify(backup.projects))
+        localStorage.setItem('dsquare-clients', JSON.stringify(backup.clients))
+      } catch (writeError) {
+        try {
+          const currentKeys = Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index)).filter((key): key is string => Boolean(key?.startsWith('dsquare-editor-document:')))
+          currentKeys.forEach(key => localStorage.removeItem(key))
+          previousValues.forEach((value, key) => {
+            if (value === null) localStorage.removeItem(key)
+            else localStorage.setItem(key, value)
+          })
+        } catch {
+          throw new Error('Restore failed and the previous workspace could not be fully recovered. Avoid closing this tab and check browser storage.')
+        }
+        throw writeError
+      }
       setProjects(backup.projects)
       setClients(backup.clients)
       setEditorProject(null)
