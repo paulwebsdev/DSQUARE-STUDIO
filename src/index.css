@@ -490,7 +490,8 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .visual-editor.preview-mode .editor-canvas-wrap{display:block;flex:1 1 0;min-height:0;height:auto;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 .visual-editor.preview-mode .editor-canvas{min-height:100%;height:auto}
 @media(max-width:600px){
-  .visual-editor.preview-mode .editor-workspace{height:0;min-height:0}
-  .visual-editor.preview-mode .editor-stage{height:auto;min-height:0}
-  .visual-editor.preview-mode .editor-canvas-wrap{height:auto;min-height:0;padding:0}
+  /* Keep a real, viewport-sized scroll area on narrow phones too. */
+  .visual-editor.preview-mode .editor-workspace{display:flex;height:auto;min-height:0;flex:1 1 0;overflow:hidden}
+  .visual-editor.preview-mode .editor-stage{display:flex;flex:1 1 0;width:100%;height:auto;min-height:0;padding:0;overflow:hidden}
+  .visual-editor.preview-mode .editor-canvas-wrap{display:block;flex:1 1 0;width:100%;height:auto;min-height:0;padding:0;overflow-x:hidden;overflow-y:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch}
 }
