@@ -84,6 +84,8 @@ export type SiteDocument = {
     title: string
     description: string
     language: string
+    templateVariant?: number
+    motionProfile?: string
   }
 }
 
