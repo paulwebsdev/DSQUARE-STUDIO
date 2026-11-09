@@ -8,7 +8,7 @@ export const SITE_SCHEMA_VERSION = 1 as const
 export type DeviceMode = 'desktop' | 'tablet' | 'mobile'
 export type SiteStatus = 'draft' | 'published' | 'archived'
 export type SectionKind = 'header' | 'hero' | 'features' | 'gallery' | 'testimonials' | 'pricing' | 'contact' | 'footer' | 'custom'
-export type ComponentKind = 'heading' | 'text' | 'button' | 'image' | 'spacer' | 'container'
+export type ComponentKind = 'heading' | 'text' | 'button' | 'image' | 'form' | 'spacer' | 'container'
 
 export type StyleMap = {
   color?: string
@@ -31,6 +31,8 @@ export type SiteComponent = {
   content: string
   styles: StyleMap
   visible: boolean
+  linkTo?: string
+  responsiveStyles?: Partial<Record<DeviceMode, StyleMap>>
 }
 
 export type SiteSection = {
