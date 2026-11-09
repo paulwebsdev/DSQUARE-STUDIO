@@ -330,3 +330,21 @@ h1,h2,h3,h4,p { margin-top: 0; }
 
 /* Professional editor batch 2 */
 .component-insert-tools{margin:8px 0 16px;padding:12px;border:1px solid #34312b;border-radius:7px;background:#1b1a18}.component-insert-tools>strong{display:block;margin-bottom:9px;color:#e5d4ae;font-size:9px}.component-insert-tools>div{display:grid;grid-template-columns:1fr 1fr;gap:6px}.component-insert-tools button{padding:8px 5px;border:1px solid #51432d;border-radius:5px;color:#e5d1a6;background:#211e18;font-size:8px}.site-preview-form{display:grid;gap:10px;max-width:480px;padding:18px;border:1px solid #ddd;border-radius:8px;background:#fafafa}.site-preview-form input,.site-preview-form textarea{width:100%;padding:11px;border:1px solid #ccc;border-radius:5px;font:inherit}.site-preview-form button{padding:11px 16px;border-radius:5px;color:white;background:#24211d}
+
+/* Website source export dialog */
+.editor-export{border-color:#a9874d!important;color:#8a672d!important;background:#f8f2e7!important}
+.export-backdrop{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:18px;background:rgba(0,0,0,.72);backdrop-filter:blur(5px)}
+.export-dialog{position:relative;width:min(100%,510px);padding:30px;border:1px solid #51432d;border-radius:16px;background:#171614;color:#eee9df;box-shadow:0 24px 80px #0009}
+.export-close{position:absolute;top:14px;right:14px;display:grid;place-items:center;width:34px;height:34px;border:1px solid #3a352c;border-radius:8px;color:#cfc5b3;background:#211f1b}
+.export-kicker{margin-bottom:10px;color:#c9a968;font-size:9px;letter-spacing:2px;font-weight:700}
+.export-dialog h2{margin:0 0 9px;font-size:25px;letter-spacing:-.7px}
+.export-dialog>p{margin:0 0 22px;color:#aaa397;font-size:12px;line-height:1.7}
+.export-zip-button{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;border:0;border-radius:8px;color:#171614;background:linear-gradient(110deg,#d4b77b,#b48b48);font-size:12px;font-weight:700}
+.export-zip-button:disabled{opacity:.6}
+.export-file-heading{margin:23px 0 10px;color:#c9c1b2;font-size:10px;font-weight:700}
+.export-file-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.export-file-grid button{padding:12px 8px;border:1px solid #39352e;border-radius:8px;color:#e8dfd0;background:#201e1a;font-size:11px;text-align:left}
+.export-file-grid button span{display:block;margin-top:5px;color:#918a7e;font-size:9px}
+.export-status{margin-top:13px;color:#d7bd88;font-size:11px}
+.export-dialog>small{display:block;margin-top:16px;color:#8f887c;font-size:9px;line-height:1.6}
+@media(max-width:600px){.export-dialog{padding:24px 18px}.export-dialog h2{font-size:21px}.export-file-grid{grid-template-columns:1fr}.export-file-grid button{display:flex;justify-content:space-between;align-items:center}.export-file-grid button span{margin:0;text-align:right}.editor-export{font-size:0;width:34px;height:33px;padding:0}.editor-export svg{width:16px;height:16px}}
