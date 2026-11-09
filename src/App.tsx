@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
 import VisualEditor from './editor/VisualEditor'
+import { createSiteFromTemplate } from './editor/defaultSite'
 import {
   Activity, ArrowDownRight, ArrowRight, Bell, Blocks, BriefcaseBusiness, Edit3,
   ChevronDown, CircleHelp, Clock3, Copy, FilePlus2, FolderKanban,
@@ -53,6 +54,7 @@ function App() {
   const [projectName, setProjectName] = useState('')
   const [projectCategory, setProjectCategory] = useState('Business')
   const [projectClient, setProjectClient] = useState('')
+  const [projectTemplateId, setProjectTemplateId] = useState<string | null>(null)
   const [clientName, setClientName] = useState('')
   const [clientEmail, setClientEmail] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
@@ -66,7 +68,7 @@ function App() {
   const selectNav = (label: string) => { setActive(label); setMenuOpen(false) }
   const openProjectEditor = (project: Project) => { setEditorProject(project); setActive('Visual editor'); setMenuOpen(false) }
   const visibleTemplates = templates.filter(template => (templateCategory === 'All templates' || template.category === templateCategory) && `${template.name} ${template.category} ${template.description}`.toLowerCase().includes(searchTerm.toLowerCase()))
-  const startFromTemplate = (template: SiteTemplate) => { setProjectName(`${template.name} website`); setProjectCategory(template.category); setSelectedTemplate(null); setShowCreate(true) }
+  const startFromTemplate = (template: SiteTemplate) => { setProjectName(`${template.name} website`); setProjectCategory(template.category); setProjectTemplateId(template.id); setSelectedTemplate(null); setShowCreate(true) }
   const activeProjects = projects.filter(p => showArchived ? p.status === 'Archived' : p.status !== 'Archived')
   const filteredProjects = useMemo(() => activeProjects.filter(p => {
     const client = clients.find(c => c.id === p.clientId)
@@ -76,8 +78,17 @@ function App() {
     event.preventDefault()
     if (!projectName.trim()) return
     const now = new Date().toISOString()
-    setProjects(current => [{ id: makeId(), name: projectName.trim(), category: projectCategory, clientId: projectClient, status: 'Draft', createdAt: now, updatedAt: now }, ...current])
-    setProjectName(''); setProjectCategory('Business'); setProjectClient(''); setShowCreate(false); setActive('My projects')
+    const project: Project = { id: makeId(), name: projectName.trim(), category: projectCategory, clientId: projectClient, status: 'Draft', createdAt: now, updatedAt: now }
+    setProjects(current => [project, ...current])
+    if (projectTemplateId) {
+      const document = createSiteFromTemplate(projectTemplateId, project.name, project.category)
+      localStorage.setItem(`dsquare-editor-document:${project.id}`, JSON.stringify(document))
+      setEditorProject(project)
+      setActive('Visual editor')
+    } else {
+      setActive('My projects')
+    }
+    setProjectName(''); setProjectCategory('Business'); setProjectClient(''); setProjectTemplateId(null); setShowCreate(false)
   }
   const createClient = (event: FormEvent) => {
     event.preventDefault()
