@@ -459,3 +459,7 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .section-touch-drag-handle{position:absolute;z-index:5;top:8px;left:8px;width:32px;height:32px;display:grid;place-items:center;border:1px solid #c39b56;border-radius:7px;background:#171614;color:#e8ca8d;font-size:20px;line-height:1;touch-action:none;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .site-preview-section.is-dragging{outline:2px dashed #c39b56;outline-offset:-3px;opacity:.72}
 @media(min-width:901px){.section-touch-drag-handle{opacity:0;transition:opacity .15s}.site-preview-section:hover .section-touch-drag-handle,.site-preview-section.is-selected .section-touch-drag-handle{opacity:1}}
+
+
+.storage-warning { position: sticky; top: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 18px; color: #f7e5bd; background: #382b17; border: 1px solid rgba(217,182,111,.35); border-radius: 10px; font-size: 12px; line-height: 1.5; }
+.storage-warning .icon-button { flex: 0 0 auto; color: inherit; }
