@@ -33,7 +33,9 @@ export type SiteComponent = {
   visible: boolean
   linkTo?: string
   openInNewTab?: boolean
-  buttonPreset?: 'gold' | 'dark' | 'outline' | 'soft' | 'custom'
+  buttonPreset?: 'gold' | 'dark' | 'outline' | 'soft' | 'custom' | 'whatsapp' | 'facebook' | 'instagram' | 'tiktok' | 'youtube' | 'linkedin' | 'x' | 'email' | 'call' | 'cta'
+  buttonLibraryId?: string
+  hoverStyles?: StyleMap
   responsiveStyles?: Partial<Record<DeviceMode, StyleMap>>
 }
 
