@@ -402,50 +402,46 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     ],
     [
       ['hero','Clarity for your next big move.','Independent thinking and practical consulting for leaders navigating change, growth and opportunity.','Talk to a consultant'],
-      ['features','Strategy that becomes action','From business reviews to implementation, we turn complex challenges into clear priorities.'],
       ['gallery','Our consulting approach','Discover how we listen, analyse, plan and work alongside your team.'],
+      ['features','Strategy that becomes action','From business reviews to implementation, we turn complex challenges into clear priorities.'],
       ['testimonials','Good advice. Better outcomes.','Our clients value clear communication, honest insight and work that moves things forward.'],
       ['contact','Bring us your biggest challenge','Start with a conversation about what success should look like.','Arrange a discovery call'],
     ],
     [
       ['hero','Make your next chapter your strongest.','A modern business partner for founders and teams ready to scale with focus and confidence.','See how we help'],
       ['features','Built for momentum','Flexible support across growth planning, systems, partnerships and customer experience.'],
-      ['gallery','Progress in practice','Explore the ideas, tools and collaborations that help growing teams move faster.'],
-      ['testimonials','Growth is a team effort','Hear how clear priorities and dependable partners help businesses make progress.'],
+      ['custom','A simple plan. Meaningful progress.','01 — Understand the opportunity. 02 — Set the priorities. 03 — Put the plan into motion.'],
       ['contact','Ready to build what comes next?','Share your goals and let’s shape a practical plan for growth.','Start a conversation'],
     ],
     [
       ['hero','Expertise that earns your confidence.','Professional services delivered with care, precision and a clear understanding of your priorities.','Meet our team'],
       ['features','Specialist support. Personal attention.','Get the right expertise, clear advice and a responsive team from first conversation to completion.'],
-      ['gallery','Our work, thoughtfully delivered','A selection of projects and outcomes shaped around real client needs.'],
       ['testimonials','A relationship built on trust','We believe the best work starts with listening and continues with dependable service.'],
+      ['pricing','Choose the support that fits','Flexible engagement options shaped around your priorities, team and timeline.','Discuss an engagement'],
       ['contact','Let’s understand your needs','Speak with our team about the support that will make a difference.','Request an introduction'],
     ],
     [
       ['hero','Stronger operations. Smarter outcomes.','Reliable business solutions for organisations that need quality, consistency and room to grow.','Explore our solutions'],
-      ['features','Capability you can count on','From planning and delivery to ongoing support, we bring the people and processes together.'],
       ['gallery','Quality in every detail','See the standards, projects and practical expertise behind the way we work.'],
-      ['testimonials','Dependable by design','Our partners count on clear timelines, accountable teams and consistent delivery.'],
+      ['custom','How delivery works','Discover a clear, accountable process from the first conversation through delivery and ongoing support.'],
       ['contact','Let’s discuss your requirements','Tell us what you need and we will prepare a considered next step.','Request a business quote'],
     ],
     [
       ['hero','A better experience for every customer.','Thoughtful products, helpful people and straightforward service from a business that cares about the details.','Discover our services'],
       ['features','Simple to work with. Easy to trust.','Clear options, responsive support and dependable service at every stage.'],
-      ['gallery','Made for the way you work','Explore our services, customer experience and the details that set us apart.'],
       ['testimonials','Our customers say it best','Real feedback from people and teams who choose to work with us.'],
+      ['gallery','Made for the way you work','Explore our services, customer experience and the details that set us apart.'],
       ['contact','How can we help today?','Tell us what you are looking for and our team will point you in the right direction.','Get in touch'],
     ],
     [
       ['hero','Technology that makes work flow.','Connected business tools and expert support that help teams work smarter and serve customers better.','Explore the platform'],
       ['features','One connected way to work','Bring your processes, people and information together with solutions designed around your business.'],
-      ['gallery','Designed around real workflows','See how thoughtful systems can remove friction and create more room for meaningful work.'],
-      ['pricing','A solution that fits your business','Start with what you need today and build on a foundation that can grow with you.','Discuss your options'],
+      ['pricing','A solution that fits your business','Start with what you need today and build on a foundation that can grow with you.','Compare options'],
       ['contact','Let’s find the right fit','Talk with our team about your goals, workflows and next steps.','Book a product walkthrough'],
     ],
     [
       ['hero','A more considered way to lead.','Strategic insight, trusted guidance and a discreet partnership for leaders making important decisions.','Meet our advisors'],
-      ['features','Perspective for complex decisions','We bring commercial understanding, thoughtful analysis and practical recommendations to the table.'],
-      ['gallery','Insight with real-world perspective','Explore our thinking, areas of expertise and the principles behind our work.'],
+      ['custom','Perspective for complex decisions','We bring commercial understanding, thoughtful analysis and practical recommendations to the table.'],
       ['testimonials','Trusted at the moments that matter','Long-term relationships built on discretion, integrity and clear advice.'],
       ['contact','Start a confidential conversation','Tell us what is on your mind and arrange a private discussion.','Speak with an advisor'],
     ],
@@ -458,9 +454,8 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     ],
     [
       ['hero','Good business starts with a better connection.','A fresh, people-first company experience built around useful solutions, lasting relationships and meaningful service.','Let’s work together'],
-      ['features','What makes us different','A clear offer, a helpful team and a commitment to doing the right thing for every customer.'],
       ['gallery','Discover the difference','Explore our story, services and the people who bring our promise to life.'],
-      ['testimonials','Relationships that last','We are proud to work with customers who value care, quality and follow-through.'],
+      ['features','What makes us different','A clear offer, a helpful team and a commitment to doing the right thing for every customer.'],
       ['contact','We would love to hear from you','Tell us a little about what you need and we will be in touch.','Contact our team'],
     ],
   ]
@@ -477,7 +472,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     [0,3,2,1,4], [0,1,2,4,3], [0,2,4,1,3], [0,3,1,4,2], [0,4,1,2,3],
   ]
   const orderedSections = sectionOrders[layoutVariant].map(index => sections[index]).filter(Boolean)
-  const variantSections = orderedSections.length >= 3 ? orderedSections : sections
+  const variantSections = category === 'Business' ? sections : orderedSections.length >= 3 ? orderedSections : sections
   const heroTone = layoutVariant % 3 === 0 ? selectedTheme.primary : palette[baseTemplateId] ?? '#f3eee5'
   const heroAlign = layoutVariant === 1 || layoutVariant === 4 || layoutVariant === 7 ? 'center' : 'left'
   site.pages[0].sections = [
@@ -593,7 +588,31 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
         ],
       }
     }),
-    { ...footer, components: [{ ...component('text', '© ' + name + '. All rights reserved.'), id: createId('copyright'), styles: { ...component('text', '© ' + name + '. All rights reserved.').styles, color: '#ffffff', maxWidth: '100%' } }], styles: { ...footer.styles, padding: '36px 7%', backgroundColor: selectedTheme.primary } },
+    {
+      ...footer,
+      components: category === 'Business' ? (() => {
+        const footerLayouts = [
+          ['A better way to do business.','COMPANY  About  Our approach  Careers','SERVICES  Strategy  Operations  Advisory','CONNECT  Contact  LinkedIn  Instagram'],
+          ['Ideas into action.','EXPLORE  Expertise  Insights  Case studies','FIRM  Our people  Our story  Careers','GET IN TOUCH  hello@yourcompany.com  +234 800 000 0000'],
+          ['Built for what comes next.','START HERE  Our services  How it works','RESOURCES  Guides  Insights  FAQs','LET’S TALK  Book a discovery call'],
+          ['Trusted expertise. Thoughtful delivery.','PRACTICE  Advisory  Consulting  Support','COMPANY  Leadership  Values  Careers','LEGAL  Privacy  Terms  Cookies'],
+          ['Business, made simpler.','WHAT WE DO  Solutions  Capabilities  Projects','WHERE WE WORK  Locations  Coverage  Partners','REQUEST A QUOTE  Tell us what you need'],
+          ['Here when you need us.','CUSTOMER CARE  Help centre  FAQs  Support','COMPANY  About  News  Careers','FOLLOW ALONG  LinkedIn  Instagram  Facebook'],
+          ['Work smarter. Move faster.','PLATFORM  Features  Integrations  Security','LEARN  Resources  Documentation  Updates','BOOK A DEMO  Talk to our team'],
+          ['A trusted partner for important decisions.','ADVISORY  Our expertise  Our approach','ABOUT  Leadership  Principles  Insights','PRIVATE ENQUIRIES  Contact our office'],
+          ['Dependable service. Consistent results.','SERVICES  Capabilities  Industries  Projects','COMPANY  About us  Our process  Careers','CONTACT  Request a proposal'],
+          ['Good people. Good business.','DISCOVER  Our story  What we do  Our values','STAY CONNECTED  News  Social  Contact','SAY HELLO  We would love to hear from you'],
+        ]
+        const footerCopy = footerLayouts[(variantNumber - 1) % footerLayouts.length]
+        const footerColor = layoutVariant % 3 === 1 ? '#111827' : selectedTheme.primary
+        return [
+          { ...component('heading', footerCopy[0]), id:createId('footer-brand'), styles:{color:'#ffffff',fontSize:layoutVariant===2?'2rem':'1.45rem',fontWeight:'750',maxWidth:'520px',margin:'0 0 24px'} },
+          ...footerCopy.slice(1).map((copy,index)=>({ ...component('text',copy), id:createId('footer-column'), styles:{color:'#e8e9eb',fontSize:'0.88rem',lineHeight:'2.05',maxWidth:'280px',padding:'12px 0',borderTop:'1px solid rgba(255,255,255,.18)'} })),
+          { ...component('text','© '+name+' · All rights reserved.'), id:createId('copyright'), styles:{color:'#c5c9cf',fontSize:'0.78rem',maxWidth:'100%',paddingTop:'22px',borderTop:'1px solid rgba(255,255,255,.2)'} },
+        ]
+      })() : [{ ...component('text', '© ' + name + '. All rights reserved.'), id: createId('copyright'), styles: { ...component('text', '© ' + name + '. All rights reserved.').styles, color: '#ffffff', maxWidth: '100%' } }],
+      styles: { ...footer.styles, padding: category === 'Business' ? (layoutVariant % 3 === 2 ? '76px 8% 30px' : '58px 7% 28px') : '36px 7%', backgroundColor: category === 'Business' && layoutVariant % 3 === 1 ? '#111827' : selectedTheme.primary, layout: category === 'Business' ? 'grid' : 'stacked', gridColumns: category === 'Business' ? (layoutVariant % 3 === 0 ? '2' : '4') : '1', gap: '22px' },
+    },
   ]
   site.metadata.description = sections[0][2]
   const categoryPageLabels: Record<string, string[]> = {
