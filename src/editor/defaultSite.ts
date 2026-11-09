@@ -574,7 +574,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
                 ['Useful solutions','Focus on what makes a real difference to everyday work.'],
                 ['Lasting relationships','Earn trust through care, quality and follow-through.'],
               ],
-            ][(variantNumber - 1) % 10]).map(([title, description], cardIndex) => ({
+            ][(variantNumber - 1) % 10]).map(([title, description]) => ({
               ...component('text', title + ' — ' + description),
               id: createId('business-feature'),
               styles: { color: selectedTheme.primary, backgroundColor: '#ffffff', border: '1px solid #e5e9e7', borderRadius: '14px', padding: '24px', minHeight: '142px', fontSize: '0.98rem', lineHeight: '1.7', boxShadow: '0 12px 32px rgba(20,32,38,.06)' },
