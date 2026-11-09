@@ -459,17 +459,19 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
       ['contact','We would love to hear from you','Tell us a little about what you need and we will be in touch.','Contact our team'],
     ],
   ]
+  // Each Business option gets its own page rhythm and footer composition.
+  // The profiles deliberately mix section order, hero treatment and footer density.
   const businessLayoutProfiles = [
-    { order:[0,1,2,3,4], hero:'classic' },
-    { order:[0,1,3,2,4], hero:'centered' },
-    { order:[0,2,1,4,3], hero:'bold' },
-    { order:[0,2,1,3,4], hero:'editorial' },
-    { order:[0,1,2,4,3], hero:'classic' },
-    { order:[0,3,1,2,4], hero:'centered' },
-    { order:[0,1,2,3,4], hero:'bold' },
-    { order:[0,2,3,1,4], hero:'editorial' },
-    { order:[0,1,3,2,4], hero:'classic' },
-    { order:[0,2,1,3,4], hero:'centered' },
+    { order:[0,1,2,3,4], hero:'split', footer:'four-column' },
+    { order:[0,1,3,2,4], hero:'centered', footer:'editorial' },
+    { order:[0,2,1,4,3], hero:'bold', footer:'compact' },
+    { order:[0,2,1,3,4], hero:'editorial', footer:'split' },
+    { order:[0,1,2,4,3], hero:'minimal', footer:'four-column' },
+    { order:[0,3,1,2,4], hero:'centered', footer:'statement' },
+    { order:[0,1,2,3,4], hero:'product', footer:'compact' },
+    { order:[0,2,3,1,4], hero:'editorial', footer:'editorial' },
+    { order:[0,1,3,2,4], hero:'split', footer:'statement' },
+    { order:[0,2,1,3,4], hero:'minimal', footer:'split' },
   ]
   const businessProfile = category === 'Business' ? businessLayoutProfiles[(variantNumber - 1) % businessLayoutProfiles.length] : undefined
   if (category === 'Business') sections.splice(0, sections.length, ...businessBlueprints[(variantNumber - 1) % businessBlueprints.length])
@@ -487,7 +489,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
   const orderedSections = (businessProfile?.order ?? sectionOrders[layoutVariant]).map(index => sections[index]).filter(Boolean)
   const variantSections = orderedSections.length >= 3 ? orderedSections : sections
   const heroTone = businessProfile?.hero === 'bold' || layoutVariant % 3 === 0 ? selectedTheme.primary : palette[baseTemplateId] ?? '#f3eee5'
-  const heroAlign = businessProfile?.hero === 'centered' || businessProfile?.hero === 'bold' || businessProfile?.hero === 'editorial' || layoutVariant === 1 || layoutVariant === 4 || layoutVariant === 7 ? 'center' : 'left'
+  const heroAlign = businessProfile?.hero === 'centered' || businessProfile?.hero === 'bold' || businessProfile?.hero === 'editorial' || businessProfile?.hero === 'minimal' || layoutVariant === 1 || layoutVariant === 4 || layoutVariant === 7 ? 'center' : 'left'
   site.pages[0].sections = [
     { ...header, components: [{ ...component('heading', name.toUpperCase()), id: createId('brand'), styles: { ...component('heading', name.toUpperCase()).styles, fontSize: '1rem', letterSpacing: '0.16em', fontWeight: '800', color: selectedTheme.primary } }], styles: { ...header.styles, padding: layoutVariant === 8 ? '34px 9%' : '22px 7%', backgroundColor: selectedTheme.background, borderBottom: '1px solid #e8e5df' } },
     ...variantSections.map(([kind, title, body, button], index) => {
@@ -500,19 +502,19 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
         ...block,
         styles: {
           ...block.styles,
-          padding: isHero ? (businessProfile?.hero === 'bold' ? '184px 10%' : businessProfile?.hero === 'editorial' ? '116px 15%' : layoutVariant === 8 ? '164px 10%' : '144px 8%') : layoutVariant === 9 ? '92px 9%' : '84px 8%',
+          padding: isHero ? (businessProfile?.hero === 'bold' ? '184px 10%' : businessProfile?.hero === 'editorial' ? '116px 15%' : businessProfile?.hero === 'minimal' ? '190px 14% 150px' : layoutVariant === 8 ? '164px 10%' : '144px 8%') : layoutVariant === 9 ? '92px 9%' : '84px 8%',
           textAlign: (isHero ? heroAlign : 'left') as 'left' | 'center',
           ...(isHero && category === 'Business' ? {
-            backgroundColor: businessProfile?.hero === 'bold' ? selectedTheme.primary : businessProfile?.hero === 'editorial' ? '#f4f0e8' : tone,
-            borderRadius: businessProfile?.hero === 'bold' ? '0' : businessProfile?.hero === 'editorial' ? '0 0 84px 0' : layoutVariant % 2 === 0 ? '0' : '22px',
-            minHeight: businessProfile?.hero === 'bold' ? '540px' : businessProfile?.hero === 'editorial' ? '390px' : '440px',
+            backgroundColor: businessProfile?.hero === 'bold' ? selectedTheme.primary : businessProfile?.hero === 'editorial' ? '#f4f0e8' : businessProfile?.hero === 'minimal' ? '#ffffff' : tone,
+            borderRadius: businessProfile?.hero === 'bold' || businessProfile?.hero === 'minimal' ? '0' : businessProfile?.hero === 'editorial' ? '0 0 84px 0' : layoutVariant % 2 === 0 ? '0' : '22px',
+            minHeight: businessProfile?.hero === 'bold' ? '540px' : businessProfile?.hero === 'editorial' ? '390px' : businessProfile?.hero === 'minimal' ? '500px' : '440px',
             boxShadow: businessProfile?.hero === 'bold' ? 'inset 0 -1px 0 rgba(255,255,255,.16)' : 'none',
           } : {}),
           layout: kind === 'gallery' || (kind === 'features' && (category === 'Business' || layoutVariant % 2 === 0)) ? 'grid' : 'stacked',
           gridColumns: kind === 'gallery' ? '3' : kind === 'features' && (category === 'Business' || layoutVariant % 2 === 0) ? (layoutVariant === 6 ? '4' : '3') : '2',
           borderTop: !isHero && index % 2 === 0 ? '1px solid #e9e4dc' : 'none',
           ...(category === 'Business' ? {
-            ...(isHero && [0,3,5,7].includes(layoutVariant) ? { display:'grid', gridTemplateColumns:'minmax(0,1fr) minmax(0,1fr)', alignItems:'center', columnGap:'clamp(28px,5vw,76px)' } : {}),
+            ...(isHero && (businessProfile?.hero === 'split' || [0,3,5,7].includes(layoutVariant)) ? { display:'grid', gridTemplateColumns:'minmax(0,1fr) minmax(0,1fr)', alignItems:'center', columnGap:'clamp(28px,5vw,76px)' } : {}),
             ...(kind === 'gallery' ? { gridColumns: layoutVariant % 2 === 0 ? '3' : '2', gap:'22px' } : {}),
             ...(kind === 'features' ? { gridColumns: layoutVariant % 3 === 0 ? '2' : '3', gap:'20px' } : {}),
             ...(kind === 'testimonials' || kind === 'pricing' ? { layout:'grid', gridColumns: layoutVariant % 2 === 0 ? '2' : '3', gap:'18px' } : {}),
@@ -540,7 +542,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
                 maxWidth: [0,3,5,7].includes(layoutVariant) ? '620px' : '1120px',
                 borderRadius: layoutVariant % 2 === 0 ? '18px' : '8px',
                 boxShadow: '0 24px 65px rgba(20,32,38,.18)',
-                ...([0,3,5,7].includes(layoutVariant) ? { gridColumn:'2', gridRow:'1 / span 3', alignSelf:'center' } : {}),
+                ...((businessProfile?.hero === 'split' || [0,3,5,7].includes(layoutVariant)) ? { gridColumn:'2', gridRow:'1 / span 3', alignSelf:'center' } : {}),
               } : {}),
               ...(category === 'Business' && isHero && item.kind !== 'image' ? { gridColumn:'1' } : {}),
             },
@@ -638,7 +640,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
           { ...component('text','© '+name+' · All rights reserved.'), id:createId('copyright'), styles:{color:'#c5c9cf',fontSize:'0.78rem',maxWidth:'100%',paddingTop:'22px',borderTop:'1px solid rgba(255,255,255,.2)'} },
         ]
       })() : [{ ...component('text', '© ' + name + '. All rights reserved.'), id: createId('copyright'), styles: { ...component('text', '© ' + name + '. All rights reserved.').styles, color: '#ffffff', maxWidth: '100%' } }],
-      styles: { ...footer.styles, padding: category === 'Business' ? (layoutVariant % 3 === 2 ? '76px 8% 30px' : '58px 7% 28px') : '36px 7%', backgroundColor: category === 'Business' && layoutVariant % 3 === 1 ? '#111827' : selectedTheme.primary, layout: category === 'Business' ? 'grid' : 'stacked', gridColumns: category === 'Business' ? (layoutVariant % 3 === 0 ? '2' : '4') : '1', gap: '22px' },
+      styles: { ...footer.styles, padding: category === 'Business' ? (businessProfile?.footer === 'compact' ? '34px 7% 22px' : businessProfile?.footer === 'statement' ? '88px 10% 36px' : businessProfile?.footer === 'editorial' ? '92px 9% 32px' : '58px 7% 28px') : '36px 7%', backgroundColor: category === 'Business' && layoutVariant % 3 === 1 ? '#111827' : selectedTheme.primary, layout: category === 'Business' ? 'grid' : 'stacked', gridColumns: category === 'Business' ? (businessProfile?.footer === 'compact' ? '1' : businessProfile?.footer === 'split' ? '2' : businessProfile?.footer === 'statement' ? '3' : '4') : '1', gap: businessProfile?.footer === 'compact' ? '10px' : '22px', textAlign: businessProfile?.footer === 'statement' ? 'center' : 'left' },
     },
   ]
   site.metadata.description = sections[0][2]
