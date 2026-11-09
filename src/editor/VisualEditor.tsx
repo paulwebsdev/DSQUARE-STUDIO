@@ -471,8 +471,23 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
       Object.entries(files.assets).forEach(([name, content]) => zip.file(name, content))
       zip.file('styles.css', files.css)
       zip.file('script.js', files.js)
-      const pageList = Object.entries(files.htmlFiles).map(([fileName]) => '  - ' + fileName).join('\n')
-      const assetCount = Object.keys(files.assets).length
+      const pageNames = Object.keys(files.htmlFiles)
+      const assetNames = Object.keys(files.assets)
+      const pageList = pageNames.map(fileName => '  - ' + fileName).join('\n')
+      const assetCount = assetNames.length
+      const manifest = {
+        format: 'dsquare-studio-website-export',
+        version: 1,
+        siteName: site.name,
+        generatedAt: new Date().toISOString(),
+        language: site.metadata.language || 'en',
+        pages: pageNames,
+        stylesheets: ['styles.css'],
+        scripts: ['script.js'],
+        assets: assetNames,
+        notes: ['Contact forms are front-end previews only.', 'Hosting, domains, databases and payment services are not included.'],
+      }
+      zip.file('manifest.json', JSON.stringify(manifest, null, 2))
       zip.file('README.txt', 'WEBSITE SOURCE PACKAGE\n' + site.name + '\n\n' +
         'GETTING STARTED\n' +
         '1. Keep the folder structure unchanged.\n' +
@@ -480,6 +495,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         '3. Upload the complete folder to a static web host to publish it.\n\n' +
         'PAGES INCLUDED\n' + pageList + '\n\n' +
         'PACKAGE CONTENTS\n' +
+        '- manifest.json: machine-readable inventory and export details.\n' +
         '- styles.css: shared website styles and responsive rules.\n' +
         '- script.js: small front-end interaction script.\n' +
         '- assets/: ' + assetCount + ' packaged image asset(s).\n\n' +
