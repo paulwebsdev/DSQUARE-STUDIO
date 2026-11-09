@@ -28,10 +28,13 @@ export default function VisualEditor({ onExit }: Props) {
   const [future, setFuture] = useState<SiteDocument[]>([])
   const [showAdd, setShowAdd] = useState(false)
   const [savedAt, setSavedAt] = useState('Just saved')
+  const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null)
+  const [previewMode, setPreviewMode] = useState(false)
 
   const page = site.pages[0]
   const selected = page?.sections.find(section => section.id === selectedId) ?? page?.sections[0]
-  const selectedText = selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
+  const selectedComponent = selected?.components.find(item => item.id === selectedComponentId)
+  const selectedText = selectedComponent?.content ?? selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
 
   useEffect(() => {
     localStorage.setItem('dsquare-editor-document', JSON.stringify(site))
@@ -108,14 +111,14 @@ export default function VisualEditor({ onExit }: Props) {
 
   const canvasClass = useMemo(() => `editor-canvas device-${device}`, [device])
 
-  return <div className="visual-editor">
+  return <div className={`visual-editor ${previewMode ? "preview-mode" : ""}`}>
     <header className="editor-topbar">
       <button className="editor-back" onClick={onExit}><ArrowLeft size={17} /><span>Back to studio</span></button>
       <div className="editor-project-name"><strong>{site.name}</strong><span><i /> {savedAt}</span></div>
       <div className="editor-top-actions">
         <button className="editor-tool" onClick={undo} disabled={!history.length} aria-label="Undo"><Undo2 size={17} /></button>
         <button className="editor-tool" onClick={redo} disabled={!future.length} aria-label="Redo"><Redo2 size={17} /></button>
-        <button className="editor-preview" onClick={() => window.open('', '_blank')}><Eye size={15} /> Preview</button>
+        <button className="editor-preview" onClick={() => setPreviewMode(value => !value)}><Eye size={15} /> {previewMode ? "Exit preview" : "Preview"}</button>
         <button className="primary-button editor-save" onClick={() => { localStorage.setItem('dsquare-editor-document', JSON.stringify(site)); setSavedAt('Saved just now') }}><Save size={14} /> Save</button>
       </div>
     </header>
@@ -140,7 +143,7 @@ export default function VisualEditor({ onExit }: Props) {
       </main>
       <aside className="editor-right-panel"><div className="editor-properties-heading"><div><Settings2 size={16} /><strong>Properties</strong></div><span>SECTION</span></div>{selected ? <div className="editor-properties">
         <label className="property-label">Section name<input value={selected.name} onChange={e => updateSection(selected.id, section => ({ ...section, name: e.target.value }))} /></label>
-        <label className="property-label">Heading text<textarea rows={3} value={selectedText} onChange={e => updateHeading(e.target.value)} /></label>
+        <label className="property-label">{selectedComponent ? `${selectedComponent.kind} content` : "Heading text"}<textarea rows={3} value={selectedText} onChange={e => updateHeading(e.target.value)} /></label>
         <label className="property-label">Background colour<div className="colour-input"><input type="color" value={selected.styles.backgroundColor ?? '#ffffff'} onChange={e => updateSection(selected.id, section => ({ ...section, styles: { ...section.styles, backgroundColor: e.target.value } }))} /><span>{selected.styles.backgroundColor ?? '#ffffff'}</span></div></label>
         <label className="property-label">Section spacing<select value={selected.styles.padding ?? '72px 8%'} onChange={e => updateSection(selected.id, section => ({ ...section, styles: { ...section.styles, padding: e.target.value } }))}><option value="40px 6%">Compact</option><option value="72px 8%">Comfortable</option><option value="112px 8%">Spacious</option></select></label>
         <div className="property-actions"><button onClick={() => moveSection(-1)} title="Move up">↑ Move up</button><button onClick={() => moveSection(1)} title="Move down">↓ Move down</button></div>
