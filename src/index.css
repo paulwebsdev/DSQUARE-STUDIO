@@ -539,3 +539,11 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .image-quick-actions button{min-height:36px;padding:7px;border:1px solid #51432d;border-radius:6px;color:#e5d1a6;background:#211e18;font-size:9px;cursor:pointer}
 .image-quick-actions button:active{background:#403321}
 .site-preview-section img.component-selected{outline:2px solid #d2a64f;outline-offset:3px;cursor:move}
+
+
+/* Direct canvas image manipulation */
+.image-canvas-wrap{position:relative;display:inline-block;max-width:100%;vertical-align:middle;line-height:0}
+.image-canvas-wrap img{display:block;max-width:100%}
+.image-canvas-wrap.component-selected{outline:2px solid #d2a64f;outline-offset:3px}
+.image-resize-handle{position:absolute;right:-7px;bottom:-7px;width:17px;height:17px;min-width:17px;min-height:17px;padding:0;border:2px solid #17130d;border-radius:50%;background:#e0b75e;box-shadow:0 0 0 1px #f7e2b4;touch-action:none;cursor:nwse-resize;z-index:5}
+.image-resize-handle:focus-visible{outline:2px solid #fff;outline-offset:3px}
