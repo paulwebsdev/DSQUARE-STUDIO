@@ -76,3 +76,16 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - [ ] Use Tab to focus heading, paragraph, button, image and container; Enter/Space selects each element and F2 starts text editing where supported.
 - [ ] Duplicate two pages with slugs that normalize to the same filename (including case differences); verify exported HTML filenames remain unique.
 - [ ] Link to a page with a query string and anchor fragment; verify the exported link points to the correct HTML file and preserves both.
+
+
+## Multi-page isolation, keyboard shortcuts and export hardening
+- [ ] Add a section on a secondary page; verify no section is added to the home page or any other page.
+- [ ] Edit a section on a secondary page; verify matching IDs or similar content on other pages remain untouched.
+- [ ] Add, rename and duplicate pages with repeated names; verify visible page names and exported filenames remain unique.
+- [ ] Duplicate sections repeatedly; verify names, IDs and responsive styles remain independent.
+- [ ] Perform more than 30 undo operations; verify undo/redo remains stable and bounded.
+- [ ] Press Escape during inline editing, with export open, with mobile panels open and in preview; verify the expected layer closes each time.
+- [ ] Switch device previews and inspect accessible pressed state.
+- [ ] Export with valid PNG/JPEG/WebP/GIF/SVG data URLs and malformed image data; verify malformed assets do not break the ZIP.
+- [ ] Verify exported image tags do not preserve javascript:, blob: or malformed data: sources.
+- [ ] Export with altered theme font/colour/button values; verify CSS remains syntactically valid.
