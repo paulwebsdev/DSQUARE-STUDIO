@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { MouseEvent } from 'react'
-import { ArrowLeft, Eye, Monitor, Tablet, Smartphone, Undo2, Redo2, Plus, Type, Image, MousePointer2, Layers3, Settings2, Trash2, ChevronDown, Save, Sparkles } from 'lucide-react'
+import { ArrowLeft, Eye, Monitor, Tablet, Smartphone, Undo2, Redo2, Plus, Type, Image, MousePointer2, Layers3, Settings2, Trash2, Save, Sparkles } from 'lucide-react'
 import { createStarterSite } from './defaultSite'
 import type { DeviceMode, SiteDocument, SiteSection } from './types'
 
@@ -52,14 +52,15 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
 
   const addPage = () => {
     const pageNumber = site.pages.length + 1
+    const pageName = `New page ${pageNumber}`
     const newPage = {
       id: globalThis.crypto?.randomUUID?.() ?? `page-${Date.now()}`,
-      name: `New page ${pageNumber}`,
+      name: pageName,
       slug: `page-${pageNumber}`,
       isHomePage: false,
       sections: [
         { id: `header-${Date.now()}`, kind: 'header' as const, name: 'Header', enabled: true, styles: { padding: '24px 8%', backgroundColor: '#171717' }, components: [{ id: `brand-${Date.now()}`, kind: 'heading' as const, content: site.name, visible: true, styles: { color: '#ffffff', fontSize: '1.4rem' } }] },
-        { id: `hero-${Date.now()}`, kind: 'hero' as const, name: 'Page introduction', enabled: true, styles: { padding: '96px 8%', backgroundColor: '#f3eee5' }, components: [{ id: `title-${Date.now()}`, kind: 'heading' as const, content: newPage.name, visible: true, styles: { fontSize: '2.8rem', fontWeight: '700', color: '#171717' } }, { id: `copy-${Date.now()}`, kind: 'text' as const, content: 'Add the content for this page in the properties panel.', visible: true, styles: { fontSize: '1rem', color: '#666666' } }] },
+        { id: `hero-${Date.now()}`, kind: 'hero' as const, name: 'Page introduction', enabled: true, styles: { padding: '96px 8%', backgroundColor: '#f3eee5' }, components: [{ id: `title-${Date.now()}`, kind: 'heading' as const, content: pageName, visible: true, styles: { fontSize: '2.8rem', fontWeight: '700', color: '#171717' } }, { id: `copy-${Date.now()}`, kind: 'text' as const, content: 'Add the content for this page in the properties panel.', visible: true, styles: { fontSize: '1rem', color: '#666666' } }] },
         { id: `footer-${Date.now()}`, kind: 'footer' as const, name: 'Footer', enabled: true, styles: { padding: '32px 8%', backgroundColor: '#171717' }, components: [{ id: `copyright-${Date.now()}`, kind: 'text' as const, content: '© ' + site.name + '. All rights reserved.', visible: true, styles: { color: '#ffffff' } }] },
       ],
     }
