@@ -203,6 +203,18 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [ ] Add automated export regression tests and verify exported sites in desktop and mobile browsers.
 
 
+## SEO, accessibility and page reliability batch — 2026-11-09
+- [x] Add Open Graph title, description and website type metadata to exported pages.
+- [x] Add Twitter summary-card metadata and browser theme-colour metadata.
+- [x] Add a keyboard-accessible skip-to-content link and visible keyboard focus styles to exported websites.
+- [x] Add accessible labels to exported page sections.
+- [x] Preserve intentionally empty image alt text for decorative images and add asynchronous image decoding.
+- [x] Add an additional tablet-width responsive grid fallback and active-page navigation styling.
+- [x] Prevent duplicate page slugs when adding, renaming or duplicating pages.
+- [x] Generate collision-resistant IDs for duplicated page content.
+- [x] Add a live website-title character counter to the SEO panel.
+- [ ] Validate exported metadata and accessibility in browser-based QA and automated tests.
+
 ## Mobile editing and preview refinement — 2026-11-09
 - [x] Add touch drag handles to move sections on touchscreens without making the whole canvas a drag target.
 - [x] Keep section dragging visually indicated while a reorder is in progress.
