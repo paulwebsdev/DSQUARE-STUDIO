@@ -494,8 +494,8 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
           ...block.styles,
           padding: isHero ? (layoutVariant === 8 ? '164px 10%' : '144px 8%') : layoutVariant === 9 ? '92px 9%' : '84px 8%',
           textAlign: (isHero ? heroAlign : 'left') as 'left' | 'center',
-          layout: kind === 'gallery' || (kind === 'features' && layoutVariant % 2 === 0) ? 'grid' : 'stacked',
-          gridColumns: kind === 'gallery' ? '3' : kind === 'features' && layoutVariant % 2 === 0 ? (layoutVariant === 6 ? '4' : '3') : '2',
+          layout: kind === 'gallery' || (kind === 'features' && (category === 'Business' || layoutVariant % 2 === 0)) ? 'grid' : 'stacked',
+          gridColumns: kind === 'gallery' ? '3' : kind === 'features' && (category === 'Business' || layoutVariant % 2 === 0) ? (layoutVariant === 6 ? '4' : '3') : '2',
           borderTop: !isHero && index % 2 === 0 ? '1px solid #e9e4dc' : 'none',
         },
         components: [
@@ -523,12 +523,59 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
             },
           })),
           ...(category === 'Business' && kind === 'features' ? [
-            ...['Strategy & planning','Expert delivery','Clear communication'].map((title, cardIndex) => ({
-              ...component('text', title + ' — ' + [
-                'Make informed decisions with a practical plan shaped around your goals.',
-                'Work with experienced people who take ownership from start to finish.',
-                'Know what is happening, what comes next and how progress is measured.',
-              ][cardIndex]),
+            ...([
+              [
+                ['Strategy & planning','Make informed decisions with a practical plan shaped around your goals.'],
+                ['Expert delivery','Work with experienced people who take ownership from start to finish.'],
+                ['Clear communication','Know what is happening, what comes next and how progress is measured.'],
+              ],
+              [
+                ['Business review','Understand the challenge with structured analysis and honest insight.'],
+                ['Growth strategy','Prioritise the opportunities with the strongest commercial potential.'],
+                ['Implementation','Turn recommendations into action with hands-on support.'],
+              ],
+              [
+                ['Growth planning','Set priorities and milestones that support sustainable expansion.'],
+                ['Better systems','Create repeatable processes that give your team room to focus.'],
+                ['Customer experience','Build stronger relationships at every stage of the journey.'],
+              ],
+              [
+                ['Specialist expertise','Access experienced professionals who understand your sector.'],
+                ['Personal attention','Get considered advice shaped around your specific requirements.'],
+                ['Reliable outcomes','Move forward with clear ownership and careful follow-through.'],
+              ],
+              [
+                ['Operational capability','Bring the right people, equipment and processes together.'],
+                ['Quality assurance','Keep standards visible through careful checks and accountability.'],
+                ['Ongoing support','Maintain momentum with responsive service after delivery.'],
+              ],
+              [
+                ['Helpful advice','Get clear answers and practical guidance from the first conversation.'],
+                ['Straightforward service','Understand your options, costs and next steps without confusion.'],
+                ['Customer care','Work with a responsive team that values your time.'],
+              ],
+              [
+                ['Connected workflows','Reduce repetitive work and keep important information in reach.'],
+                ['Useful insights','Turn business information into clearer everyday decisions.'],
+                ['Flexible foundations','Choose an approach that can adapt as your team grows.'],
+              ],
+              [
+                ['Commercial perspective','See the wider picture before making important decisions.'],
+                ['Independent insight','Challenge assumptions and uncover new possibilities.'],
+                ['Trusted partnership','Work with an advisor who values discretion and integrity.'],
+              ],
+              [
+                ['Responsive operations','Keep work moving with clear processes and practical support.'],
+                ['Accountable delivery','Know who owns each task and what happens next.'],
+                ['Consistent standards','Deliver dependable quality across every customer touchpoint.'],
+              ],
+              [
+                ['People first','Build a business experience that respects customers and teams.'],
+                ['Useful solutions','Focus on what makes a real difference to everyday work.'],
+                ['Lasting relationships','Earn trust through care, quality and follow-through.'],
+              ],
+            ][(variantNumber - 1) % 10]).map(([title, description], cardIndex) => ({
+              ...component('text', title + ' — ' + description),
               id: createId('business-feature'),
               styles: { color: selectedTheme.primary, backgroundColor: '#ffffff', border: '1px solid #e5e9e7', borderRadius: '14px', padding: '24px', minHeight: '142px', fontSize: '0.98rem', lineHeight: '1.7', boxShadow: '0 12px 32px rgba(20,32,38,.06)' },
             })),
@@ -599,6 +646,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     nonprofit: ['Programmes in action', 'Discover the initiatives, services and community projects behind our mission.', 'Ways to make a difference', 'Find out how to volunteer, partner with us or support the work.'],
   }
   const categoryPageDescriptions: Record<string, Record<string, string>> = {
+    Business:{About:'Learn about our story, values and the people committed to helping customers and partners succeed.',Services:'Explore our core services, capabilities and the practical ways we support businesses.',Contact:'Tell us what you need and our team will help you find the right next step.'},
     Automotive:{Vehicles:'Explore available vehicles, key details and options to arrange a viewing or test drive.',Services:'Discover maintenance, repairs and aftercare designed to keep you moving.',Finance:'Understand available finance guidance and the information to prepare before applying.'},
     'Fitness & Sports':{Membership:'Compare membership options and find the level of access that suits your goals.',Classes:'Explore group sessions, training styles and class information.',Coaches:'Meet the coaches and learn about their experience and approach.',Timetable:'Plan your week with our class and training schedule.'},
     Wedding:{'Our Story':'Meet the people, inspiration and approach behind the celebrations we create.',Gallery:'Explore real celebrations, thoughtful details and ideas for your own day.',Packages:'Discover planning options and services that can be shaped around your celebration.',FAQs:'Find answers to common questions about planning, dates and our services.',RSVP:'Share your response and important details for the celebration.'},
@@ -653,6 +701,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
     const pageBody = categoryPageDescriptions[category]?.[label] ?? pageDescriptions[label] ?? 'Discover more about ' + name + ', our approach and how we can help you take the next step.'
     const pageHighlights = innerPageHighlights[category] ?? innerPageHighlights[baseTemplateId] ?? ['Thoughtful expertise','A considered experience shaped around your needs.','Clear information','Helpful guidance for your next step.']
     const showcaseByCategory: Record<string, { title: string; items: string[] }> = {
+      Business:{title:'Our business capabilities',items:['Strategy & consulting · Clear thinking and practical plans for your next stage.','Business operations · Dependable support that helps your organisation work better.','Client partnerships · Responsive people focused on long-term relationships.']},
       shop: { title: 'Explore the collection', items: ['New arrivals · Discover the latest additions to the collection.', 'Customer favourites · Browse pieces customers return to again and again.', 'Made for everyday · Clear details, thoughtful quality and easy support.'] },
       restaurant: { title: 'A taste of the menu', items: ['Small plates · Fresh starters and seasonal dishes to share.', 'From the kitchen · Signature mains prepared with care.', 'Something sweet · Desserts and drinks to finish your visit.'] },
       education: { title: 'Learning at every stage', items: ['Early years · A warm start built around curiosity and confidence.', 'Primary learning · Strong foundations, creativity and discovery.', 'Secondary pathways · Skills, subject choices and preparation for what comes next.'] },
