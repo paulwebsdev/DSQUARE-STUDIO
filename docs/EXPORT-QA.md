@@ -115,3 +115,10 @@ This checklist records repeatable manual checks for the browser prototype. It is
 - [ ] Open README.txt and verify all exported page filenames and packaged asset count are accurate.
 - [ ] Confirm the README clearly states that forms, hosting, domains, databases and payments are not connected.
 - [ ] Download the ZIP on Android and desktop; confirm the archive opens and contains all page, style, script and asset files.
+
+
+## Export manifest
+- [ ] Export a one-page and multi-page website; confirm manifest.json exists and uses format dsquare-studio-website-export version 1.
+- [ ] Compare manifest page and asset lists against the actual ZIP entries.
+- [ ] Confirm generation timestamp and language are present and no client directory or unrelated workspace records are included.
+- [ ] Confirm README describes manifest.json and service limitations accurately.
