@@ -75,6 +75,7 @@ export type SiteDocument = {
   theme: SiteTheme
   pages: SitePage[]
   assets?: SiteAsset[]
+  savedComponents?: SiteComponent[]
   metadata: {
     title: string
     description: string
