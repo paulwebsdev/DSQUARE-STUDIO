@@ -67,7 +67,6 @@ function App() {
   const [aiCategory, setAiCategory] = useState('Business')
   const [aiTone, setAiTone] = useState('Modern and professional')
   const [aiPages, setAiPages] = useState('Home, About, Services, Contact')
-  const [aiGenerated, setAiGenerated] = useState(false)
 
   useEffect(() => { localStorage.setItem('dsquare-projects', JSON.stringify(projects)) }, [projects])
   useEffect(() => { localStorage.setItem('dsquare-clients', JSON.stringify(clients)) }, [clients])
@@ -111,10 +110,10 @@ function App() {
       if (index === 0) return
       const pageId = makeId()
       document.pages.push({ id: pageId, name: pageName, slug: pageName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), sections: [
-        { id: makeId(), kind: 'header', name: 'Header', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: name.toUpperCase(), styles: {} }] },
-        { id: makeId(), kind: 'hero', name: pageName, enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: pageName, styles: {} }, { id: makeId(), kind: 'text', content: aiPrompt.trim(), styles: {} }] },
-        { id: makeId(), kind: 'contact', name: 'Contact', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: 'Let’s connect', styles: {} }] },
-        { id: makeId(), kind: 'footer', name: 'Footer', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'text', content: '© ' + name + '. All rights reserved.', styles: {} }] },
+        { id: makeId(), kind: 'header', name: 'Header', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: name.toUpperCase(), visible: true, styles: {} }] },
+        { id: makeId(), kind: 'hero', name: pageName, enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: pageName, visible: true, styles: {} }, { id: makeId(), kind: 'text', content: aiPrompt.trim(), visible: true, styles: {} }] },
+        { id: makeId(), kind: 'contact', name: 'Contact', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'heading', content: 'Let’s connect', visible: true, styles: {} }] },
+        { id: makeId(), kind: 'footer', name: 'Footer', enabled: true, styles: {}, components: [{ id: makeId(), kind: 'text', content: '© ' + name + '. All rights reserved.', visible: true, styles: {} }] },
       ] })
     })
     document.pages[0].sections.forEach(section => section.components.forEach(component => {
@@ -125,7 +124,6 @@ function App() {
     localStorage.setItem(`dsquare-editor-document:${project.id}`, JSON.stringify(document))
     setEditorProject(project)
     setActive('Visual editor')
-    setAiGenerated(true)
   }
 
   const createClient = (event: FormEvent) => {
