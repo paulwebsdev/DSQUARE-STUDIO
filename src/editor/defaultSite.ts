@@ -149,6 +149,76 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
       ['testimonials','Member voices','Hear why people choose to be part of this community.'],
       ['contact','There’s a place for you','Find out how to join, volunteer or get involved.','Get involved'],
     ],
+    realestate: [
+      ['hero','Find a place that feels like yours.','Exceptional homes, considered guidance and a smoother way to make your next move.','Explore properties'],
+      ['gallery','Featured properties','Discover distinctive homes and spaces selected for their character, quality and location.'],
+      ['features','A better way to find home','Local knowledge, thoughtful advice and support at every step of your property journey.'],
+      ['testimonials','Moves made with confidence','Hear from buyers, sellers and property owners we have helped.'],
+      ['contact','Your next chapter starts here','Tell us what you are looking for and our property team will help you take the next step.','Speak to an advisor'],
+    ],
+    healthcare: [
+      ['hero','Care that puts you first.','Thoughtful, professional healthcare delivered with compassion, clarity and respect.','Book an appointment'],
+      ['features','How we can support you','Explore our care services, specialist support and patient-first approach.'],
+      ['gallery','Meet your care team','Get to know the people, spaces and expertise behind your care.'],
+      ['testimonials','Trusted care, real experiences','Discover what patients value about the care they receive.'],
+      ['contact','We are here to help','Find our clinic, ask a question or request an appointment.','Contact the clinic'],
+    ],
+    beauty: [
+      ['hero','A little time, entirely for you.','Considered treatments, expert hands and a beautiful space to reset and feel your best.','Explore treatments'],
+      ['features','The studio experience','Discover signature treatments, thoughtful details and care tailored to you.'],
+      ['gallery','The details make the difference','Explore the studio, treatment moments and our latest work.'],
+      ['testimonials','Kind words from our guests','A few notes from clients who make time for themselves with us.'],
+      ['contact','Your moment starts here','Choose your treatment and get in touch to arrange your visit.','Book your experience'],
+    ],
+    travel: [
+      ['hero','Go somewhere unforgettable.','Beautiful places, thoughtful stays and local experiences worth travelling for.','Discover your stay'],
+      ['gallery','Places to fall in love with','Explore our handpicked destinations, rooms and memorable escapes.'],
+      ['features','Travel, thoughtfully arranged','From the first idea to the final detail, enjoy a smoother way to explore.'],
+      ['testimonials','Stories from the journey','Read about the moments guests remember long after they return.'],
+      ['contact','Let’s plan your escape','Tell us what inspires you and we will help shape your next journey.','Plan a trip'],
+    ],
+    finance: [
+      ['hero','Make your next move with clarity.','Independent thinking, practical financial guidance and a plan shaped around what matters to you.','Arrange a consultation'],
+      ['features','Advice built around your goals','Explore our approach to planning, protection and long-term financial confidence.'],
+      ['gallery','Expertise you can understand','Clear insights and practical guidance for the decisions ahead.'],
+      ['testimonials','Relationships built on trust','Learn how thoughtful advice helps clients move forward with confidence.'],
+      ['contact','Let’s talk about your plans','Start a confidential conversation with our advisory team.','Speak with an advisor'],
+    ],
+    saas: [
+      ['hero','Less busywork. More brilliant work.','One connected platform to help your team move faster, stay aligned and do its best work.','Start your free trial'],
+      ['features','Everything your team needs','Bring your workflows, collaboration and insights together in one clear workspace.'],
+      ['gallery','A clearer way to work','See how simple workflows turn complex work into meaningful progress.'],
+      ['pricing','Plans that grow with you','Choose a plan for the way your team works today, with room to scale tomorrow.'],
+      ['contact','Ready to see it in action?','Talk with our team and discover what a more focused workflow could look like.','Book a demo'],
+    ],
+    nonprofit: [
+      ['hero','Together, we can make change happen.','We bring people, resources and ideas together to create a more hopeful future.','Be part of the change'],
+      ['features','Where your support goes','Discover the programmes, people and practical work making a difference.'],
+      ['gallery','Stories of impact','Meet the communities and individuals at the heart of our mission.'],
+      ['testimonials','Every contribution matters','Hear from volunteers, partners and the people behind the progress.'],
+      ['contact','There is a place for you here','Give your time, share your skills or support the work in a way that matters to you.','Get involved'],
+    ],
+    events: [
+      ['hero','An experience worth showing up for.','Bring your people together for ideas, inspiration and moments that stay with you.','Reserve your place'],
+      ['features','What to expect','Explore the programme, highlights and experiences waiting for you.'],
+      ['gallery','Meet the voices and moments','Discover the speakers, performers and stories shaping this event.'],
+      ['testimonials','Made memorable together','A look back at the energy, ideas and connections from our community.'],
+      ['contact','Make plans to be there','Find the details you need and secure your place.','Register now'],
+    ],
+    construction: [
+      ['hero','Built with care. Made to last.','Reliable construction, considered craftsmanship and a team that takes pride in every detail.','Discuss your project'],
+      ['gallery','Work that speaks for itself','Explore completed projects, specialist capabilities and the quality behind every finish.'],
+      ['features','From first plan to final handover','A clear process, experienced people and dependable delivery at every stage.'],
+      ['testimonials','Confidence from the ground up','Hear from clients who trusted our team with their projects.'],
+      ['contact','Tell us what you are building','Share your plans and arrange a conversation with our project team.','Request a quote'],
+    ],
+    legal: [
+      ['hero','Clear advice. Strong representation.','Experienced legal guidance delivered with discretion, diligence and a focus on your interests.','Arrange a consultation'],
+      ['features','How we can assist','Explore our practice areas and the considered support we provide to clients.'],
+      ['gallery','Experience you can rely on','Meet the people, principles and professional standards behind our work.'],
+      ['testimonials','Trusted through important decisions','Discover why clients value clarity, care and dependable representation.'],
+      ['contact','Speak with our legal team','Share a brief outline of your matter and arrange a confidential discussion.','Contact the firm'],
+    ],
   }
   const palette: Record<string, string> = {
     agency: '#f3eee5', business: '#edf3f4', portfolio: '#f5eeee', shop: '#f4f0e6',
@@ -192,21 +262,53 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
   const sections = content[baseTemplateId] ?? content.business
   const header = site.pages[0].sections[0]
   const footer = site.pages[0].sections[site.pages[0].sections.length - 1]
-  const layoutVariant = (variantNumber - 1) % 5
-  const variantSections = layoutVariant === 1
-    ? [sections[0], ...sections.slice(1).reverse()]
-    : layoutVariant === 2 && sections.length > 2
-      ? [sections[0], ...sections.slice(2), sections[1]]
-      : layoutVariant === 3 && sections.length > 2
-        ? [sections[0], ...sections.slice(1).filter((_, index) => index % 2 === 0), ...sections.slice(1).filter((_, index) => index % 2 !== 0)]
-        : sections
+  const layoutVariant = (variantNumber - 1) % 10
+  const sectionOrders = [
+    [0,1,2,3,4], [0,2,1,3,4], [0,3,1,2,4], [0,1,3,2,4], [0,2,3,1,4],
+    [0,3,2,1,4], [0,1,2,4,3], [0,2,4,1,3], [0,3,1,4,2], [0,4,1,2,3],
+  ]
+  const orderedSections = sectionOrders[layoutVariant].map(index => sections[index]).filter(Boolean)
+  const variantSections = orderedSections.length >= 3 ? orderedSections : sections
+  const heroTone = layoutVariant % 3 === 0 ? selectedTheme.primary : palette[baseTemplateId] ?? '#f3eee5'
+  const heroAlign = layoutVariant === 1 || layoutVariant === 4 || layoutVariant === 7 ? 'center' : 'left'
   site.pages[0].sections = [
-    { ...header, components: [{ ...component('heading', name.toUpperCase()), id: createId('brand') }], styles: { ...header.styles, padding: layoutVariant === 4 ? '32px 8%' : '24px 6%' } },
+    { ...header, components: [{ ...component('heading', name.toUpperCase()), id: createId('brand'), styles: { ...component('heading', name.toUpperCase()).styles, fontSize: '1rem', letterSpacing: '0.16em', fontWeight: '800', color: selectedTheme.primary } }], styles: { ...header.styles, padding: layoutVariant === 8 ? '34px 9%' : '22px 7%', backgroundColor: selectedTheme.background, borderBottom: '1px solid #e8e5df' } },
     ...variantSections.map(([kind, title, body, button], index) => {
-      const block = makeSection(kind, title, body, button, index % 2 === 0 ? palette[baseTemplateId] ?? '#f3eee5' : '#ffffff')
-      return { ...block, styles: { ...block.styles, padding: layoutVariant === 4 ? '104px 10%' : layoutVariant === 2 ? '64px 5%' : kind === 'hero' ? '136px 8%' : '76px 8%', textAlign: (layoutVariant === 3 && kind === 'hero' ? 'center' : 'left') as 'left' | 'center', layout: layoutVariant === 1 && kind === 'features' ? 'grid' : 'stacked', gridColumns: layoutVariant === 1 && kind === 'features' ? '3' : '2' } }
+      const isHero = kind === 'hero'
+      const tone = isHero ? heroTone : index % 2 === 0 ? palette[baseTemplateId] ?? '#f3eee5' : '#ffffff'
+      const block = makeSection(kind, title, body, button, tone)
+      const isDark = isHero && layoutVariant % 3 === 0
+      const textColor = isDark ? '#ffffff' : selectedTheme.text
+      return {
+        ...block,
+        styles: {
+          ...block.styles,
+          padding: isHero ? (layoutVariant === 8 ? '164px 10%' : '144px 8%') : layoutVariant === 9 ? '92px 9%' : '84px 8%',
+          textAlign: (isHero ? heroAlign : 'left') as 'left' | 'center',
+          layout: kind === 'features' && layoutVariant % 2 === 0 ? 'grid' : 'stacked',
+          gridColumns: kind === 'features' && layoutVariant % 2 === 0 ? (layoutVariant === 6 ? '4' : '3') : '2',
+          borderTop: !isHero && index % 2 === 0 ? '1px solid #e9e4dc' : 'none',
+        },
+        components: block.components.map(item => ({
+          ...item,
+          styles: {
+            ...item.styles,
+            color: item.kind === 'heading' || item.kind === 'text' ? textColor : item.styles.color,
+            fontFamily: item.kind === 'heading' ? selectedTheme.heading : selectedTheme.body,
+            fontSize: item.kind === 'heading' ? (isHero ? (layoutVariant === 5 ? 'clamp(2.8rem, 7vw, 6rem)' : 'clamp(2.6rem, 6vw, 5.2rem)') : 'clamp(1.7rem, 3vw, 2.6rem)') : item.kind === 'text' ? '1.05rem' : item.styles.fontSize,
+            fontWeight: item.kind === 'heading' ? '750' : item.styles.fontWeight,
+            lineHeight: item.kind === 'heading' ? '1.08' : item.kind === 'text' ? '1.75' : item.styles.lineHeight,
+            maxWidth: item.kind === 'heading' ? '900px' : '680px',
+            backgroundColor: item.kind === 'button' ? selectedTheme.accent : item.styles.backgroundColor,
+            color: item.kind === 'button' ? '#ffffff' : item.styles.color,
+            borderRadius: item.kind === 'button' ? selectedTheme.radius : item.styles.borderRadius,
+            padding: item.kind === 'button' ? '15px 28px' : item.styles.padding,
+            letterSpacing: item.kind === 'heading' && layoutVariant === 6 ? '-0.04em' : item.styles.letterSpacing,
+          },
+        })),
+      }
     }),
-    { ...footer, components: [{ ...component('text', '© ' + name + '. All rights reserved.'), id: createId('copyright') }] },
+    { ...footer, components: [{ ...component('text', '© ' + name + '. All rights reserved.'), id: createId('copyright'), styles: { ...component('text', '© ' + name + '. All rights reserved.').styles, color: '#ffffff', maxWidth: '100%' } }], styles: { ...footer.styles, padding: '36px 7%', backgroundColor: selectedTheme.primary } },
   ]
   site.metadata.description = sections[0][2]
   const pageLabels: Record<string, string[]> = {
