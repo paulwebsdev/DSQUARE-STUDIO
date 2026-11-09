@@ -354,3 +354,20 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .editor-panel-tabs{grid-template-columns:repeat(4,minmax(0,1fr))}.editor-panel-tabs button{gap:4px;font-size:9px}.media-library-item{display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px solid #34312b}.media-library-item>img{width:72px;height:64px;object-fit:cover;border-radius:6px;background:#292720}.media-library-item>div{display:grid;align-content:start;gap:5px;min-width:0}.media-library-item strong{overflow-wrap:anywhere;color:#e9e1d3;font-size:9px}.media-library-item small,.seo-counter,.seo-help{color:#928b7f;font-size:8px;line-height:1.5}.media-library-item button{padding:6px;border:1px solid #51432d;border-radius:5px;color:#e5d1a6;background:#211e18;font-size:8px}.seo-counter{display:block;margin-top:-11px;margin-bottom:12px;text-align:right}.seo-help{padding:10px;border:1px solid #39352e;border-radius:6px;background:#201e1a}
 
 .media-alt-label{display:grid;gap:4px;color:#b9ad98;font-size:8px}.media-alt-label input{width:100%;min-width:0;padding:7px;border:1px solid #494237;border-radius:5px;background:#171612;color:#f0e7d8;font-size:9px;outline:none}.media-alt-label input:focus{border-color:#c99b45}
+
+
+/* Mobile editor panels: bottom navigation opens a scrollable drawer */
+.mobile-panel-close{display:none}
+@media(max-width:600px){
+  .editor-mobile-add{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .mobile-panel-open .editor-left-panel{
+    display:flex!important;position:absolute;z-index:30;left:8px;right:8px;bottom:56px;
+    width:auto;height:min(68vh,620px);max-height:calc(100% - 75px);
+    border:1px solid #5b4b31;border-radius:12px;background:#171614;
+    box-shadow:0 16px 50px rgba(0,0,0,.65);overflow:hidden
+  }
+  .mobile-panel-open .editor-left-panel .editor-panel-content{min-height:0;overflow:auto}
+  .mobile-panel-open .editor-left-panel .editor-panel-foot{display:none}
+  .mobile-panel-close{display:grid!important;place-items:center;width:27px;height:27px;margin:3px;border:1px solid #51432d;border-radius:5px;color:#e5d1a6;background:#211e18}
+  .editor-panel-tabs{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
