@@ -33,6 +33,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const [future, setFuture] = useState<SiteDocument[]>([])
   const [showAdd, setShowAdd] = useState(false)
   const [mobilePanelOpen, setMobilePanelOpen] = useState(false)
+  const [mobilePropertiesOpen, setMobilePropertiesOpen] = useState(false)
   const [savedAt, setSavedAt] = useState('Just saved')
   const [previewMode, setPreviewMode] = useState(false)
   const [exportOpen, setExportOpen] = useState(false)
@@ -309,7 +310,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
 
   const canvasClass = useMemo(() => `editor-canvas device-${device}`, [device])
 
-  return <div className={`visual-editor ${previewMode ? "preview-mode" : ""} ${mobilePanelOpen ? "mobile-panel-open" : ""}`}>
+  return <div className={`visual-editor ${previewMode ? "preview-mode" : ""} ${mobilePanelOpen ? "mobile-panel-open" : ""} ${mobilePropertiesOpen ? "mobile-properties-open" : ""}`}>
     <header className="editor-topbar">
       <button className="editor-back" onClick={onExit}><ArrowLeft size={17} /><span>Back to studio</span></button>
       <div className="editor-project-name"><strong>{site.name}</strong><span><i /> {savedAt}</span></div>
@@ -343,7 +344,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
           </section>)}
         </div></div>
       </main>
-      <aside className="editor-right-panel"><div className="editor-properties-heading"><div><Settings2 size={16} /><strong>Properties</strong></div><span>SECTION</span></div>{selected ? <div className="editor-properties">
+      <aside className="editor-right-panel"><div className="editor-properties-heading"><div><Settings2 size={16} /><strong>Properties</strong></div><span>SECTION</span><button className="mobile-properties-close" onClick={() => setMobilePropertiesOpen(false)} aria-label="Close properties"><X size={16} /></button></div>{selected ? <div className="editor-properties">
         <label className="property-label">Section name<input value={selected.name} onChange={e => updateSection(selected.id, section => ({ ...section, name: e.target.value }))} /></label>
         <label className="property-label">{selectedComponent ? `${selectedComponent.kind} content` : 'Heading text'}<textarea rows={3} value={selectedText} onChange={e => updateHeading(e.target.value)} /></label>
         <label className="property-label">Background colour<div className="colour-input"><input type="color" value={selected.styles.backgroundColor ?? '#ffffff'} onChange={e => updateSection(selected.id, section => ({ ...section, styles: { ...section.styles, backgroundColor: e.target.value } }))} /><span>{selected.styles.backgroundColor ?? '#ffffff'}</span></div></label>
@@ -371,7 +372,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         <button className="remove-section" onClick={removeSection} disabled={['header','footer'].includes(selected.kind)}><Trash2 size={14} /> Remove section</button>
       </div> : <p className="editor-no-selection">Choose a section on the canvas.</p>}</aside>
     </div>
-    <div className="editor-mobile-add"><button onClick={() => { setPanel('add'); setMobilePanelOpen(true) }}><Plus size={16} /> Add</button><button onClick={() => { setPanel('layers'); setMobilePanelOpen(true) }}><Layers3 size={16} /> Layers</button><button onClick={() => { setPanel('media'); setMobilePanelOpen(true) }}><Image size={16} /> Media</button><button onClick={() => { setPanel('seo'); setMobilePanelOpen(true) }}><Settings2 size={16} /> SEO</button></div>
+    <div className="editor-mobile-add"><button onClick={() => { setMobilePropertiesOpen(false); setPanel('add'); setMobilePanelOpen(true) }}><Plus size={16} /> Add</button><button onClick={() => { setPanel('layers'); setMobilePanelOpen(true) }}><Layers3 size={16} /> Layers</button><button onClick={() => { setPanel('media'); setMobilePanelOpen(true) }}><Image size={16} /> Media</button><button onClick={() => { setPanel('seo'); setMobilePanelOpen(true); setMobilePropertiesOpen(false) }}><Settings2 size={16} /> SEO</button><button onClick={() => { setMobilePanelOpen(false); setMobilePropertiesOpen(true) }}><Settings2 size={16} /> Style</button></div>
     {exportOpen && <div className="export-backdrop" role="presentation" onClick={() => !exportBusy && setExportOpen(false)}><section className="export-dialog" role="dialog" aria-modal="true" aria-labelledby="export-title" onClick={event => event.stopPropagation()}><button className="export-close" aria-label="Close export" onClick={() => setExportOpen(false)} disabled={exportBusy}><X size={18} /></button><div className="export-kicker">YOUR WEBSITE · SOURCE CODE</div><h2 id="export-title">Download your website</h2><p>Get the actual HTML, CSS and JavaScript files. The complete ZIP includes every page, styling and scripts needed to run the website.</p><button className="export-zip-button" onClick={downloadWebsiteZip} disabled={exportBusy}><Download size={17} /> {exportBusy ? "Preparing ZIP..." : "Download complete website ZIP"}</button><div className="export-file-heading">Or download individual source files</div><div className="export-file-grid"><button onClick={() => downloadSourceFile("html")}>index.html <span>Website structure</span></button><button onClick={() => downloadSourceFile("css")}>styles.css <span>Design and layout</span></button><button onClick={() => downloadSourceFile("js")}>script.js <span>Interactions</span></button></div>{exportMessage && <div className="export-status" role="status">{exportMessage}</div>}<small>Contact forms are exported as front-end previews. Connect a form service before using them to receive messages.</small></section></div>}
     {showAdd && <div className="editor-add-sheet"><div><strong>Add a section</strong><button onClick={() => setShowAdd(false)}>Close</button></div>{sectionOptions.map(item => <button key={item.kind} onClick={() => addSection(item.kind)}>{item.label}<Plus size={15} /></button>)}</div>}
   </div>
