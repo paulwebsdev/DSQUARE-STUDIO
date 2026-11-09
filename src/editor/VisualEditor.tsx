@@ -630,17 +630,23 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
                   if (mode === 'move') image.style.translate = `${dx}px ${dy}px`
                   else { image.style.width = `${Math.max(40, initialWidth + dx)}px`; image.style.height = `${Math.max(40, initialHeight + dy)}px` }
                 }
-                const pointerUp = (up: PointerEvent) => {
-                  window.removeEventListener('pointermove', pointerMove); window.removeEventListener('pointerup', pointerUp)
+                const finishGesture = (up: PointerEvent) => {
+                  window.removeEventListener('pointermove', pointerMove)
+                  window.removeEventListener('pointerup', finishGesture)
+                  window.removeEventListener('pointercancel', finishGesture)
                   const dx = up.clientX - startX, dy = up.clientY - startY
                   image.style.translate = ''
+                  image.style.width = ''
+                  image.style.height = ''
                   if (mode === 'move') updateSection(section.id, current => ({ ...current, components: current.components.map(component => component.id === item.id ? { ...component, responsiveStyles: { ...component.responsiveStyles, [device]: { ...(component.responsiveStyles?.[device] ?? {}), imageX: String(initialX + dx), imageY: String(initialY + dy) } } : component) }))
                   else updateSection(section.id, current => ({ ...current, components: current.components.map(component => component.id === item.id ? { ...component, responsiveStyles: { ...component.responsiveStyles, [device]: { ...(component.responsiveStyles?.[device] ?? {}), width: `${Math.max(40, initialWidth + dx)}px`, height: `${Math.max(40, initialHeight + dy)}px` } } : component) }))
                 }
-                window.addEventListener('pointermove', pointerMove); window.addEventListener('pointerup', pointerUp, { once: true })
+                window.addEventListener('pointermove', pointerMove)
+                window.addEventListener('pointerup', finishGesture, { once: true })
+                window.addEventListener('pointercancel', finishGesture, { once: true })
               }
               return <div key={item.id} className={'image-canvas-wrap ' + selectedClass} onClick={handleElementClick}>
-                <img tabIndex={0} aria-label="Select image element; drag to move" onKeyDown={handleElementKeyDown} onPointerDown={event => beginImageGesture(event, 'move')} style={{ ...elementStyle, position: 'relative', touchAction: 'none', transform: `rotate(${elementStyle.rotation ?? '0'}deg) scaleX(${elementStyle.flipX === 'true' ? -1 : 1}) scaleY(${elementStyle.flipY === 'true' ? -1 : 1})`, transformOrigin: 'center center', cursor: previewMode ? 'default' : 'move' }} src={item.content} alt={(site.assets ?? []).find(asset => asset.dataUrl === item.content)?.altText ?? ''} />
+                <img tabIndex={0} aria-label="Select image element; drag to move" onKeyDown={handleElementKeyDown} onPointerDown={event => beginImageGesture(event, 'move')} style={{ ...elementStyle, position: 'relative', touchAction: 'none', transform: `translate(${elementStyle.imageX ?? '0'}px, ${elementStyle.imageY ?? '0'}px) rotate(${elementStyle.rotation ?? '0'}deg) scaleX(${elementStyle.flipX === 'true' ? -1 : 1}) scaleY(${elementStyle.flipY === 'true' ? -1 : 1})`, transformOrigin: 'center center', cursor: previewMode ? 'default' : 'move' }} src={item.content} alt={(site.assets ?? []).find(asset => asset.dataUrl === item.content)?.altText ?? ''} />
                 {selectedComponentId === item.id && !previewMode && <button type="button" className="image-resize-handle" aria-label="Drag to resize image" title="Drag to resize" onPointerDown={event => beginImageGesture(event, 'resize')} />}
               </div>
             })() : item.kind === 'form' ? <form key={item.id} className="site-preview-form" onSubmit={event => { event.preventDefault(); if (previewMode) window.alert('Form preview only. Connect a form service before publishing to receive submissions.') }} onClick={selectItem}><input aria-label="Your name" placeholder="Your name" required /><input aria-label="Email address" type="email" placeholder="Email address" required /><textarea aria-label="Your message" placeholder="Your message" required /><button type="submit">Send message</button></form> : item.kind === 'container' ? <div key={item.id} tabIndex={0} aria-label={'Select container: ' + item.content} onKeyDown={handleElementKeyDown} className={selectedClass} onClick={handleElementClick} onDoubleClick={() => setEditingComponentId(item.id)} contentEditable={editingComponentId === item.id} suppressContentEditableWarning onBlur={event => editingComponentId === item.id && finishInlineEdit(item.id, event.currentTarget.textContent ?? '')} style={elementStyle}>{item.content}</div> : null })}
