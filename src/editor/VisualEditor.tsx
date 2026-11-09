@@ -28,7 +28,6 @@ export default function VisualEditor({ onExit }: Props) {
   const [future, setFuture] = useState<SiteDocument[]>([])
   const [showAdd, setShowAdd] = useState(false)
   const [savedAt, setSavedAt] = useState('Just saved')
-  const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null)
   const [previewMode, setPreviewMode] = useState(false)
 
   const page = site.pages[0]
