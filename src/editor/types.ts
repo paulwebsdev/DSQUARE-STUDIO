@@ -33,7 +33,7 @@ export type SiteComponent = {
   visible: boolean
   linkTo?: string
   openInNewTab?: boolean
-  buttonPreset?: 'gold' | 'dark' | 'outline' | 'soft' | 'custom' | 'whatsapp' | 'facebook' | 'instagram' | 'tiktok' | 'youtube' | 'linkedin' | 'x' | 'email' | 'call' | 'cta'
+  buttonPreset?: 'gold' | 'dark' | 'outline' | 'soft' | 'custom' | 'whatsapp' | 'facebook' | 'instagram' | 'tiktok' | 'youtube' | 'linkedin' | 'x' | 'email' | 'call' | 'cta' | 'telegram' | 'pinterest' | 'snapchat' | 'threads' | 'discord' | 'maps' | 'booking' | 'quote' | 'download'
   buttonLibraryId?: string
   hoverStyles?: StyleMap
   responsiveStyles?: Partial<Record<DeviceMode, StyleMap>>
