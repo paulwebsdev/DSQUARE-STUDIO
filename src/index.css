@@ -453,3 +453,9 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .editor-panel-tabs>button{flex:0 0 auto}
 .editor-mobile-add{overflow-x:auto}
 .editor-mobile-add>button{flex:0 0 auto}
+
+
+/* Mobile section reorder handle */
+.section-touch-drag-handle{position:absolute;z-index:5;top:8px;left:8px;width:32px;height:32px;display:grid;place-items:center;border:1px solid #c39b56;border-radius:7px;background:#171614;color:#e8ca8d;font-size:20px;line-height:1;touch-action:none;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.site-preview-section.is-dragging{outline:2px dashed #c39b56;outline-offset:-3px;opacity:.72}
+@media(min-width:901px){.section-touch-drag-handle{opacity:0;transition:opacity .15s}.site-preview-section:hover .section-touch-drag-handle,.site-preview-section.is-selected .section-touch-drag-handle{opacity:1}}
