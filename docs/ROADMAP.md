@@ -193,3 +193,10 @@ Note: media assets remain in browser-local project storage for this prototype; a
 - [x] Respect reduced-motion preferences and collapse CSS-grid sections to one column on narrow screens.
 - [x] Preserve per-device responsive styles when saving and inserting reusable elements.
 - [ ] Add automated export regression tests and verify exported sites in desktop and mobile browsers.
+
+## Editor reliability and export correction — 2026-11-09
+- [x] Correct the data-URL matcher used to rewrite section background images in exported HTML.
+- [x] Debounce autosave briefly to avoid writing to browser storage on every keystroke.
+- [x] Catch browser storage quota or write errors and show a visible save-status warning instead of silently failing.
+- [x] Add Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z and Ctrl/Cmd+Y undo/redo shortcuts while protecting text fields and inline editing.
+- [ ] Add automated export regression tests and verify exported sites in desktop and mobile browsers.
