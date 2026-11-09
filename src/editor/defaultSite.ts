@@ -138,7 +138,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
         content: heroImage,
         visible: true,
         styles: { width: '100%', height: 'min(48vw, 440px)', maxWidth: '1120px', objectFit: 'cover', borderRadius: '18px', margin: '36px auto 0' },
-      }] : kind === 'gallery' ? galleryImages.map((imageId, index) => ({
+      }] : kind === 'gallery' ? galleryImages.map((imageId) => ({
         id: createId('image'),
         kind: 'image' as const,
         content: `https://images.unsplash.com/${imageId}?auto=format&fit=crop&w=900&q=82`,
