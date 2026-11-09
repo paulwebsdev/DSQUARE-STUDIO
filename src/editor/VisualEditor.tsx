@@ -181,13 +181,13 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
 
   const saveReusableComponent = () => {
     if (!selectedComponent) return
-    const saved = { ...selectedComponent, id: globalThis.crypto?.randomUUID?.() ?? `saved-${Date.now()}`, styles: { ...selectedComponent.styles } }
+    const saved = { ...selectedComponent, id: globalThis.crypto?.randomUUID?.() ?? `saved-${Date.now()}`, styles: { ...selectedComponent.styles }, responsiveStyles: selectedComponent.responsiveStyles ? Object.fromEntries(Object.entries(selectedComponent.responsiveStyles).map(([mode, styles]) => [mode, { ...styles }])) : undefined }
     commit({ ...site, savedComponents: [...(site.savedComponents ?? []), saved] })
   }
 
   const insertReusableComponent = (saved: NonNullable<SiteDocument['savedComponents']>[number]) => {
     if (!selected) return
-    const component = { ...saved, id: globalThis.crypto?.randomUUID?.() ?? `reuse-${Date.now()}`, styles: { ...saved.styles } }
+    const component = { ...saved, id: globalThis.crypto?.randomUUID?.() ?? `reuse-${Date.now()}`, styles: { ...saved.styles }, responsiveStyles: saved.responsiveStyles ? Object.fromEntries(Object.entries(saved.responsiveStyles).map(([mode, styles]) => [mode, { ...styles }])) : undefined }
     updateSection(selected.id, section => ({ ...section, components: [...section.components, component] }))
     setSelectedComponentId(component.id)
     setMobilePanelOpen(false)
