@@ -177,7 +177,7 @@ export function buildExportFiles(site: SiteDocument): ExportFiles {
     if (!pageHtml) continue
     if (pageCode.html.trim()) pageHtml = injectHtml(pageHtml, pageCode.html)
     if (pageCode.css.trim()) pageHtml = pageHtml.replace('</head>', '<style data-dsquare-page-code>\n' + pageCode.css + '\n</style>\n</head>')
-    if (pageCode.javascript.trim()) pageHtml = pageHtml.replace('</body>', '<script data-dsquare-page-code>\n(function(){\n' + pageCode.javascript + '\n})();\n</script>\n</body>')
+    if (pageCode.javascript.trim()) pageHtml = pageHtml.replace('</body>', '<script data-dsquare-page-code>\ndocument.addEventListener("DOMContentLoaded",function(){(function(){\n' + pageCode.javascript + '\n})();});\n</script>\n</body>')
     htmlFiles[fileName] = pageHtml
   }
   const customJs = (customCode.javascript ?? '').trim()
