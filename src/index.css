@@ -1054,3 +1054,33 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .code-snippet-tools small{color:#89847a;font-size:8px;line-height:1.45}
 .code-action:disabled{opacity:.55;cursor:default}
 @media(max-width:600px){.code-snippet-tools{padding:8px}.code-snippet-tools button{font-size:8px;padding:7px}}
+
+
+/* Code Studio: page scope, page creation and collapsible editor */
+.code-scope-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:11px 16px;border-bottom:1px solid #302d26;background:#191816;color:#cfc6b6}
+.code-scope-bar label{display:flex;align-items:center;gap:8px;color:#e2c58d;font-size:10px;font-weight:700}
+.code-scope-bar select,.code-scope-bar input{min-width:175px;max-width:260px;padding:9px 11px;border:1px solid #55472f;border-radius:7px;background:#211f1b;color:#f5ecdc;font-size:11px}
+.code-scope-bar .code-new-page-name{color:#e2c58d}
+.code-scope-bar>span{margin-left:auto;color:#89847a;font-size:9px;line-height:1.4}
+.code-body.hide-editor{grid-template-columns:minmax(0,1fr)}
+.code-body.hide-editor .code-preview-pane{border:0}
+.code-body.hide-editor .code-preview-frame{max-width:1400px}
+.code-workspace{height:100%;overflow:hidden}
+.code-toolbar{flex-wrap:wrap}
+.code-toolbar-actions{flex-wrap:wrap;justify-content:flex-end}
+@media(max-width:900px){
+ .code-scope-bar{gap:8px;padding:9px 10px}
+ .code-scope-bar>span{width:100%;margin:0}
+ .code-body.hide-editor{grid-template-rows:minmax(0,1fr)}
+ .code-body:not(.hide-editor){grid-template-rows:minmax(260px,1fr) minmax(280px,1fr)}
+}
+@media(max-width:600px){
+ .code-toolbar{gap:7px}
+ .code-toolbar-actions{width:100%;gap:5px}
+ .code-toolbar-actions .code-save-status{display:none}
+ .code-scope-bar label{width:100%;justify-content:space-between}
+ .code-scope-bar select,.code-scope-bar input{flex:1;min-width:0;max-width:none}
+ .code-scope-bar>span{font-size:8px}
+ .code-body.hide-editor{grid-template-rows:minmax(0,1fr)}
+ .code-body.hide-editor .code-preview-frame{min-height:360px}
+}
