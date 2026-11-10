@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
-import { Code2, Eye, FileCode2, FileText, Play, Save, ShieldCheck, Smartphone, Monitor, RotateCcw, X, WandSparkles, Palette, MousePointerClick, EyeOff } from 'lucide-react'
+import { Code2, Eye, FileCode2, FileText, Play, Save, ShieldCheck, Smartphone, Monitor, RotateCcw, X, WandSparkles, AlertCircle, CheckCircle2, File, Files, Palette, MousePointerClick, EyeOff } from 'lucide-react'
 import { buildExportFiles } from './exportSite'
 import { createId, type SiteDocument, type SiteCustomCode, type SitePage } from './types'
 
@@ -13,6 +13,41 @@ const examples: Record<CodeTab, string> = {
   javascript: '// Change existing content on the selected page\ndocument.querySelectorAll(".ds-section-hero h2").forEach((heading) => {\n  heading.textContent = "A fresh headline, written with code.";\n});\ndocument.querySelectorAll(".ds-element-button").forEach((button) => {\n  button.addEventListener("click", () => console.log("Custom interaction working!"));\n});',
 }
 const tabLabels: Record<CodeTab, string> = { html: 'HTML', css: 'CSS', javascript: 'JavaScript' }
+type Diagnostic = { line: number; message: string; severity: 'error' | 'warning' }
+function inspectCode(tab: CodeTab, source: string): Diagnostic[] {
+  const issues: Diagnostic[] = []
+  const lines = source.split('\\n')
+  if (tab === 'css') {
+    let depth = 0
+    lines.forEach((line, index) => {
+      depth += (line.match(/{/g) ?? []).length - (line.match(/}/g) ?? []).length
+      if (depth < 0) { issues.push({ line: index + 1, message: 'Unexpected closing brace.', severity: 'error' }); depth = 0 }
+    })
+    if (depth > 0) issues.push({ line: lines.length, message: 'A CSS block is missing a closing brace.', severity: 'error' })
+    lines.forEach((line, index) => { if (/[^:]\\b(?:colou?r|background|padding|margin)\\s+[^:]+;/.test(line)) issues.push({ line: index + 1, message: 'Check this CSS declaration; it may be missing a colon.', severity: 'warning' }) })
+  } else if (tab === 'html') {
+    const stack: string[] = []
+    const voidTags = new Set(['area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr'])
+    const token = /<\\/?([a-zA-Z][\\w:-]*)\\b[^>]*>/g
+    let match: RegExpExecArray | null
+    while ((match = token.exec(source))) {
+      const raw = match[0]
+      const tag = match[1].toLowerCase()
+      if (raw.startsWith('</')) {
+        const expected = stack.pop()
+        if (expected && expected !== tag) issues.push({ line: source.slice(0, match.index).split('\\n').length, message: 'Closing </' + tag + '> does not match <' + expected + '>.', severity: 'warning' })
+      } else if (!voidTags.has(tag) && !raw.endsWith('/>')) stack.push(tag)
+    }
+    if (stack.length) issues.push({ line: lines.length, message: 'Possibly unclosed HTML tag: <' + stack[stack.length - 1] + '>.', severity: 'warning' })
+  } else if (source.trim()) {
+    try { new Function(source) } catch (error) {
+      const message = error instanceof Error ? error.message : 'JavaScript syntax error.'
+      const lineMatch = message.match(/line\\s+(\\d+)/i)
+      issues.push({ line: lineMatch ? Number(lineMatch[1]) : 1, message, severity: 'error' })
+    }
+  }
+  return issues
+}
 const blankPage = (name: string, code: SiteCustomCode, home?: SitePage): SitePage => {
   const base = name.trim() || 'New page'
   const slugBase = base.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'new-page'
@@ -45,9 +80,13 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
   const [findText, setFindText] = useState('')
   const [replaceText, setReplaceText] = useState('')
   const [focusMode, setFocusMode] = useState(false)
+  const [showProblems, setShowProblems] = useState(true)
+  const [wrapLines, setWrapLines] = useState(false)
+  const [fontSize, setFontSize] = useState(12)
   const editorRef = useRef<HTMLTextAreaElement>(null)
   const [message, setMessage] = useState('Editing code for the selected page.')
   const current = code[tab]
+  const diagnostics = useMemo(() => inspectCode(tab, current), [tab, current])
   const isDirty = scope === 'new' || code.html !== savedCode.html || code.css !== savedCode.css || code.javascript !== savedCode.javascript
   useEffect(() => {
     const next = getCode(site, scope)
@@ -129,9 +168,9 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
     <div className={'code-body '+(!showCode?'hide-editor ':'')+(focusMode?'code-focus-mode':'')}>
       {showCode&&<div className="code-editor-pane">
         <div className="code-tabs">{(['html','css','javascript'] as CodeTab[]).map(item=><button key={item} className={tab===item?'active':''} onClick={()=>setTab(item)}><FileCode2 size={14}/>{tabLabels[item]}<span>{(code[item]??'').trim()?'●':''}</span></button>)}</div>
-        <div className="code-editor-meta"><span><FileText size={13}/>{tab==='javascript'?'script.js':tab==='html'?'custom.html':'styles.css'}</span><span>{lineCount} lines</span><div className="code-mini-actions"><button type="button" onClick={() => setFindOpen(value => !value)}>Find / replace</button><button type="button" onClick={formatCode}>Format</button><button type="button" onClick={() => setFocusMode(value => !value)}>{focusMode ? "Exit focus" : "Focus"}</button></div></div>{findOpen && <div className="code-search-row"><input aria-label="Find text" placeholder="Find…" value={findText} onChange={event => setFindText(event.target.value)}/><input aria-label="Replace text" placeholder="Replace with…" value={replaceText} onChange={event => setReplaceText(event.target.value)}/><button type="button" onClick={replaceAll}>Replace all</button></div>}
-        <div className="code-input-wrap"><div className="code-line-numbers" aria-hidden="true">{Array.from({length:lineCount},(_,index)=><span key={index}>{index+1}</span>)}</div><textarea ref={editorRef} onKeyDown={handleEditorKeyDown} className="code-input" spellCheck={false} autoCapitalize="off" autoCorrect="off" autoComplete="off" aria-label={tab+' source code'} value={current} onChange={event=>update(event.target.value)} placeholder={'Write '+tabLabels[tab]+' here…'}/></div>
-        <div className="code-editor-foot"><ShieldCheck size={14}/> HTML adds content. CSS restyles existing sections. JavaScript changes content and interactions.</div>
+        <div className="code-editor-meta"><span><FileText size={13}/>{tab==='javascript'?'script.js':tab==='html'?'custom.html':'styles.css'}</span><span>{lineCount} lines</span><div className="code-mini-actions"><button type="button" onClick={() => setFindOpen(value => !value)}>Find / replace</button><button type="button" onClick={formatCode}>Format</button><button type="button" onClick={() => setWrapLines(value => !value)}>{wrapLines ? "No wrap" : "Wrap"}</button><button type="button" onClick={() => setFontSize(value => Math.max(10, Math.min(20, value + 1)))}>A+</button><button type="button" onClick={() => setFontSize(value => Math.max(10, value - 1))}>A−</button><button type="button" onClick={() => setFocusMode(value => !value)}>{focusMode ? "Exit focus" : "Focus"}</button></div></div>{findOpen && <div className="code-search-row"><input aria-label="Find text" placeholder="Find…" value={findText} onChange={event => setFindText(event.target.value)}/><input aria-label="Replace text" placeholder="Replace with…" value={replaceText} onChange={event => setReplaceText(event.target.value)}/><button type="button" onClick={replaceAll}>Replace all</button></div>}
+        <div className="code-input-wrap"><div className="code-line-numbers" aria-hidden="true">{Array.from({length:lineCount},(_,index)=><span key={index}>{index+1}</span>)}</div><textarea style={{fontSize,whiteSpace:wrapLines?"pre-wrap":"pre"}} ref={editorRef} onKeyDown={handleEditorKeyDown} className="code-input" spellCheck={false} autoCapitalize="off" autoCorrect="off" autoComplete="off" aria-label={tab+' source code'} value={current} onChange={event=>update(event.target.value)} placeholder={'Write '+tabLabels[tab]+' here…'}/></div>
+        <div className="code-editor-foot"><ShieldCheck size={14}/> HTML adds content. CSS restyles existing sections. JavaScript changes content and interactions.<button type="button" onClick={()=>setShowProblems(value=>!value)}>{showProblems?"Hide":"Show"} diagnostics · {diagnostics.length}</button></div>{showProblems && <div className="code-problems" aria-live="polite"><div className="code-problems-heading"><strong><Files size={13}/> Problems</strong><span>{diagnostics.length ? diagnostics.length+" issue(s)" : "No issues detected"}</span></div>{diagnostics.length ? diagnostics.map((issue,index)=><div className={"code-problem "+issue.severity} key={index}><AlertCircle size={13}/><button type="button" onClick={()=>{const area=editorRef.current;if(area){const position=current.split("\\n").slice(0,issue.line-1).reduce((sum,line)=>sum+line.length+1,0);area.focus();area.setSelectionRange(position,position)}}}>Line {issue.line}: {issue.message}</button></div>) : <div className="code-problem-clean"><CheckCircle2 size={13}/> No basic syntax issues found in this file.</div>}<small>These lightweight checks catch common mistakes; they do not replace a full browser console or language server.</small></div>}
         <div className="code-snippet-tools"><strong><WandSparkles size={14}/> Quick examples</strong><div><button onClick={()=>insertExample('css')}><Palette size={13}/> Restyle this website</button><button onClick={()=>insertExample('javascript')}><MousePointerClick size={13}/> Change existing content</button><button onClick={()=>insertExample('html')}><FileCode2 size={13}/> Add a new section</button></div><small>Examples replace code in the selected tab. Save to apply changes to the website.</small></div>
       </div>}
       <div className="code-preview-pane">
