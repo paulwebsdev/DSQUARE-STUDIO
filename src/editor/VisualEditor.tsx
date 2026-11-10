@@ -301,15 +301,28 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
 
   const addSection = (kind: SiteSection['kind']) => {
     const labels: Record<string, string> = { hero: 'Hero section', features: 'Features', gallery: 'Gallery', testimonials: 'Testimonials', pricing: 'Pricing', contact: 'Contact section' }
-    const heading = kind === 'hero' ? 'Your next big idea starts here.' : labels[kind]
+    const make = (elementKind: 'heading' | 'text' | 'button' | 'container', content: string, styles: StyleMap = {}) => ({
+      id: freshEditorId(elementKind), kind: elementKind, content, visible: true, styles,
+    })
+    const title = (content: string) => make('heading', content, { fontSize: '2.35rem', fontWeight: '700', color: '#171717', textAlign: 'center', gridColumn: '1 / -1', margin: '0 0 8px' })
+    const intro = (content: string) => make('text', content, { fontSize: '1rem', color: '#686868', textAlign: 'center', gridColumn: '1 / -1', maxWidth: '680px', margin: '0 auto 22px' })
+    const card = (content: string) => make('container', content, { padding: '25px', backgroundColor: '#ffffff', border: '1px solid #e9e4da', borderRadius: '16px', boxShadow: '0 8px 24px rgba(0,0,0,.05)', minHeight: '120px' })
+    const components: SiteSection['components'] = kind === 'hero'
+      ? [make('heading', 'Your next big idea starts here.', { fontSize: '3rem', fontWeight: '700', color: '#171717', maxWidth: '760px', lineHeight: '1.08' }), make('text', 'Introduce your brand with a clear message that makes visitors want to explore.', { fontSize: '1.1rem', color: '#666666', maxWidth: '620px', lineHeight: '1.7' }), make('button', 'Get started', { backgroundColor: '#c6a56b', color: '#171717', padding: '14px 26px', borderRadius: '999px', fontWeight: '700' })]
+      : kind === 'features'
+        ? [title('What makes us different'), intro('A clear, scannable overview of the value you bring.'), card('01  ·  Thoughtful quality\\nBuilt around the details that matter to you.'), card('02  ·  Personal service\\nA responsive team focused on your goals.'), card('03  ·  Reliable results\\nA practical approach from start to finish.')]
+      : kind === 'gallery'
+        ? [title('Selected work'), intro('A visual collection of recent projects, products or moments.'), card('Project one\\nAdd an image and a short caption.'), card('Project two\\nAdd an image and a short caption.'), card('Project three\\nAdd an image and a short caption.')]
+      : kind === 'testimonials'
+        ? [title('Kind words from our clients'), card('“The experience was excellent from the first conversation to the final result.”\\n— Client name'), card('“A thoughtful team that made the whole process feel simple.”\\n— Client name'), card('“Professional, creative and genuinely easy to work with.”\\n— Client name')]
+      : kind === 'pricing'
+        ? [title('Simple, transparent pricing'), intro('Choose the package that fits your needs. Update prices and inclusions before publishing.'), card('STARTER\\n₦25,000\\nFor getting started\\n• Core service\\n• Standard support'), card('GROWTH · POPULAR\\n₦60,000\\nFor growing teams\\n• Everything in Starter\\n• Priority support'), card('PREMIUM\\n₦120,000\\nFor complete coverage\\n• Everything in Growth\\n• Dedicated assistance')]
+      : [title('Let’s start a conversation'), intro('Tell us what you need and our team will get back to you.'), card('Email  ·  hello@example.com'), card('Phone  ·  +234 800 000 0000'), make('button', 'Contact our team', { backgroundColor: '#c6a56b', color: '#171717', padding: '14px 26px', borderRadius: '999px', fontWeight: '700', gridColumn: '1 / -1', justifySelf: 'center' })]
     const section: SiteSection = {
       id: freshEditorId('section'),
       kind, name: labels[kind] ?? 'New section', enabled: true,
-      styles: { padding: '72px 8%', backgroundColor: page.sections.length % 2 ? '#f6f3ed' : '#ffffff' },
-      components: [
-        { id: freshEditorId('heading'), kind: 'heading', content: heading, visible: true, styles: { fontSize: '2.4rem', fontWeight: '700', color: '#171717' } },
-        { id: freshEditorId('text'), kind: 'text', content: 'Add your own content here to tell your story.', visible: true, styles: { fontSize: '1rem', color: '#666666' } },
-      ],
+      styles: { padding: '72px 8%', backgroundColor: page.sections.length % 2 ? '#f6f3ed' : '#ffffff', ...(kind !== 'hero' ? { display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '20px', alignItems: 'stretch' } : {}) },
+      components,
     }
     commit({ ...site, pages: site.pages.map(p => p.id === page.id ? { ...p, sections: [...p.sections.slice(0, -1), section, p.sections[p.sections.length - 1]] } : p) })
     setSelectedId(section.id)
