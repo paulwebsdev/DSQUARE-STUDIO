@@ -68,6 +68,8 @@ export type SiteTheme = {
 
 export type SiteAsset = { id: string; name: string; mimeType: string; dataUrl: string; altText: string; createdAt: string }
 
+export type SiteCustomCode = { html: string; css: string; javascript: string }
+
 export type SiteDocument = {
   schemaVersion: typeof SITE_SCHEMA_VERSION
   id: string
@@ -79,6 +81,7 @@ export type SiteDocument = {
   theme: SiteTheme
   pages: SitePage[]
   assets?: SiteAsset[]
+  customCode?: SiteCustomCode
   savedComponents?: SiteComponent[]
   metadata: {
     title: string
