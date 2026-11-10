@@ -1002,3 +1002,30 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .other-variant-2 .site-preview-section.section-hero{text-align:center}.other-variant-3 .site-preview-section.section-hero{background:#1c232a!important}.other-variant-4 .site-preview-section.section-hero h2{font-family:Georgia,serif}.other-variant-5 .site-preview-section.section-features>*{border-radius:3px;border-top:3px solid var(--ds-accent)}.other-variant-6 .site-preview-section.section-hero{border-radius:0 0 90px 0}.other-variant-7 .site-preview-section.section-gallery{background:#f8f0e8}.other-variant-8 .site-preview-section.section-hero{background:linear-gradient(120deg,#3a304b,#77678c)!important}.other-variant-9 .site-preview-section.section-features>*{border-radius:24px}.other-variant-10 .site-preview-section.section-contact{border-radius:30px}
 @media(max-width:700px){.agriculture-template .site-preview-section.section-hero,.logistics-template .site-preview-section.section-hero,.interior-template .site-preview-section.section-hero,.other-template .site-preview-section.section-hero{display:block;min-height:0}.agriculture-template .site-preview-section,.logistics-template .site-preview-section,.interior-template .site-preview-section,.other-template .site-preview-section{padding-left:6%!important;padding-right:6%!important}.interior-template .site-preview-section.section-gallery{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.agriculture-template *,.logistics-template *,.interior-template *,.other-template *{animation:none!important;transition:none!important}}
+
+
+/* Full-page website preview: preserve the complete page height and allow smooth scrolling. */
+.visual-editor.preview-mode{height:100vh;height:100dvh;min-height:0;overflow:hidden}
+.visual-editor.preview-mode .editor-topbar{position:relative;z-index:30;flex:0 0 auto;padding-top:env(safe-area-inset-top,0px)}
+.visual-editor.preview-mode .editor-workspace{height:calc(100vh - 62px);height:calc(100dvh - 62px);min-height:0;overflow:hidden}
+.visual-editor.preview-mode .editor-stage{height:100%;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.visual-editor.preview-mode .editor-canvas-wrap{display:flex;flex:1 1 auto;min-height:0;height:auto;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;align-items:flex-start;justify-content:center;padding:0}
+.visual-editor.preview-mode .editor-canvas{flex:0 0 auto;width:100%;max-width:none;min-height:max-content;height:max-content;overflow:visible;box-shadow:none}
+.visual-editor.preview-mode .site-preview-section{flex-shrink:0}
+.preview-page-switch{display:flex;align-items:center;gap:8px;margin-left:auto;padding:0 12px;color:#c6bda9;font-size:9px;letter-spacing:.12em}
+.preview-page-switch select{max-width:180px;min-width:105px;padding:8px 28px 8px 10px;border:1px solid #494235;border-radius:8px;background:#211f1b;color:#f5ecdc;font-size:12px;letter-spacing:normal}
+.visual-editor.preview-mode .editor-top-actions{margin-left:10px}
+@media(max-width:700px){
+ .visual-editor.preview-mode .editor-workspace{height:calc(100vh - 55px);height:calc(100dvh - 55px)}
+ .visual-editor.preview-mode .editor-topbar{gap:6px;padding-left:10px;padding-right:10px}
+ .visual-editor.preview-mode .editor-back span{display:none}
+ .visual-editor.preview-mode .editor-project-name{min-width:0;max-width:30%;overflow:hidden}
+ .visual-editor.preview-mode .editor-project-name strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .visual-editor.preview-mode .editor-project-name>span{display:none}
+ .preview-page-switch{gap:4px;padding:0 4px;font-size:8px}
+ .preview-page-switch select{min-width:88px;max-width:116px;padding:7px 18px 7px 7px;font-size:10px}
+ .visual-editor.preview-mode .editor-top-actions{gap:4px;margin-left:0}
+ .visual-editor.preview-mode .editor-top-actions .editor-tool,.visual-editor.preview-mode .editor-top-actions .editor-export,.visual-editor.preview-mode .editor-top-actions .editor-save{display:none}
+ .visual-editor.preview-mode .editor-preview{padding:8px 9px;font-size:10px;white-space:nowrap}
+}
+@media(prefers-reduced-motion:reduce){.visual-editor.preview-mode .editor-canvas-wrap{scroll-behavior:auto}}
