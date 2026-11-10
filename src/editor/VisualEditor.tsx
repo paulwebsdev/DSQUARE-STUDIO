@@ -647,10 +647,11 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     <header className="editor-topbar">
       <button className="editor-back" onClick={onExit}><ArrowLeft size={17} /><span>Back to studio</span></button>
       <div className="editor-project-name"><strong>{site.name}</strong><span><i /> {savedAt}</span></div>
+      {previewMode && <label className="preview-page-switch"><span>PAGE</span><select aria-label="Preview website page" value={page?.id ?? ''} onChange={event => { const nextPage = site.pages.find(item => item.id === event.target.value); if (nextPage) { setActivePageId(nextPage.id); setSelectedId(nextPage.sections[1]?.id ?? nextPage.sections[0]?.id ?? ''); setSelectedComponentId(null); requestAnimationFrame(() => previewScrollRef.current?.scrollTo({ top: 0 })) } }}>{site.pages.map(item => <option key={item.id} value={item.id}>{item.name}{item.isHomePage ? ' (Home)' : ''}</option>)}</select></label>}
       <div className="editor-top-actions">
         <button className="editor-tool" onClick={undo} disabled={!history.length} aria-label="Undo"><Undo2 size={17} /></button>
         <button className="editor-tool" onClick={redo} disabled={!future.length} aria-label="Redo"><Redo2 size={17} /></button>
-        <button className="editor-preview" onClick={() => { setEditingComponentId(null); setPreviewMode(value => !value) }} aria-pressed={previewMode}><Eye size={15} /> {previewMode ? "Exit preview" : "Preview"}</button>
+        <button className="editor-preview" onClick={() => { setEditingComponentId(null); setPreviewMode(value => !value); previewScrollRef.current?.scrollTo({ top: 0 }) }} aria-pressed={previewMode}><Eye size={15} /> {previewMode ? "Exit preview" : "Preview"}</button>
         <button ref={exportTriggerRef} className="editor-preview editor-export" onClick={() => { setExportMessage(""); setExportOpen(true) }}><Download size={15} /> Export</button>
         <button className="primary-button editor-save" onClick={() => { try { localStorage.setItem(storageKey, JSON.stringify(site)); setSavedAt('Saved just now') } catch { setSavedAt('Could not save — storage is full') } }}><Save size={14} /> Save</button>
       </div>
