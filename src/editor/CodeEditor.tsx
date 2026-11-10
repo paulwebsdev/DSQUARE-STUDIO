@@ -51,7 +51,7 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
     if (scope.startsWith('page:')) setPreviewPageId(scope.slice(5))
     else if (scope === 'site') setPreviewPageId(activePageId)
     setMessage(scope === 'site' ? 'Changes apply across the entire website.' : scope === 'new' ? 'Create a new page and add your code.' : 'Editing code for ' + (site.pages.find(page => page.id === scope.slice(5))?.name ?? 'selected page') + '.')
-  }, [scope, site])
+  }, [scope, site, activePageId])
   const update = (value: string) => { setCode(previous => ({ ...previous, [tab]: value })); setMessage('Unsaved changes · preview updates as you type') }
   const insertExample = (target: CodeTab) => {
     setTab(target)
