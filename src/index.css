@@ -1108,3 +1108,17 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .code-focus-mode .code-preview-pane{display:none}
 .code-studio-overlay .code-input{min-height:300px}
 @media(max-width:600px){.code-mini-actions button{padding:5px;font-size:9px}.code-search-row{flex-wrap:wrap}.code-search-row input{flex:1 1 40%}.code-search-row button{flex:1 1 100%}.code-studio-overlay .code-toolbar-actions{justify-content:flex-start;overflow-x:auto}.code-studio-overlay .code-toolbar{flex-wrap:wrap}.code-studio-overlay .code-body{overflow:auto}}
+
+/* Code Studio diagnostics and editor controls */
+.code-mini-actions{flex-wrap:wrap}
+.code-editor-foot{justify-content:flex-start;flex-wrap:wrap}
+.code-editor-foot button{margin-left:auto;border:0;background:transparent;color:#e0bd79;font-size:10px}
+.code-problems{max-height:160px;overflow:auto;padding:9px 13px;border-top:1px solid #302d26;background:#151514;color:#ddd5c7}
+.code-problems-heading{display:flex;justify-content:space-between;align-items:center;font-size:10px;margin-bottom:7px}
+.code-problems-heading strong{display:flex;align-items:center;gap:6px;color:#e4c98f}
+.code-problems-heading span,.code-problems small{color:#8c877e;font-size:9px}
+.code-problem,.code-problem-clean{display:flex;align-items:flex-start;gap:7px;padding:4px 0;font-size:10px}
+.code-problem.error{color:#ff9b91}.code-problem.warning{color:#e9c77d}.code-problem button{border:0;padding:0;text-align:left;color:inherit;background:transparent;font:inherit}
+.code-problem-clean{color:#9ed6a5}
+.code-problems small{display:block;margin-top:7px}
+@media(max-width:600px){.code-problems{max-height:125px}.code-editor-foot button{margin-left:0}}
