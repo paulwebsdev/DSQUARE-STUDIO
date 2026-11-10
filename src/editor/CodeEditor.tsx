@@ -36,17 +36,20 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
   const [code, setCode] = useState<SiteCustomCode>(() => getCode(site, `page:${activePageId}`))
   const [savedCode, setSavedCode] = useState<SiteCustomCode>(() => getCode(site, `page:${activePageId}`))
   const [pageName, setPageName] = useState('New page')
+  const [previewPageId, setPreviewPageId] = useState(activePageId)
   const [tab, setTab] = useState<CodeTab>('css')
   const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop')
   const [ran, setRan] = useState(0)
   const [showCode, setShowCode] = useState(true)
   const [message, setMessage] = useState('Editing code for the selected page.')
   const current = code[tab]
-  const isDirty = code.html !== savedCode.html || code.css !== savedCode.css || code.javascript !== savedCode.javascript
+  const isDirty = scope === 'new' || code.html !== savedCode.html || code.css !== savedCode.css || code.javascript !== savedCode.javascript
   useEffect(() => {
     const next = getCode(site, scope)
     setCode(next)
     setSavedCode(next)
+    if (scope.startsWith('page:')) setPreviewPageId(scope.slice(5))
+    else if (scope === 'site') setPreviewPageId(activePageId)
     setMessage(scope === 'site' ? 'Changes apply across the entire website.' : scope === 'new' ? 'Create a new page and add your code.' : 'Editing code for ' + (site.pages.find(page => page.id === scope.slice(5))?.name ?? 'selected page') + '.')
   }, [scope, site])
   const update = (value: string) => { setCode(previous => ({ ...previous, [tab]: value })); setMessage('Unsaved changes · preview updates as you type') }
@@ -59,7 +62,7 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
   const preview = useMemo(() => {
     const previewPage = scope === 'new'
       ? blankPage(pageName, code, site.pages.find(page => page.isHomePage))
-      : site.pages.find(page => page.id === (scope === 'site' ? activePageId : scope.slice(5))) ?? site.pages[0]
+      : site.pages.find(page => page.id === (scope === 'site' ? previewPageId : scope.slice(5))) ?? site.pages[0]
     const previewSite: SiteDocument = scope === 'site'
       ? { ...site, customCode: code }
       : scope === 'new'
@@ -74,7 +77,7 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
       .replace('</head>', '<style>html,body{margin:0;min-height:100%}</style></head>')
       .replace('</body>', '<script>(function(){var style=document.createElement("style");style.textContent=decodeURIComponent(escape(atob("' + safeCss + '")));document.head.append(style);try{(new Function(decodeURIComponent(escape(atob("' + safeJs + '")))))()}catch(error){var box=document.createElement("pre");box.setAttribute("role","alert");box.style.cssText="position:fixed;bottom:0;left:0;right:0;max-height:30vh;overflow:auto;background:#2a1010;color:#ffd7d7;padding:12px;z-index:999999;font:12px monospace;white-space:pre-wrap";box.textContent="JavaScript error: "+error.message;document.body.appendChild(box)}})();</script></body>')
     return html
-  }, [site, scope, code, pageName, activePageId, ran])
+  }, [site, scope, code, pageName, activePageId, previewPageId, ran])
   const save = () => {
     try {
       const newPageId = onApply(scope, code, pageName)
@@ -103,7 +106,7 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
         <div className="code-snippet-tools"><strong><WandSparkles size={14}/> Quick examples</strong><div><button onClick={()=>insertExample('css')}><Palette size={13}/> Restyle this website</button><button onClick={()=>insertExample('javascript')}><MousePointerClick size={13}/> Change existing content</button><button onClick={()=>insertExample('html')}><FileCode2 size={13}/> Add a new section</button></div><small>Examples replace code in the selected tab. Save to apply changes to the website.</small></div>
       </div>}
       <div className="code-preview-pane">
-        <div className="code-preview-head"><div><Eye size={15}/><strong>{scope==='site'?'Website-wide preview':scope==='new'?'New page preview':(site.pages.find(page=>page.id===scope.slice(5))?.name??'Page')+' preview'}</strong><span>Live · isolated</span></div><div className="code-preview-actions"><button className={device==='desktop'?'selected':''} onClick={()=>setDevice('desktop')} aria-label="Desktop preview"><Monitor size={15}/></button><button className={device==='mobile'?'selected':''} onClick={()=>setDevice('mobile')} aria-label="Mobile preview"><Smartphone size={15}/></button><button onClick={()=>{setRan(value=>value+1);setMessage('Preview refreshed')}}><Play size={13}/> Run</button></div></div>
+        <div className="code-preview-head"><div><Eye size={15}/><strong>{scope==='site'?'Website-wide preview':scope==='new'?'New page preview':(site.pages.find(page=>page.id===scope.slice(5))?.name??'Page')+' preview'}</strong><span>Live · isolated</span></div>{scope==='site'&&<select className="code-preview-page-select" aria-label="Preview a website page" value={previewPageId} onChange={event=>setPreviewPageId(event.target.value)}>{site.pages.map(page=><option key={page.id} value={page.id}>{page.name}</option>)}</select>}<div className="code-preview-actions"><button className={device==='desktop'?'selected':''} onClick={()=>setDevice('desktop')} aria-label="Desktop preview"><Monitor size={15}/></button><button className={device==='mobile'?'selected':''} onClick={()=>setDevice('mobile')} aria-label="Mobile preview"><Smartphone size={15}/></button><button onClick={()=>{setRan(value=>value+1);setMessage('Preview refreshed')}}><Play size={13}/> Run</button></div></div>
         <div className="code-preview-frame-wrap"><iframe key={ran} title="Website code preview" sandbox="allow-scripts allow-forms" srcDoc={preview} className={'code-preview-frame '+(device==='mobile'?'mobile':'')}/></div>
       </div>
     </div>
