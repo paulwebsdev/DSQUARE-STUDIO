@@ -14,6 +14,7 @@ const examples: Record<CodeTab, string> = {
 }
 const tabLabels: Record<CodeTab, string> = { html: 'HTML', css: 'CSS', javascript: 'JavaScript' }
 type Diagnostic = { line: number; message: string; severity: 'error' | 'warning' }
+type CodeSnapshot = { id: string; createdAt: string; scope: Scope; label: string; code: SiteCustomCode }
 function inspectCode(tab: CodeTab, source: string): Diagnostic[] {
   const issues: Diagnostic[] = []
   const lines = source.split('\n')
@@ -85,6 +86,30 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
   const [fontSize, setFontSize] = useState(12)
   const editorRef = useRef<HTMLTextAreaElement>(null)
   const [message, setMessage] = useState('Editing code for the selected page.')
+  const [showHistory, setShowHistory] = useState(false)
+  const [history, setHistory] = useState<CodeSnapshot[]>([])
+  const historyKey = `dsquare-code-history:${site.id}`
+  useEffect(() => {
+    try { const stored = localStorage.getItem(historyKey); setHistory(stored ? JSON.parse(stored) as CodeSnapshot[] : []) }
+    catch { setHistory([]) }
+  }, [historyKey])
+  const persistHistory = (items: CodeSnapshot[]) => {
+    setHistory(items)
+    try { localStorage.setItem(historyKey, JSON.stringify(items.slice(0, 30))) } catch { setMessage('History could not be saved. Browser storage may be full.') }
+  }
+  const restoreSnapshot = (snapshot: CodeSnapshot) => {
+    if (!window.confirm(`Restore the saved code from ${new Date(snapshot.createdAt).toLocaleString()}? Your current unsaved changes will be replaced.`)) return
+    if (snapshot.scope === 'new') { setMessage('This older snapshot cannot be restored because it was saved before the page was created.'); return }
+    try {
+      onApply(snapshot.scope, snapshot.code, snapshot.label)
+      setScope(snapshot.scope)
+      setCode({ ...snapshot.code })
+      setSavedCode({ ...snapshot.code })
+      setShowHistory(false)
+      setMessage('Code restored from history ✓')
+      setRan(value => value + 1)
+    } catch { setMessage('Could not restore this snapshot. Please try again.') }
+  }
   const current = code[tab]
   const diagnostics = useMemo(() => inspectCode(tab, current), [tab, current])
   const isDirty = scope === 'new' || code.html !== savedCode.html || code.css !== savedCode.css || code.javascript !== savedCode.javascript
@@ -149,6 +174,10 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
   const save = () => {
     try {
       const newPageId = onApply(scope, code, pageName)
+      const savedScope: Scope = scope === 'new' && newPageId ? `page:${newPageId}` : scope
+      const label = scope === 'new' ? pageName.trim() || 'New page' : scope === 'site' ? 'Entire website' : site.pages.find(page => page.id === scope.slice(5))?.name ?? 'Page'
+      const snapshot: CodeSnapshot = { id: createId('snapshot'), createdAt: new Date().toISOString(), scope: savedScope, label, code: { ...code } }
+      persistHistory([snapshot, ...history].slice(0, 30))
       setSavedCode({ ...code })
       setMessage(scope === 'site' ? 'Saved to the entire website ✓' : scope === 'new' ? 'New page added to your website ✓' : 'Saved to ' + (site.pages.find(page => page.id === scope.slice(5))?.name ?? 'page') + ' ✓')
       if (scope === 'new' && newPageId) setScope(`page:${newPageId}`)
@@ -162,7 +191,7 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
   return <section className="code-workspace code-studio-overlay" aria-label="Website code editor">
     <header className="code-toolbar">
       <div className="code-heading"><span className="code-mark"><Code2 size={18}/></span><div><strong>Website Code Studio</strong><small>Apply code to one page, create a page, or redesign the whole website</small></div></div>
-      <div className="code-toolbar-actions"><span className="code-save-status" aria-live="polite">{message}</span><button className="code-action secondary" onClick={()=>setShowCode(value=>!value)}><EyeOff size={14}/>{showCode?'Hide code':'Show code'}</button><button className="code-action secondary" onClick={reset}><RotateCcw size={14}/> Reset</button><button className="code-action primary" onClick={save} disabled={!isDirty}><Save size={14}/> {isDirty ? 'Save to website' : 'Saved'}</button><button className="code-action close" onClick={close} aria-label="Close code editor"><X size={16}/></button></div>
+      <div className="code-toolbar-actions"><span className="code-save-status" aria-live="polite">{message}</span><button className="code-action secondary" onClick={()=>setShowHistory(value=>!value)}><RotateCcw size={14}/> History ({history.length})</button><button className="code-action secondary" onClick={()=>setShowCode(value=>!value)}><EyeOff size={14}/>{showCode?'Hide code':'Show code'}</button><button className="code-action secondary" onClick={reset}><RotateCcw size={14}/> Reset</button><button className="code-action primary" onClick={save} disabled={!isDirty}><Save size={14}/> {isDirty ? 'Save to website' : 'Saved'}</button><button className="code-action close" onClick={close} aria-label="Close code editor"><X size={16}/></button></div>
     </header>
     <div className="code-scope-bar"><label>Apply code to <select value={scope} onChange={event=>setScope(event.target.value as Scope)}><optgroup label="Existing pages">{site.pages.map(page=><option key={page.id} value={`page:${page.id}`}>{page.name}{page.isHomePage?' · Home':''}</option>)}</optgroup><optgroup label="Website-wide"><option value="site">Entire website · redesign all pages</option><option value="new">Create a new page</option></optgroup></select></label>{scope==='new'&&<label className="code-new-page-name">Page name <input value={pageName} onChange={event=>setPageName(event.target.value)} placeholder="e.g. Services"/></label>}<span>{scope==='site'?'HTML, CSS and JavaScript apply across every page.':scope==='new'?'Your new page will be added to the website and page navigation.':'Only this page will be changed; other pages stay untouched.'}</span></div>
     <div className={'code-body '+(!showCode?'hide-editor ':'')+(focusMode?'code-focus-mode':'')}>
@@ -171,6 +200,7 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
         <div className="code-editor-meta"><span><FileText size={13}/>{tab==='javascript'?'script.js':tab==='html'?'custom.html':'styles.css'}</span><span>{lineCount} lines</span><div className="code-mini-actions"><button type="button" onClick={() => setFindOpen(value => !value)}>Find / replace</button><button type="button" onClick={formatCode}>Format</button><button type="button" onClick={() => setWrapLines(value => !value)}>{wrapLines ? "No wrap" : "Wrap"}</button><button type="button" onClick={() => setFontSize(value => Math.max(10, Math.min(20, value + 1)))}>A+</button><button type="button" onClick={() => setFontSize(value => Math.max(10, value - 1))}>A−</button><button type="button" onClick={() => setFocusMode(value => !value)}>{focusMode ? "Exit focus" : "Focus"}</button></div></div>{findOpen && <div className="code-search-row"><input aria-label="Find text" placeholder="Find…" value={findText} onChange={event => setFindText(event.target.value)}/><input aria-label="Replace text" placeholder="Replace with…" value={replaceText} onChange={event => setReplaceText(event.target.value)}/><button type="button" onClick={replaceAll}>Replace all</button></div>}
         <div className="code-input-wrap"><div className="code-line-numbers" aria-hidden="true">{Array.from({length:lineCount},(_,index)=><span key={index}>{index+1}</span>)}</div><textarea style={{fontSize,whiteSpace:wrapLines?"pre-wrap":"pre"}} ref={editorRef} onKeyDown={handleEditorKeyDown} className="code-input" spellCheck={false} autoCapitalize="off" autoCorrect="off" autoComplete="off" aria-label={tab+' source code'} value={current} onChange={event=>update(event.target.value)} placeholder={'Write '+tabLabels[tab]+' here…'}/></div>
         <div className="code-editor-foot"><ShieldCheck size={14}/> HTML adds content. CSS restyles existing sections. JavaScript changes content and interactions.<button type="button" onClick={()=>setShowProblems(value=>!value)}>{showProblems?"Hide":"Show"} diagnostics · {diagnostics.length}</button></div>{showProblems && <div className="code-problems" aria-live="polite"><div className="code-problems-heading"><strong><Files size={13}/> Problems</strong><span>{diagnostics.length ? diagnostics.length+" issue(s)" : "No issues detected"}</span></div>{diagnostics.length ? diagnostics.map((issue,index)=><div className={"code-problem "+issue.severity} key={index}><AlertCircle size={13}/><button type="button" onClick={()=>{const area=editorRef.current;if(area){const position=current.split("\n").slice(0,issue.line-1).reduce((sum,line)=>sum+line.length+1,0);area.focus();area.setSelectionRange(position,position)}}}>Line {issue.line}: {issue.message}</button></div>) : <div className="code-problem-clean"><CheckCircle2 size={13}/> No basic syntax issues found in this file.</div>}<small>These lightweight checks catch common mistakes; they do not replace a full browser console or language server.</small></div>}
+        {showHistory && <div className="code-history-panel"><div className="code-history-heading"><strong><RotateCcw size={14}/> Saved code history</strong><button type="button" onClick={()=>setShowHistory(false)}>Close</button></div><p>Up to 30 successful saves are kept on this device for this website. Restoring a snapshot applies it to the website.</p>{history.length ? history.map(snapshot=><div className="code-history-item" key={snapshot.id}><div><strong>{snapshot.label}</strong><small>{new Date(snapshot.createdAt).toLocaleString()} · {snapshot.scope==='site'?'Website-wide':'Page code'}</small></div><button type="button" onClick={()=>restoreSnapshot(snapshot)}>Restore</button></div>) : <div className="code-history-empty">No saved snapshots yet. Save your code to create the first one.</div>}</div>}
         <div className="code-snippet-tools"><strong><WandSparkles size={14}/> Quick examples</strong><div><button onClick={()=>insertExample('css')}><Palette size={13}/> Restyle this website</button><button onClick={()=>insertExample('javascript')}><MousePointerClick size={13}/> Change existing content</button><button onClick={()=>insertExample('html')}><FileCode2 size={13}/> Add a new section</button></div><small>Examples replace code in the selected tab. Save to apply changes to the website.</small></div>
       </div>}
       <div className="code-preview-pane">
