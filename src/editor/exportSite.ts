@@ -167,7 +167,18 @@ export function buildExportFiles(site: SiteDocument): ExportFiles {
 
   const js = "document.documentElement.classList.add('ds-motion-ready');var revealItems=document.querySelectorAll('[data-ds-reveal]');if('IntersectionObserver'in window&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){var revealObserver=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('is-visible');revealObserver.unobserve(entry.target);}});},{rootMargin:'0px 0px -8% 0px',threshold:0.08});revealItems.forEach(function(item){revealObserver.observe(item);});}else{revealItems.forEach(function(item){item.classList.add('is-visible');});}document.querySelectorAll('a[href^=\\\"#\\\"]').forEach(function(link){link.addEventListener('click',function(event){var target=document.querySelector(link.getAttribute('href'));if(target){event.preventDefault();target.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}});});document.querySelectorAll('.ds-contact-form').forEach(function(form){form.addEventListener('submit',function(event){event.preventDefault();var note=form.querySelector('.ds-form-note');if(note)note.textContent='This form is a front-end preview. Connect a form service to receive messages.';});});document.querySelectorAll('.ds-back-top').forEach(function(button){var update=function(){button.classList.toggle('is-visible',window.scrollY>420);};window.addEventListener('scroll',update,{passive:true});update();button.addEventListener('click',function(){window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});});});"
   const customCode = site.customCode ?? { html: '', css: '', javascript: '' }
-  if (customCode.html.trim()) for (const fileName of Object.keys(htmlFiles)) htmlFiles[fileName] = htmlFiles[fileName].replace('</main>', '\n' + customCode.html + '\n</main>')
+  if (customCode.html.trim()) for (const fileName of Object.keys(htmlFiles)) htmlFiles[fileName] = htmlFiles[fileName].replace('</main>', '\\n' + customCode.html + '\\n</main>')
+  for (const page of site.pages) {
+    const pageCode = page.customCode
+    if (!pageCode) continue
+    const fileName = pageFiles.get(page.slug) ?? (page.isHomePage ? 'index.html' : safeFileName(page.slug || page.name) + '.html')
+    let pageHtml = htmlFiles[fileName]
+    if (!pageHtml) continue
+    if (pageCode.html.trim()) pageHtml = pageHtml.replace('</main>', '\\n' + pageCode.html + '\\n</main>')
+    if (pageCode.css.trim()) pageHtml = pageHtml.replace('</head>', '<style data-dsquare-page-code>\\n' + pageCode.css + '\\n</style>\\n</head>')
+    if (pageCode.javascript.trim()) pageHtml = pageHtml.replace('</body>', '<script data-dsquare-page-code>\\n(function(){\\n' + pageCode.javascript + '\\n})();\\n</script>\\n</body>')
+    htmlFiles[fileName] = pageHtml
+  }
   const customJs = (customCode.javascript ?? '').trim()
-  return { htmlFiles, css: css + '\n' + (customCode.css ?? ''), js: js + businessSpecialtyJs + editorialSpecialtyJs + fiveCategorySpecialtyJs + categoryExperienceJs + (customJs ? '\n;\n(function(){\n' + customJs + '\n})();\n' : ''), assets }
+  return { htmlFiles, css: css + '\\n' + (customCode.css ?? ''), js: js + businessSpecialtyJs + editorialSpecialtyJs + fiveCategorySpecialtyJs + categoryExperienceJs + (customJs ? '\\n;\\n(function(){\\n' + customJs + '\\n})();\\n' : ''), assets }
 }
