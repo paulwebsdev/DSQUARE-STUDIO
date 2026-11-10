@@ -1191,3 +1191,12 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .site-preview-section{transition:outline-color .15s,background-color .15s}
 .site-preview-section:has(.visual-element-tile){outline-offset:3px}
 @media(max-width:760px){.visual-element-palette{grid-template-columns:1fr 1fr;gap:6px}.visual-element-tile{min-height:54px;padding:7px;gap:7px}.visual-element-tile small{font-size:8px}}
+
+
+/* Visual editor: responsive section layout presets */
+.section-layout-presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:2px 0 13px}
+.section-layout-presets button{display:grid;justify-items:center;gap:5px;min-width:0;padding:9px 4px;border:1px solid #34312b;border-radius:7px;background:#1b1a18;color:#c9c1b2;font-size:8px;cursor:pointer}
+.section-layout-presets button span{font-size:17px;color:#c7a66c}
+.section-layout-presets button.active,.section-layout-presets button:hover{border-color:#b79659;color:#f0d8aa;background:#292319}
+.site-preview-section[style*="display: grid"]>*{min-width:0}
+@media(max-width:600px){.section-layout-presets button{font-size:7px;padding:8px 2px}}
