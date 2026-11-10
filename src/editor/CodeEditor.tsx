@@ -120,7 +120,7 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
   const reset = () => { if (window.confirm('Clear the custom code in this selected location?')) { setCode(emptyCode()); setMessage('Code cleared · save to apply it') } }
   const close = () => { if (isDirty && !window.confirm('You have unsaved code changes. Close without saving?')) return; onClose() }
   const lineCount = Math.max(1, current.split('\n').length)
-  return <section className="code-workspace" aria-label="Website code editor">
+  return <section className="code-workspace code-studio-overlay" aria-label="Website code editor">
     <header className="code-toolbar">
       <div className="code-heading"><span className="code-mark"><Code2 size={18}/></span><div><strong>Website Code Studio</strong><small>Apply code to one page, create a page, or redesign the whole website</small></div></div>
       <div className="code-toolbar-actions"><span className="code-save-status" aria-live="polite">{message}</span><button className="code-action secondary" onClick={()=>setShowCode(value=>!value)}><EyeOff size={14}/>{showCode?'Hide code':'Show code'}</button><button className="code-action secondary" onClick={reset}><RotateCcw size={14}/> Reset</button><button className="code-action primary" onClick={save} disabled={!isDirty}><Save size={14}/> {isDirty ? 'Save to website' : 'Saved'}</button><button className="code-action close" onClick={close} aria-label="Close code editor"><X size={16}/></button></div>
