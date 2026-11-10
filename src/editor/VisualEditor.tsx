@@ -163,8 +163,8 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
       const mime = extension === 'png' ? 'image/png' : extension === 'webp' ? 'image/webp' : extension === 'gif' ? 'image/gif' : extension === 'svg' ? 'image/svg+xml' : 'image/jpeg'
       html = html.split(assetPath).join('data:' + mime + ';base64,' + encode(bytes))
     }
-    html = html.replace(/<link[^>]+href=["']styles\\.css["'][^>]*>/i, '')
-      .replace(/<script[^>]+src=["']script\\.js["'][^>]*><\\/script>/i, '')
+    html = html.replace('<link rel="stylesheet" href="styles.css">', '')
+      .replace('<script src="script.js" defer></script>', '')
       .replace('</head>', '<style data-dsquare-preview>' + files.css.replace(/<\/style/gi, '<\\/style') + '</style></head>')
       .replace('</body>', '<script data-dsquare-preview>' + files.js.replace(/<\/script/gi, '<\\/script') + '</script></body>')
     return html
