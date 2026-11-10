@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent, MouseEvent, KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent, CSSProperties } from 'react'
-import { ArrowLeft, Eye, Monitor, Tablet, Smartphone, Undo2, Redo2, Plus, Type, Image, MousePointer2, Layers3, Settings2, Trash2, Save, Sparkles, Download, X, Code2 } from 'lucide-react'
+import { ArrowLeft, Eye, Monitor, Tablet, Smartphone, Undo2, Redo2, Plus, Type, Image, MousePointer2, Layers3, Settings2, Trash2, Save, Sparkles, Download, X } from 'lucide-react'
 import JSZip from 'jszip'
-import { buildExportFiles } from './exportSite'
 import { createStarterSite } from './defaultSite'
-import CodeEditor from './CodeEditor'
 import type { DeviceMode, SiteDocument, SiteSection, StyleMap } from './types'
 
 type Props = { onExit: () => void; projectId: string; projectName: string; category: string }
@@ -85,7 +83,6 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const [mobilePropertiesOpen, setMobilePropertiesOpen] = useState(false)
   const [savedAt, setSavedAt] = useState('Just saved')
   const [previewMode, setPreviewMode] = useState(false)
-  const [codeMode, setCodeMode] = useState(false)
   const [previewScrolled, setPreviewScrolled] = useState(false)
   const [exportOpen, setExportOpen] = useState(false)
   const [exportBusy, setExportBusy] = useState(false)
@@ -148,6 +145,29 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const selectedImageAsset = selectedComponent?.kind === 'image' ? (site.assets ?? []).find(asset => asset.dataUrl === selectedComponent.content) : undefined
   const selectedText = selectedComponent?.content ?? selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
   const visibleLayers = useMemo(() => page?.sections.map((section, index) => ({ section, index })).filter(({ section }) => `${section.name} ${section.kind}`.toLowerCase().includes(layerSearch.trim().toLowerCase())) ?? [], [page, layerSearch])
+
+  const websitePreviewDoc = useMemo(() => {
+    if (!page) return '<!doctype html><html><body><p>No page available.</p></body></html>'
+    const files = buildExportFiles(site)
+    const slug = page.slug.replace(/^\\//, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    const fileName = page.isHomePage ? 'index.html' : (Object.keys(files.htmlFiles).find(name => name === slug + '.html' || name.startsWith(slug + '-')) ?? slug + '.html')
+    let html = files.htmlFiles[fileName] ?? files.htmlFiles['index.html'] ?? '<!doctype html><html><body><p>Preview unavailable.</p></body></html>'
+    const encode = (bytes: Uint8Array) => {
+      let binary = ''
+      for (let i = 0; i < bytes.length; i += 1) binary += String.fromCharCode(bytes[i])
+      return btoa(binary)
+    }
+    for (const [assetPath, bytes] of Object.entries(files.assets)) {
+      const extension = assetPath.split('.').pop()?.toLowerCase() ?? ''
+      const mime = extension === 'png' ? 'image/png' : extension === 'webp' ? 'image/webp' : extension === 'gif' ? 'image/gif' : extension === 'svg' ? 'image/svg+xml' : 'image/jpeg'
+      html = html.split(assetPath).join('data:' + mime + ';base64,' + encode(bytes))
+    }
+    html = html.replace(/<link[^>]+href=["']styles\\.css["'][^>]*>/i, '')
+      .replace(/<script[^>]+src=["']script\\.js["'][^>]*><\\/script>/i, '')
+      .replace('</head>', '<style data-dsquare-preview>' + files.css.replace(/<\\/style/gi, '<\\\\/style') + '</style></head>')
+      .replace('</body>', '<script data-dsquare-preview>' + files.js.replace(/<\\/script/gi, '<\\\\/script') + '</script></body>')
+    return html
+  }, [site, page])
   const visibleAssets = useMemo(() => [...(site.assets ?? [])].filter(asset => `${asset.name} ${asset.altText}`.toLowerCase().includes(mediaSearch.trim().toLowerCase())).sort((a, b) => mediaSort === 'name' ? a.name.localeCompare(b.name) : mediaSort === 'largest' ? b.dataUrl.length - a.dataUrl.length : (b.createdAt ?? '').localeCompare(a.createdAt ?? '')), [site.assets, mediaSearch, mediaSort])
 
   useEffect(() => {
@@ -651,7 +671,6 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
       <div className="editor-project-name"><strong>{site.name}</strong><span><i /> {savedAt}</span></div>
       {previewMode && <label className="preview-page-switch"><span>PAGE</span><select aria-label="Preview website page" value={page?.id ?? ''} onChange={event => { const nextPage = site.pages.find(item => item.id === event.target.value); if (nextPage) { setActivePageId(nextPage.id); setSelectedId(nextPage.sections[1]?.id ?? nextPage.sections[0]?.id ?? ''); setSelectedComponentId(null); requestAnimationFrame(() => previewScrollRef.current?.scrollTo({ top: 0 })) } }}>{site.pages.map(item => <option key={item.id} value={item.id}>{item.name}{item.isHomePage ? ' (Home)' : ''}</option>)}</select></label>}
       <div className="editor-top-actions">
-        <button className={`editor-preview editor-code-toggle ${codeMode ? 'active' : ''}`} onClick={() => { setCodeMode(value => !value); setPreviewMode(false) }} aria-pressed={codeMode}><Code2 size={15} /> {codeMode ? 'Visual editor' : 'Code'}</button>
         <button className="editor-tool" onClick={undo} disabled={!history.length} aria-label="Undo"><Undo2 size={17} /></button>
         <button className="editor-tool" onClick={redo} disabled={!future.length} aria-label="Redo"><Redo2 size={17} /></button>
         <button className="editor-preview" onClick={() => { setEditingComponentId(null); setPreviewMode(value => !value); previewScrollRef.current?.scrollTo({ top: 0 }) }} aria-pressed={previewMode}><Eye size={15} /> {previewMode ? "Exit preview" : "Preview"}</button>
@@ -659,26 +678,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         <button className="primary-button editor-save" onClick={() => { try { localStorage.setItem(storageKey, JSON.stringify(site)); setSavedAt('Saved just now') } catch { setSavedAt('Could not save — storage is full') } }}><Save size={14} /> Save</button>
       </div>
     </header>
-    {codeMode ? <CodeEditor site={site} activePageId={activePageId} onApply={(scope, customCode, pageName) => {
-       if (scope === 'site') { commit({ ...site, customCode }); return }
-       if (scope === 'new') {
-         const base = pageName.trim() || 'New page'
-         const slugBase = base.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'new-page'
-         let slug = '/' + slugBase
-         let suffix = 2
-         while (site.pages.some(item => item.slug.toLowerCase() === slug.toLowerCase())) slug = '/' + slugBase + '-' + suffix++
-         const home = site.pages.find(item => item.isHomePage) ?? site.pages[0]
-         const shared = (home?.sections ?? []).filter(section => section.kind === 'header' || section.kind === 'footer').map(section => ({ ...section, id: freshEditorId('section'), components: section.components.map(component => ({ ...component, id: freshEditorId('component') })) }))
-         const newPage = { id: freshEditorId('page'), name: base, slug, isHomePage: false, sections: shared, customCode }
-         commit({ ...site, pages: [...site.pages, newPage] })
-         setActivePageId(newPage.id)
-         setSelectedId(newPage.sections[0]?.id ?? '')
-         setSelectedComponentId(null)
-         return newPage.id
-       }
-       const pageId = scope.slice(5)
-       commit({ ...site, pages: site.pages.map(item => item.id === pageId ? { ...item, customCode } : item) })
-     }} onClose={() => setCodeMode(false)} /> : <div className="editor-workspace">
+    <div className="editor-workspace">
       <aside className="editor-left-panel">
         <div className="editor-panel-tabs">
           <button className={panel === 'add' ? 'active' : ''} onClick={() => setPanel('add')}><Plus size={14} /> Add</button>
@@ -692,7 +692,8 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
       </aside>
       <main className="editor-stage">
         <div className="editor-stage-toolbar"><div><select className="editor-page-select" aria-label="Choose page" value={page.id} onChange={event => { const nextPage = site.pages.find(item => item.id === event.target.value); if (nextPage) { setActivePageId(nextPage.id); setSelectedId(nextPage.sections[1]?.id ?? nextPage.sections[0]?.id ?? ''); setSelectedComponentId(null); setEditingComponentId(null); setMobilePanelOpen(false); setMobilePropertiesOpen(false) } }}>{site.pages.map(item => <option key={item.id} value={item.id}>{item.name}{item.isHomePage ? ' (Home)' : ''}</option>)}</select><button className="editor-page-action" onClick={addPage}>+ Page</button><button className="editor-page-action" onClick={renamePage}>Rename</button><button className="editor-page-action" onClick={duplicatePage}>Duplicate</button><button className="editor-page-action" onClick={deletePage} disabled={page.isHomePage || site.pages.length <= 1}>Delete</button><span className="editor-stage-muted">/</span><span className="editor-stage-muted">Editing</span></div><div className="device-switch"><button className={device === 'desktop' ? 'selected' : ''} onClick={() => setDevice('desktop')} aria-label="Desktop preview" aria-pressed={device === 'desktop'}><Monitor size={16} /></button><button className={device === 'tablet' ? 'selected' : ''} onClick={() => setDevice('tablet')} aria-label="Tablet preview" aria-pressed={device === 'tablet'}><Tablet size={16} /></button><button className={device === 'mobile' ? 'selected' : ''} onClick={() => setDevice('mobile')} aria-label="Mobile preview" aria-pressed={device === 'mobile'}><Smartphone size={16} /></button></div></div>
-        <div ref={previewScrollRef} className="editor-canvas-wrap"><div className={canvasClass}>
+        <div ref={previewScrollRef} className="editor-canvas-wrap">
+          {previewMode ? <iframe title={site.name + ' website preview'} className="editor-published-preview-frame" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox" srcDoc={websitePreviewDoc} /> : <div className={canvasClass}>
           {page.sections.filter(section => section.enabled).map(section => <section key={section.id} tabIndex={0} aria-label={section.name + ' section'} aria-selected={selected?.id === section.id} onKeyDown={event => { if (event.target !== event.currentTarget) return; if (event.altKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) { event.preventDefault(); setSelectedId(section.id); moveSection(event.key === 'ArrowUp' ? -1 : 1, section.id) } else if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setSelectedId(section.id); setSelectedComponentId(null) } }} draggable={!previewMode && !['header','footer'].includes(section.kind)} onDragStart={event => { if (['header','footer'].includes(section.kind)) { event.preventDefault(); return } setDraggedSectionId(section.id); event.dataTransfer.effectAllowed = 'move'; event.dataTransfer.setData('text/plain', section.id) }} onDragOver={event => { if (draggedSectionId) event.preventDefault() }} onDrop={event => { event.preventDefault(); const sourceId = event.dataTransfer.getData('text/plain') || draggedSectionId; if (sourceId) moveSectionTo(sourceId, section.id); setDraggedSectionId(null) }} onDragEnd={() => setDraggedSectionId(null)} data-section-id={section.id} onTouchMove={event => { if (draggedSectionId) event.preventDefault() }} onTouchEnd={event => { if (!draggedSectionId) return; const touch = event.changedTouches[0]; const target = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('[data-section-id]') as HTMLElement | null; const targetId = target?.dataset.sectionId; if (targetId && targetId !== draggedSectionId) moveSectionTo(draggedSectionId, targetId); setDraggedSectionId(null) }} onClick={() => { setSelectedId(section.id); setSelectedComponentId(null); setEditingComponentId(null) }} onDoubleClick={event => { if (!previewMode) { event.stopPropagation(); setSelectedId(section.id); setSelectedComponentId(null); setMobilePanelOpen(false); setMobilePropertiesOpen(true) } }} className={'site-preview-section ' + (selected?.id === section.id ? 'is-selected ' : '') + (draggedSectionId === section.id ? 'is-dragging ' : '') + 'section-' + section.kind} style={section.styles}>
             {section.components.filter(item => item.visible).map(item => { const selectItem = (event: MouseEvent) => { event.stopPropagation(); setSelectedId(section.id); setSelectedComponentId(item.id) }; const openItemEditor = (event: MouseEvent, inline = false) => { event.stopPropagation(); setSelectedId(section.id); setSelectedComponentId(item.id); setMobilePanelOpen(false); setMobilePropertiesOpen(true); if (inline) setEditingComponentId(item.id) }; const selectedClass = selectedComponentId === item.id ? 'component-selected' : ''; const responsiveElementStyle: StyleMap = { ...item.styles, ...(item.responsiveStyles?.[device] ?? {}) }; const elementStyle: StyleMap = { ...responsiveElementStyle, ...(item.kind === 'image' ? { display:'block', width:responsiveElementStyle.width ?? '100%', maxWidth:'100%', height:responsiveElementStyle.height ?? 'clamp(220px, 34vw, 440px)', objectFit:responsiveElementStyle.objectFit ?? 'cover', objectPosition:responsiveElementStyle.objectPosition ?? 'center', borderRadius:responsiveElementStyle.borderRadius ?? '18px' } : {}) }; const handleElementClick = (event: MouseEvent) => {
               if (previewMode && item.kind === 'button' && item.linkTo?.trim()) {
@@ -798,7 +799,8 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
           </section>)}
           {previewMode && previewContactSection && <button type="button" className="preview-floating-contact" onClick={() => previewScrollRef.current?.querySelector('[data-section-id="' + previewContactSection.id + '"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span className="preview-floating-spark">✦</span> Let's talk <span aria-hidden="true">↗</span></button>}
           {previewMode && <button type="button" className={'preview-back-top ' + (previewScrolled ? 'is-visible' : '')} aria-label="Back to top" onClick={() => previewScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}>↑</button>}
-        </div></div>
+
+        </div>}
       </main>
       <aside className="editor-right-panel"><div className="editor-properties-heading"><div><Settings2 size={16} /><strong>Edit selection</strong></div><span>{selectedComponent ? selectedComponent.kind.toUpperCase() : "SECTION"}</span><button className="mobile-properties-close" onClick={() => setMobilePropertiesOpen(false)} aria-label="Close properties"><X size={16} /></button></div>{selected ? <div className="editor-properties"><div className="inspector-intro"><strong>{selectedComponent ? `Editing ${selectedComponent.kind}` : `Editing ${selected?.name ?? "section"}`}</strong><small>{selectedComponent ? "Choose a group below to change this item." : "Choose a group below to customise this section."}</small></div>
         <details className="inspector-group" open><summary>Content & visibility</summary><div className="inspector-group-body">
