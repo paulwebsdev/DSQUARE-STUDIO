@@ -1122,3 +1122,15 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .code-problem-clean{color:#9ed6a5}
 .code-problems small{display:block;margin-top:7px}
 @media(max-width:600px){.code-problems{max-height:125px}.code-editor-foot button{margin-left:0}}
+
+/* Code Studio: local save history */
+.code-history-panel{max-height:230px;overflow:auto;padding:12px 14px;border-top:1px solid #51442f;background:#191816;color:#e9e0d2}
+.code-history-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.code-history-heading strong{display:flex;align-items:center;gap:7px;color:#e2c58d;font-size:11px}
+.code-history-heading button,.code-history-item button{padding:6px 9px;border:1px solid #51442f;border-radius:6px;color:#e6d7bb;background:#211d16;font-size:9px}
+.code-history-panel>p{margin:7px 0;color:#928b7e;font-size:9px;line-height:1.5}
+.code-history-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid #302d26}
+.code-history-item>div{display:grid;gap:3px;min-width:0}.code-history-item strong{overflow:hidden;color:#e9e0d2;font-size:10px;text-overflow:ellipsis;white-space:nowrap}.code-history-item small,.code-history-empty{color:#928b7e;font-size:9px}
+.code-history-item button{flex:0 0 auto;color:#21190c;border-color:#d9b66f;background:#e0bd79;font-weight:700}
+.code-history-empty{padding:12px 0}
+@media(max-width:600px){.code-history-panel{max-height:190px;padding:9px}.code-history-item{align-items:flex-start}}
