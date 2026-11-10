@@ -743,7 +743,7 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
         ...block,
         styles: {
           ...block.styles,
-          padding: isHero ? (businessProfile?.hero === 'bold' ? '184px 10%' : businessProfile?.hero === 'editorial' ? '116px 15%' : businessProfile?.hero === 'minimal' ? '190px 14% 150px' : layoutVariant === 8 ? '164px 10%' : '144px 8%') : layoutVariant === 9 ? '92px 9%' : '84px 8%',
+          padding: categoryArt && isHero ? (artHeroMode === 'editorial' ? 'clamp(112px,14vw,184px) 12%' : artHeroMode === 'minimal' ? 'clamp(130px,16vw,196px) 10%' : artHeroMode === 'banner' ? 'clamp(72px,9vw,112px) 8%' : artHeroMode === 'cinematic' ? 'clamp(140px,16vw,200px) 9%' : 'clamp(84px,10vw,140px) 8%') : isHero ? (businessProfile?.hero === 'bold' ? '184px 10%' : businessProfile?.hero === 'editorial' ? '116px 15%' : businessProfile?.hero === 'minimal' ? '190px 14% 150px' : layoutVariant === 8 ? '164px 10%' : '144px 8%') : layoutVariant === 9 ? '92px 9%' : '84px 8%',
           textAlign: (isHero ? heroAlign : 'left') as 'left' | 'center',
           ...(isHero && category === 'Business' ? {
             backgroundColor: businessProfile?.hero === 'bold' ? selectedTheme.primary : businessProfile?.hero === 'editorial' ? '#f4f0e8' : businessProfile?.hero === 'minimal' ? '#ffffff' : tone,
@@ -756,7 +756,6 @@ export function createSiteFromTemplate(templateId: string, name: string, categor
           borderTop: !isHero && index % 2 === 0 ? '1px solid #e9e4dc' : 'none',
           ...(categoryArt ? (isHero ? {
             minHeight: artHeroMode === 'cinematic' ? '560px' : artHeroMode === 'banner' ? '360px' : artHeroMode === 'minimal' ? '480px' : artHeroMode === 'gallery' ? '420px' : '440px',
-            padding: artHeroMode === 'editorial' ? 'clamp(112px,14vw,184px) 12%' : artHeroMode === 'minimal' ? 'clamp(130px,16vw,196px) 10%' : artHeroMode === 'banner' ? 'clamp(72px,9vw,112px) 8%' : artHeroMode === 'cinematic' ? 'clamp(140px,16vw,200px) 9%' : 'clamp(84px,10vw,140px) 8%',
             ...(artHeroMode === 'centered' || artHeroMode === 'minimal' ? { textAlign:'center' as const } : {}),
             ...(artHeroMode === 'cinematic' ? { backgroundColor:selectedTheme.primary, color:'#ffffff', borderRadius:'0', overflow:'hidden' } : {}),
             ...(artHeroMode === 'framed' ? { borderRadius:'28px', margin:'22px 3%', boxShadow:'0 24px 70px rgba(20,32,38,.12)' } : {}),
