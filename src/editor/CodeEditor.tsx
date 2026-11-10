@@ -16,15 +16,16 @@ const examples: Record<CodeTab, string> = {
 const tabLabels: Record<CodeTab, string> = { html: 'HTML', css: 'CSS', javascript: 'JavaScript' }
 
 const highlightCode = (source: string, tab: CodeTab) => {
+  void tab
   const escape = (value: string) => value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-  const tokenPattern = /(<!--[\\s\\S]*?-->|\\/\\*[\\s\\S]*?\\*\\/|\\/\\/[^\\n]*|"(?:\\\\.|[^"\\\\])*"|'(?:\\\\.|[^'\\\\])*'|`(?:\\\\.|[^`\\\\])*`|<\\/?[a-zA-Z][\\w:-]*|\\b(?:const|let|var|function|return|if|else|for|while|new|class|extends|async|await|try|catch|throw|import|from|export|default|true|false|null|undefined|this|document|window|addEventListener|querySelector|querySelectorAll|display|flex|grid|block|none|relative|absolute|fixed|sticky|important)\\b|#[0-9a-fA-F]{3,8}\\b|\\b\\d+(?:\\.\\d+)?(?:px|rem|em|vh|vw|%)?)/g
+  const tokenPattern = /(&lt;!--.*?--&gt;|&lt;\/?[a-zA-Z][\w:-]*|\/\*.*?\*\/|\/\/[^\n]*|"[^"\n]*"|'[^'\n]*'|\b(?:const|let|var|function|return|if|else|for|while|new|class|async|await|true|false|null|undefined|document|window|display|flex|grid|none|relative|absolute|fixed|sticky)\b|#[0-9a-fA-F]{3,8}\b|\b\d+(?:\.\d+)?(?:px|rem|em|vh|vw|%)?)/g
   return escape(source).replace(tokenPattern, token => {
-    const cls = token.startsWith('<!--') || token.startsWith('/*') || token.startsWith('//') ? 'comment'
-      : token.startsWith('"') || token.startsWith("'") || token.startsWith('`') ? 'string'
-      : token.startsWith('<') ? 'tag'
-      : token.startsWith('#') || /^\\d/.test(token) ? 'number' : 'keyword'
+    const cls = token.startsWith('&lt;!--') || token.startsWith('/*') || token.startsWith('//') ? 'comment'
+      : token.startsWith('"') || token.startsWith("'") ? 'string'
+      : token.startsWith('&lt;') ? 'tag'
+      : token.startsWith('#') || /^\d/.test(token) ? 'number' : 'keyword'
     return '<span class="code-token-'+cls+'">'+token+'</span>'
-  }) + (source.endsWith('\\n') ? ' ' : '')
+  }) + (source.endsWith('\n') ? ' ' : '')
 }
 
 type Diagnostic = { line: number; message: string; severity: 'error' | 'warning' }
