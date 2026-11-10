@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent, MouseEvent, KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent, CSSProperties } from 'react'
-import { ArrowLeft, Eye, Monitor, Tablet, Smartphone, Undo2, Redo2, Plus, Type, Image, MousePointer2, Layers3, Settings2, Trash2, Save, Sparkles, Download, X } from 'lucide-react'
+import { ArrowLeft, Eye, Code2, Monitor, Tablet, Smartphone, Undo2, Redo2, Plus, Type, Image, MousePointer2, Layers3, Settings2, Trash2, Save, Sparkles, Download, X } from 'lucide-react'
 import JSZip from 'jszip'
 import { createStarterSite } from './defaultSite'
 import { buildExportFiles } from './exportSite'
 import type { DeviceMode, SiteDocument, SiteSection, StyleMap } from './types'
+import CodeEditor from './CodeEditor'
+import type { SiteCustomCode } from './types'
 
 type Props = { onExit: () => void; projectId: string; projectName: string; category: string }
 
@@ -84,6 +86,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const [mobilePropertiesOpen, setMobilePropertiesOpen] = useState(false)
   const [savedAt, setSavedAt] = useState('Just saved')
   const [previewMode, setPreviewMode] = useState(false)
+  const [codeStudioOpen, setCodeStudioOpen] = useState(false)
   const [previewScrolled, setPreviewScrolled] = useState(false)
   const [exportOpen, setExportOpen] = useState(false)
   const [exportBusy, setExportBusy] = useState(false)
@@ -202,6 +205,25 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     setSite({ ...next, updatedAt: new Date().toISOString() })
   }
 
+  const applyCustomCode = (scope: 'site' | 'new' | `page:${string}`, code: SiteCustomCode, pageName: string): string | void => {
+    if (scope === 'site') { commit({ ...site, customCode: { ...code } }); return }
+    if (scope.startsWith('page:')) {
+      const targetId = scope.slice(5)
+      commit({ ...site, pages: site.pages.map(item => item.id === targetId ? { ...item, customCode: { ...code } } : item) })
+      return
+    }
+    const cleanName = pageName.trim().slice(0, 60) || 'New page'
+    const uniqueName = uniquePageName(cleanName, site.pages)
+    const slug = uniquePageSlug(uniqueName, site.pages)
+    const home = site.pages.find(item => item.isHomePage) ?? site.pages[0]
+    const sharedSections = (home?.sections ?? []).filter(section => section.kind === 'header' || section.kind === 'footer').map(section => ({ ...section, id: freshEditorId('section'), components: section.components.map(component => ({ ...component, id: freshEditorId('element'), styles: { ...component.styles } })) }))
+    const newId = freshEditorId('page')
+    const newPage = { id: newId, name: uniqueName, slug, isHomePage: false, sections: sharedSections, customCode: { ...code } }
+    commit({ ...site, pages: [...site.pages, newPage] })
+    setActivePageId(newId)
+    setSelectedId(sharedSections[0]?.id ?? '')
+    return newId
+  }
   const addPage = () => {
     let pageNumber = site.pages.length + 1
     while (site.pages.some(item => item.name.toLowerCase() === (`New page ${pageNumber}`).toLowerCase())) pageNumber++
@@ -675,6 +697,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         <button className="editor-tool" onClick={undo} disabled={!history.length} aria-label="Undo"><Undo2 size={17} /></button>
         <button className="editor-tool" onClick={redo} disabled={!future.length} aria-label="Redo"><Redo2 size={17} /></button>
         <button className="editor-preview" onClick={() => { setEditingComponentId(null); setPreviewMode(value => !value); previewScrollRef.current?.scrollTo({ top: 0 }) }} aria-pressed={previewMode}><Eye size={15} /> {previewMode ? "Exit preview" : "Preview"}</button>
+        <button className="editor-preview editor-code-studio" onClick={() => setCodeStudioOpen(true)}><Code2 size={15} /> Code Studio</button>
         <button ref={exportTriggerRef} className="editor-preview editor-export" onClick={() => { setExportMessage(""); setExportOpen(true) }}><Download size={15} /> Export</button>
         <button className="primary-button editor-save" onClick={() => { try { localStorage.setItem(storageKey, JSON.stringify(site)); setSavedAt('Saved just now') } catch { setSavedAt('Could not save — storage is full') } }}><Save size={14} /> Save</button>
       </div>
@@ -884,6 +907,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     </div>
     <div className="editor-mobile-add"><button onClick={() => { setMobilePropertiesOpen(false); setPanel("add"); setMobilePanelOpen(true) }}><Plus size={16} /><span>Add</span></button><button onClick={() => { setMobilePropertiesOpen(false); setPanel("layers"); setMobilePanelOpen(true) }}><Layers3 size={16} /><span>Sections</span></button><button onClick={() => { setMobilePropertiesOpen(false); setPanel("media"); setMobilePanelOpen(true) }}><Image size={16} /><span>Images</span></button><button className={mobilePropertiesOpen ? "active" : ""} onClick={() => { setMobilePanelOpen(false); setMobilePropertiesOpen(value => !value) }}><Settings2 size={16} /><span>Edit</span></button><button onClick={() => { setMobilePropertiesOpen(false); setPanel("seo"); setMobilePanelOpen(true) }}><Settings2 size={16} /><span>More</span></button></div>
     {exportOpen && <div className="export-backdrop" role="presentation" onClick={() => !exportBusy && setExportOpen(false)}><section className="export-dialog" role="dialog" aria-modal="true" aria-labelledby="export-title" onClick={event => event.stopPropagation()}><button ref={exportCloseRef} className="export-close" aria-label="Close export" onClick={() => setExportOpen(false)} disabled={exportBusy}><X size={18} /></button><div className="export-kicker">YOUR WEBSITE · SOURCE CODE</div><h2 id="export-title">Download your website</h2><p>Get the actual HTML, CSS and JavaScript files. The complete ZIP includes every page, styling and scripts needed to run the website.</p><div className="export-summary" aria-label="Website export summary"><span><strong>{site.pages.length}</strong> {site.pages.length === 1 ? "page" : "pages"}</span><span><strong>{site.pages.reduce((total, item) => total + item.sections.filter(section => section.enabled).length, 0)}</strong> active sections</span><span><strong>{(site.assets ?? []).length}</strong> media assets</span></div><div className="export-readiness-note">Your export includes the current saved design and packaged images. Forms are visual previews; connect services for submissions, payments or databases.</div><button className="export-zip-button" onClick={downloadWebsiteZip} disabled={exportBusy}><Download size={17} /> {exportBusy ? "Preparing ZIP..." : "Download complete website ZIP"}</button><div className="export-file-heading">Or download individual source files</div><div className="export-file-grid"><button onClick={() => downloadSourceFile("html")}>index.html <span>Website structure</span></button><button onClick={() => downloadSourceFile("css")}>styles.css <span>Design and layout</span></button><button onClick={() => downloadSourceFile("js")}>script.js <span>Interactions</span></button></div>{exportMessage && <div className="export-status" role="status">{exportMessage}</div>}<small>Contact forms are exported as front-end previews. Connect a form service before using them to receive messages.</small></section></div>}
+    {codeStudioOpen && <CodeEditor site={site} activePageId={activePageId} onApply={applyCustomCode} onClose={() => setCodeStudioOpen(false)} />}
     {showAdd && <div className="editor-add-sheet"><div><strong>Add a section</strong><button onClick={() => setShowAdd(false)}>Close</button></div>{sectionOptions.map(item => <button key={item.kind} onClick={() => addSection(item.kind)}>{item.label}<Plus size={15} /></button>)}</div>}
   </div>
 }
