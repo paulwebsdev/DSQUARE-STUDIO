@@ -187,6 +187,18 @@ export function buildExportFiles(site: SiteDocument): ExportFiles {
     if (pageCode.javascript.trim()) pageHtml = pageHtml.replace('</body>', '<script data-dsquare-page-code>\ndocument.addEventListener("DOMContentLoaded",function(){(function(){\n' + pageCode.javascript + '\n})();});\n</script>\n</body>')
     htmlFiles[fileName] = pageHtml
   }
+  for (const file of site.codeFiles ?? []) {
+    if (!file.includeInSite) continue
+    const parts = (file.path || file.name).replace(/\\\\/g, '/').split('/').filter(Boolean)
+    if (!parts.length || parts.some(part => part === '.' || part === '..' || !/^[a-zA-Z0-9._-]+$/.test(part))) continue
+    const assetPath = 'project/' + parts.join('/')
+    const extension = parts[parts.length - 1].split('.').pop()?.toLowerCase()
+    if (extension === 'css') {
+      for (const fileName of Object.keys(htmlFiles)) htmlFiles[fileName] = htmlFiles[fileName].replace('</head>', '<link rel="stylesheet" href="' + assetPath + '" data-dsquare-project-file>\\n</head>')
+    } else if (extension === 'js' || extension === 'mjs') {
+      for (const fileName of Object.keys(htmlFiles)) htmlFiles[fileName] = htmlFiles[fileName].replace('</body>', '<script src="' + assetPath + '" defer data-dsquare-project-file></script>\\n</body>')
+    }
+  }
   const customJs = (customCode.javascript ?? '').trim()
   return { htmlFiles, css: css + '\n' + (customCode.css ?? ''), js: js + businessSpecialtyJs + editorialSpecialtyJs + fiveCategorySpecialtyJs + categoryExperienceJs + (customJs ? '\n;\n(function(){\n' + customJs + '\n})();\n' : ''), assets }
 }
