@@ -175,7 +175,7 @@ export function buildExportFiles(site: SiteDocument): ExportFiles {
     const fileName = pageFiles.get(page.slug) ?? (page.isHomePage ? 'index.html' : safeFileName(page.slug || page.name) + '.html')
     let pageHtml = htmlFiles[fileName]
     if (!pageHtml) continue
-    if (pageCode.html.trim()) pageHtml = pageHtml.replace('</main>', '\n' + pageCode.html + '\n</main>')
+    if (pageCode.html.trim()) pageHtml = injectHtml(pageHtml, pageCode.html)
     if (pageCode.css.trim()) pageHtml = pageHtml.replace('</head>', '<style data-dsquare-page-code>\n' + pageCode.css + '\n</style>\n</head>')
     if (pageCode.javascript.trim()) pageHtml = pageHtml.replace('</body>', '<script data-dsquare-page-code>\n(function(){\n' + pageCode.javascript + '\n})();\n</script>\n</body>')
     htmlFiles[fileName] = pageHtml
