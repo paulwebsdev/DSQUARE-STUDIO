@@ -5,7 +5,7 @@ import JSZip from 'jszip'
 import { buildExportFiles } from './exportSite'
 import { createStarterSite } from './defaultSite'
 import CodeEditor from './CodeEditor'
-import type { DeviceMode, SiteDocument, SiteSection, StyleMap } from './types'
+import type { DeviceMode, SiteDocument, SiteSection, StyleMap, SiteCustomCode } from './types'
 
 type Props = { onExit: () => void; projectId: string; projectName: string; category: string }
 
@@ -659,7 +659,26 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
         <button className="primary-button editor-save" onClick={() => { try { localStorage.setItem(storageKey, JSON.stringify(site)); setSavedAt('Saved just now') } catch { setSavedAt('Could not save — storage is full') } }}><Save size={14} /> Save</button>
       </div>
     </header>
-    {codeMode ? <CodeEditor site={site} onApply={customCode => commit({ ...site, customCode })} onClose={() => setCodeMode(false)} /> : <div className="editor-workspace">
+    {codeMode ? <CodeEditor site={site} activePageId={activePageId} onApply={(scope, customCode, pageName) => {
+       if (scope === 'site') { commit({ ...site, customCode }); return }
+       if (scope === 'new') {
+         const base = pageName.trim() || 'New page'
+         const slugBase = base.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'new-page'
+         let slug = '/' + slugBase
+         let suffix = 2
+         while (site.pages.some(item => item.slug.toLowerCase() === slug.toLowerCase())) slug = '/' + slugBase + '-' + suffix++
+         const home = site.pages.find(item => item.isHomePage) ?? site.pages[0]
+         const shared = (home?.sections ?? []).filter(section => section.kind === 'header' || section.kind === 'footer').map(section => ({ ...section, id: freshEditorId('section'), components: section.components.map(component => ({ ...component, id: freshEditorId('component') })) }))
+         const newPage = { id: freshEditorId('page'), name: base, slug, isHomePage: false, sections: shared, customCode }
+         commit({ ...site, pages: [...site.pages, newPage] })
+         setActivePageId(newPage.id)
+         setSelectedId(newPage.sections[0]?.id ?? '')
+         setSelectedComponentId(null)
+         return newPage.id
+       }
+       const pageId = scope.slice(5)
+       commit({ ...site, pages: site.pages.map(item => item.id === pageId ? { ...item, customCode } : item) })
+     }} onClose={() => setCodeMode(false)} /> : <div className="editor-workspace">
       <aside className="editor-left-panel">
         <div className="editor-panel-tabs">
           <button className={panel === 'add' ? 'active' : ''} onClick={() => setPanel('add')}><Plus size={14} /> Add</button>
