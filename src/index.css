@@ -1220,3 +1220,10 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .layer-element:active{cursor:grabbing}
 .layer-element-dragging{opacity:.48;border-color:#b79659;background:#332a1c}
 .layer-element[draggable="true"]:hover{border-color:#51442e}
+
+/* Visual editor layer actions */
+.layer-section-row{display:flex;align-items:center;gap:4px;margin-bottom:4px}
+.layer-section-row .layer-item{flex:1;min-width:0;margin-bottom:0}
+.layer-section-action{width:25px;height:27px;flex:0 0 25px;border:1px solid #39352d;border-radius:5px;background:#211f1b;color:#cfc6b6;font-size:14px}
+.layer-section-action:hover{border-color:#b79659;color:#f0d8aa}
+@media(max-width:600px){.layer-section-action{width:23px;flex-basis:23px;height:25px}}
