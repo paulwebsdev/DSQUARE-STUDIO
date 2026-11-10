@@ -3,6 +3,7 @@ import type { FormEvent, MouseEvent, KeyboardEvent as ReactKeyboardEvent, Pointe
 import { ArrowLeft, Eye, Code2, Monitor, Tablet, Smartphone, Undo2, Redo2, Plus, Type, Image, MousePointer2, Layers3, Settings2, Trash2, Save, Sparkles, Download, X } from 'lucide-react'
 import JSZip from 'jszip'
 import { createStarterSite } from './defaultSite'
+import { loadStoredSite, saveStoredSite } from './persistence'
 import { buildExportFiles } from './exportSite'
 import type { DeviceMode, SiteDocument, SiteSection, StyleMap } from './types'
 import CodeEditor from './CodeEditor'
@@ -73,6 +74,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
       return saved ? JSON.parse(saved) as SiteDocument : createStarterSite(projectName, category)
     } catch { return createStarterSite(projectName, category) }
   })
+  const [storageReady, setStorageReady] = useState(false)
   const [selectedId, setSelectedId] = useState(site.pages[0]?.sections[1]?.id ?? '')
   const [activePageId, setActivePageId] = useState(site.pages[0]?.id ?? '')
   const [device, setDevice] = useState<DeviceMode>('desktop')
@@ -175,29 +177,38 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const visibleAssets = useMemo(() => [...(site.assets ?? [])].filter(asset => `${asset.name} ${asset.altText}`.toLowerCase().includes(mediaSearch.trim().toLowerCase())).sort((a, b) => mediaSort === 'name' ? a.name.localeCompare(b.name) : mediaSort === 'largest' ? b.dataUrl.length - a.dataUrl.length : (b.createdAt ?? '').localeCompare(a.createdAt ?? '')), [site.assets, mediaSearch, mediaSort])
 
   useEffect(() => {
-    const saveImmediately = () => {
-      try { localStorage.setItem(storageKey, JSON.stringify(site)) } catch { /* The visible autosave status reports storage failures. */ }
-    }
+    let active = true
+    setStorageReady(false)
+    loadStoredSite(projectId).then(async stored => {
+      if (!active) return
+      if (stored) setSite(stored)
+      else await saveStoredSite(projectId, site)
+      if (active) setStorageReady(true)
+    })
+    return () => { active = false }
+  // Hydrate once when switching projects; the initial localStorage document is the migration fallback.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId])
+
+  useEffect(() => {
+    if (!storageReady) return
+    const saveImmediately = () => { void saveStoredSite(projectId, site) }
     window.addEventListener('pagehide', saveImmediately)
     window.addEventListener('beforeunload', saveImmediately)
     return () => {
       window.removeEventListener('pagehide', saveImmediately)
       window.removeEventListener('beforeunload', saveImmediately)
     }
-  }, [site, storageKey])
+  }, [site, projectId, storageReady])
 
   useEffect(() => {
+    if (!storageReady) return
     setSavedAt('Saving…')
     const timer = window.setTimeout(() => {
-      try {
-        localStorage.setItem(storageKey, JSON.stringify(site))
-        setSavedAt('Saved just now')
-      } catch {
-        setSavedAt('Could not save — storage is full')
-      }
+      saveStoredSite(projectId, site).then(saved => setSavedAt(saved ? 'Saved on this device' : 'Could not save — check browser storage'))
     }, 250)
     return () => window.clearTimeout(timer)
-  }, [site, storageKey])
+  }, [site, projectId, storageReady])
 
   const commit = (next: SiteDocument) => {
     setHistory(items => [...items.slice(-29), site])
