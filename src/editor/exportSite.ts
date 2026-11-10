@@ -92,6 +92,13 @@ export function buildExportFiles(site: SiteDocument): ExportFiles {
     pageFiles.set(page.slug, candidate)
   }
   const assets: Record<string, Uint8Array> = {}
+  for (const file of site.codeFiles ?? []) {
+    const parts = (file.path || file.name).replace(/\\\\/g, '/').split('/').filter(Boolean)
+    if (!parts.length || parts.some(part => part === '.' || part === '..' || !/^[a-zA-Z0-9._-]+$/.test(part))) continue
+    const outputPath = 'project/' + parts.join('/')
+    if (Object.keys(assets).some(path => path.toLowerCase() === outputPath.toLowerCase())) continue
+    assets[outputPath] = new TextEncoder().encode(file.content ?? '')
+  }
   const assetPaths = new Map<string, string>()
   const assetAltTexts = new Map((site.assets ?? []).map(asset => [asset.dataUrl, asset.altText]))
   let assetIndex = 0
