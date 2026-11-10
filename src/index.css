@@ -1213,3 +1213,10 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .layer-element>button:disabled{opacity:.3;cursor:default}
 .layer-element>button:hover:not(:disabled){border-color:#b79659;color:#f0d8aa}
 @media(max-width:600px){.layer-element{margin-left:10px;gap:2px}.layer-element>button:not(.layer-element-select){width:22px;flex-basis:22px;height:24px}}
+
+
+/* Visual editor: drag ordering feedback in the page layer tree */
+.layer-element{cursor:grab;transition:background .15s,border-color .15s,opacity .15s}
+.layer-element:active{cursor:grabbing}
+.layer-element-dragging{opacity:.48;border-color:#b79659;background:#332a1c}
+.layer-element[draggable="true"]:hover{border-color:#51442e}
