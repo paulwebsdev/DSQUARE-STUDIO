@@ -1227,3 +1227,17 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .layer-section-action{width:25px;height:27px;flex:0 0 25px;border:1px solid #39352d;border-radius:5px;background:#211f1b;color:#cfc6b6;font-size:14px}
 .layer-section-action:hover{border-color:#b79659;color:#f0d8aa}
 @media(max-width:600px){.layer-section-action{width:23px;flex-basis:23px;height:25px}}
+
+
+/* Code Studio: make the actual typing and paste surface unmistakable and reliable */
+.code-editor-instruction{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 13px;border-bottom:1px solid #51432e;background:#211d16;color:#e8ddc9}
+.code-editor-instruction strong{color:#f0d49a;font-size:11px;white-space:nowrap}
+.code-editor-instruction span{flex:1;min-width:180px;color:#c5bba9;font-size:10px;line-height:1.45}
+.code-editor-instruction button{padding:7px 11px;border:1px solid #b9965b;border-radius:6px;background:#d9b66f;color:#21190c;font-size:10px;font-weight:700}
+.code-input-wrap{position:relative;flex:1 1 auto;min-height:280px;isolation:isolate}
+.code-highlight{display:none!important}
+.code-input{display:block;position:relative;z-index:2;flex:1 1 auto;width:100%;min-width:0;min-height:280px;height:100%;box-sizing:border-box;resize:none;color:#f4ead8!important;-webkit-text-fill-color:#f4ead8;background:#0d0e10!important;caret-color:#f6d28f;opacity:1;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;padding:16px 14px;white-space:pre;overflow:auto;touch-action:pan-x pan-y}
+.code-input::placeholder{-webkit-text-fill-color:#77736b;color:#77736b}
+.code-input::selection{background:rgba(190,151,83,.45);color:#fff;-webkit-text-fill-color:#fff}
+@media(max-width:900px){.code-body:not(.hide-editor){grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(320px,1.15fr) minmax(240px,.85fr)}.code-editor-pane{min-height:320px}.code-input-wrap{min-height:220px}}
+@media(max-width:600px){.code-editor-instruction{align-items:flex-start;padding:9px;gap:7px}.code-editor-instruction span{flex-basis:100%;font-size:9px}.code-editor-instruction button{padding:7px 10px}.code-body:not(.hide-editor){grid-template-rows:minmax(320px,1.2fr) minmax(210px,.8fr)}.code-editor-pane{min-height:320px}.code-input-wrap{min-height:220px}.code-input{min-height:220px;font-size:13px!important}}
