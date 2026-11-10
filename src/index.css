@@ -1084,3 +1084,7 @@ h1,h2,h3,h4,p { margin-top: 0; }
  .code-body.hide-editor{grid-template-rows:minmax(0,1fr)}
  .code-body.hide-editor .code-preview-frame{min-height:360px}
 }
+
+
+.code-preview-page-select{max-width:130px;min-width:80px;padding:6px 8px;border:1px solid #51442f;border-radius:6px;color:#e6d7bb;background:#211d16;font-size:9px}
+@media(max-width:600px){.code-preview-page-select{max-width:90px;min-width:65px;padding:5px;font-size:8px}}
