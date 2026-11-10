@@ -15,6 +15,7 @@ const examples: Record<CodeTab, string> = {
 const tabLabels: Record<CodeTab, string> = { html: 'HTML', css: 'CSS', javascript: 'JavaScript' }
 type Diagnostic = { line: number; message: string; severity: 'error' | 'warning' }
 type CodeSnapshot = { id: string; createdAt: string; scope: Scope; label: string; code: SiteCustomCode }
+type SavedSnippet = { id: string; name: string; tab: CodeTab; source: string; createdAt: string }
 function inspectCode(tab: CodeTab, source: string): Diagnostic[] {
   const issues: Diagnostic[] = []
   const lines = source.split('\n')
@@ -88,6 +89,41 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
   const [message, setMessage] = useState('Editing code for the selected page.')
   const [showHistory, setShowHistory] = useState(false)
   const [history, setHistory] = useState<CodeSnapshot[]>([])
+  const [snippets, setSnippets] = useState<SavedSnippet[]>([])
+  const [showSnippets, setShowSnippets] = useState(false)
+  const snippetKey = `dsquare-code-snippets:${site.id}`
+  useEffect(() => {
+    try { const stored = localStorage.getItem(snippetKey); setSnippets(stored ? JSON.parse(stored) as SavedSnippet[] : []) }
+    catch { setSnippets([]) }
+  }, [snippetKey])
+  const persistSnippets = (items: SavedSnippet[]) => {
+    setSnippets(items)
+    try { localStorage.setItem(snippetKey, JSON.stringify(items)) } catch { setMessage('Could not save snippet. Browser storage may be full.') }
+  }
+  const saveSnippet = () => {
+    if (!current.trim()) { setMessage('Add some code before saving it as a snippet.'); return }
+    const name = window.prompt('Name this reusable ' + tabLabels[tab] + ' snippet:')
+    if (!name?.trim()) return
+    const item: SavedSnippet = { id: createId('snippet'), name: name.trim(), tab, source: current, createdAt: new Date().toISOString() }
+    persistSnippets([item, ...snippets])
+    setShowSnippets(true)
+    setMessage('Snippet saved on this device ✓')
+  }
+  const insertSnippet = (snippet: SavedSnippet) => {
+    setTab(snippet.tab)
+    const area = editorRef.current
+    const start = area?.selectionStart ?? code[snippet.tab].length
+    const end = area?.selectionEnd ?? start
+    const source = code[snippet.tab]
+    const before = source.slice(0, start)
+    const after = source.slice(end)
+    const separator = before && !before.endsWith('\\n') ? '\\n' : ''
+    const insertion = separator + snippet.source + (after && !snippet.source.endsWith('\\n') ? '\\n' : '')
+    const next = before + insertion + after
+    setCode(previous => ({ ...previous, [snippet.tab]: next }))
+    setMessage('Inserted snippet: ' + snippet.name + ' · save to apply')
+    requestAnimationFrame(() => { if (area) { area.focus(); const position = before.length + insertion.length; area.setSelectionRange(position, position) } })
+  }
   const historyKey = `dsquare-code-history:${site.id}`
   useEffect(() => {
     try { const stored = localStorage.getItem(historyKey); setHistory(stored ? JSON.parse(stored) as CodeSnapshot[] : []) }
@@ -201,7 +237,7 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
         <div className="code-input-wrap"><div className="code-line-numbers" aria-hidden="true">{Array.from({length:lineCount},(_,index)=><span key={index}>{index+1}</span>)}</div><textarea style={{fontSize,whiteSpace:wrapLines?"pre-wrap":"pre"}} ref={editorRef} onKeyDown={handleEditorKeyDown} className="code-input" spellCheck={false} autoCapitalize="off" autoCorrect="off" autoComplete="off" aria-label={tab+' source code'} value={current} onChange={event=>update(event.target.value)} placeholder={'Write '+tabLabels[tab]+' here…'}/></div>
         <div className="code-editor-foot"><ShieldCheck size={14}/> HTML adds content. CSS restyles existing sections. JavaScript changes content and interactions.<button type="button" onClick={()=>setShowProblems(value=>!value)}>{showProblems?"Hide":"Show"} diagnostics · {diagnostics.length}</button></div>{showProblems && <div className="code-problems" aria-live="polite"><div className="code-problems-heading"><strong><Files size={13}/> Problems</strong><span>{diagnostics.length ? diagnostics.length+" issue(s)" : "No issues detected"}</span></div>{diagnostics.length ? diagnostics.map((issue,index)=><div className={"code-problem "+issue.severity} key={index}><AlertCircle size={13}/><button type="button" onClick={()=>{const area=editorRef.current;if(area){const position=current.split("\n").slice(0,issue.line-1).reduce((sum,line)=>sum+line.length+1,0);area.focus();area.setSelectionRange(position,position)}}}>Line {issue.line}: {issue.message}</button></div>) : <div className="code-problem-clean"><CheckCircle2 size={13}/> No basic syntax issues found in this file.</div>}<small>These lightweight checks catch common mistakes; they do not replace a full browser console or language server.</small></div>}
         {showHistory && <div className="code-history-panel"><div className="code-history-heading"><strong><RotateCcw size={14}/> Saved code history</strong><button type="button" onClick={()=>setShowHistory(false)}>Close</button></div><p>Up to 30 successful saves are kept on this device for this website. Restoring a snapshot applies it to the website.</p>{history.length ? history.map(snapshot=><div className="code-history-item" key={snapshot.id}><div><strong>{snapshot.label}</strong><small>{new Date(snapshot.createdAt).toLocaleString()} · {snapshot.scope==='site'?'Website-wide':'Page code'}</small></div><button type="button" onClick={()=>restoreSnapshot(snapshot)}>Restore</button></div>) : <div className="code-history-empty">No saved snapshots yet. Save your code to create the first one.</div>}</div>}
-        <div className="code-snippet-tools"><strong><WandSparkles size={14}/> Quick examples</strong><div><button onClick={()=>insertExample('css')}><Palette size={13}/> Restyle this website</button><button onClick={()=>insertExample('javascript')}><MousePointerClick size={13}/> Change existing content</button><button onClick={()=>insertExample('html')}><FileCode2 size={13}/> Add a new section</button></div><small>Examples replace code in the selected tab. Save to apply changes to the website.</small></div>
+        <div className="code-snippet-tools"><strong><WandSparkles size={14}/> Quick examples</strong><div><button onClick={()=>insertExample('css')}><Palette size={13}/> Restyle this website</button><button onClick={()=>insertExample('javascript')}><MousePointerClick size={13}/> Change existing content</button><button onClick={()=>insertExample('html')}><FileCode2 size={13}/> Add a new section</button></div><small>Examples replace code in the selected tab. Save to apply changes to the website.</small><div className="code-snippet-actions"><button type="button" onClick={saveSnippet}>＋ Save current {tabLabels[tab]} as snippet</button><button type="button" onClick={()=>setShowSnippets(value=>!value)}>My snippets ({snippets.length})</button></div>{showSnippets && <div className="code-snippet-list">{snippets.length ? snippets.map(snippet=><div className="code-snippet-item" key={snippet.id}><div><strong>{snippet.name}</strong><small>{tabLabels[snippet.tab]} · {new Date(snippet.createdAt).toLocaleDateString()}</small></div><button type="button" onClick={()=>insertSnippet(snippet)}>Insert</button><button type="button" aria-label={'Delete '+snippet.name} onClick={()=>{if(window.confirm('Delete snippet “'+snippet.name+'”?')) persistSnippets(snippets.filter(item=>item.id!==snippet.id))}}>Delete</button></div>) : <p>No saved snippets yet. Save useful code here to reuse it in any page of this website.</p>}</div>}</div>
       </div>}
       <div className="code-preview-pane">
         <div className="code-preview-head"><div><Eye size={15}/><strong>{scope==='site'?'Website-wide preview':scope==='new'?'New page preview':(site.pages.find(page=>page.id===scope.slice(5))?.name??'Page')+' preview'}</strong><span>Live · isolated</span></div>{scope==='site'&&<select className="code-preview-page-select" aria-label="Preview a website page" value={previewPageId} onChange={event=>setPreviewPageId(event.target.value)}>{site.pages.map(page=><option key={page.id} value={page.id}>{page.name}</option>)}</select>}<div className="code-preview-actions"><button className={device==='desktop'?'selected':''} onClick={()=>setDevice('desktop')} aria-label="Desktop preview"><Monitor size={15}/></button><button className={device==='mobile'?'selected':''} onClick={()=>setDevice('mobile')} aria-label="Mobile preview"><Smartphone size={15}/></button><button onClick={()=>{setRan(value=>value+1);setMessage('Preview refreshed')}}><Play size={13}/> Run</button></div></div>
