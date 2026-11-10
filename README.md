@@ -26,7 +26,7 @@ This is an actively developed **frontend prototype**, deployed through GitHub Pa
 
 Website ZIP export packages the current design, but production forms, payments, databases, bookings, hosting integrations and other connected services still require separate implementation. Direct online publishing is not yet connected.
 
-The AI-builder and AI Edit interfaces currently use local draft/command logic. A real AI provider requires a secure server-side backend; API keys must never be placed in this frontend repository.
+Code Studio now includes a project file explorer with nested folders, ZIP import/export, file operations, save history, snippets, diagnostics, preview and custom CSS/JavaScript website integration. Code files are saved inside the website document in browser local storage; they are not cloud-synced. The code editor is a lightweight browser editor rather than a full language-server IDE.\n\nThe AI-builder and AI Edit interfaces currently use local draft/command logic. A real AI provider requires a secure server-side backend; API keys must never be placed in this frontend repository.
 
 Owner-only authentication is a product requirement, but secure server-side authentication is not yet implemented. Do not treat the public GitHub Pages prototype as a secured private production workspace.
 

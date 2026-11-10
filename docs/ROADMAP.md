@@ -414,3 +414,12 @@ Note: media assets remain in browser-local project storage for this prototype; a
 
 - [x] Add an explicit mobile touch-scroll handler to the Preview canvas so vertical finger movement updates the canvas scroll position.
 - [ ] Physically verify actual content movement on Android and iPhone; automated deployment cannot substitute for device testing.
+
+
+## Code Studio completion status — 10 November 2026
+
+The Code Studio project explorer now supports nested folders, file creation/editing/renaming/moving/duplication/deletion, ZIP import/export, and opt-in loading of project CSS/JavaScript assets in the generated website. The editor includes lightweight diagnostics, save history, reusable snippets, find/replace, formatting, indentation, preview, and responsive device preview.
+
+The editor is being enhanced with paired delimiters, indentation-aware Enter, context-aware completion suggestions, and line navigation. This remains a lightweight browser editor, not a full language-server IDE: semantic TypeScript/JavaScript intelligence, debugging, source maps and advanced refactoring are not included.
+
+**Persistence boundary:** project documents and code files currently save in browser local storage. This survives reloads in the same browser profile but does not sync across devices and can be removed when site data is cleared. A cloud-backed provider cannot be completed safely until the owner selects a backend/database and deployment environment; no provider credentials or server infrastructure are currently configured. The data model remains provider-neutral so a secure adapter can be added after that decision. Do not put database credentials in this frontend repository.
