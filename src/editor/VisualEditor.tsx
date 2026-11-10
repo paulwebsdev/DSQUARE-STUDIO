@@ -5,7 +5,7 @@ import JSZip from 'jszip'
 import { buildExportFiles } from './exportSite'
 import { createStarterSite } from './defaultSite'
 import CodeEditor from './CodeEditor'
-import type { DeviceMode, SiteDocument, SiteSection, StyleMap, SiteCustomCode } from './types'
+import type { DeviceMode, SiteDocument, SiteSection, StyleMap } from './types'
 
 type Props = { onExit: () => void; projectId: string; projectName: string; category: string }
 
