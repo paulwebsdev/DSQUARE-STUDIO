@@ -1096,3 +1096,15 @@ h1,h2,h3,h4,p { margin-top: 0; }
 .editor-published-preview-frame.tablet{flex-basis:min(820px,100%);width:min(820px,100%)}
 .editor-published-preview-frame.mobile{flex-basis:min(390px,100%);width:min(390px,100%);min-height:calc(100vh - 150px);border-left:1px solid #ddd;border-right:1px solid #ddd}
 @media(max-width:760px){.editor-published-preview-frame{min-height:calc(100dvh - 126px)}.editor-published-preview-frame.mobile{min-height:calc(100dvh - 126px)}}
+
+/* Code Studio workspace and developer controls */
+.code-studio-overlay{position:fixed;inset:0;z-index:1000;width:100%;height:100dvh;min-height:0;overflow:hidden;background:#101011;display:flex;flex-direction:column}
+.code-studio-overlay .code-body{flex:1;min-height:0}
+.code-mini-actions{display:flex;align-items:center;gap:5px}
+.code-mini-actions button,.code-search-row button{border:1px solid #39352d;border-radius:5px;padding:5px 8px;background:#211f1a;color:#d9b66f;font-size:10px}
+.code-search-row{display:flex;gap:7px;padding:8px 12px;border-bottom:1px solid #302d26;background:#171716}
+.code-search-row input{min-width:0;width:35%;padding:7px 9px;border:1px solid #39352d;border-radius:5px;background:#0d0e10;color:#eee8dc;font:11px ui-monospace,monospace}
+.code-focus-mode{grid-template-columns:minmax(0,1fr)}
+.code-focus-mode .code-preview-pane{display:none}
+.code-studio-overlay .code-input{min-height:300px}
+@media(max-width:600px){.code-mini-actions button{padding:5px;font-size:9px}.code-search-row{flex-wrap:wrap}.code-search-row input{flex:1 1 40%}.code-search-row button{flex:1 1 100%}.code-studio-overlay .code-toolbar-actions{justify-content:flex-start;overflow-x:auto}.code-studio-overlay .code-toolbar{flex-wrap:wrap}.code-studio-overlay .code-body{overflow:auto}}
