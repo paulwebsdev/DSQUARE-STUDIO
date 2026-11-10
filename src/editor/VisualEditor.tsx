@@ -150,7 +150,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   const selectedComponent = selected?.components.find(item => item.id === selectedComponentId)
   const selectedImageAsset = selectedComponent?.kind === 'image' ? (site.assets ?? []).find(asset => asset.dataUrl === selectedComponent.content) : undefined
   const selectedText = selectedComponent?.content ?? selected?.components.find(item => item.kind === 'heading')?.content ?? selected?.name ?? ''
-  const visibleLayers = useMemo(() => page?.sections.map((section, index) => ({ section, index })).filter(({ section }) => `${section.name} ${section.kind}`.toLowerCase().includes(layerSearch.trim().toLowerCase())) ?? [], [page, layerSearch])
+  const visibleLayers = useMemo(() => { const query = layerSearch.trim().toLowerCase(); return page?.sections.map((section, index) => ({ section, index })).filter(({ section }) => !query || `${section.name} ${section.kind}`.toLowerCase().includes(query) || section.components.some(component => `${component.kind} ${component.content}`.toLowerCase().includes(query))) ?? [] }, [page, layerSearch])
 
   const websitePreviewDoc = useMemo(() => {
     if (!page) return '<!doctype html><html><body><p>No page available.</p></body></html>'
