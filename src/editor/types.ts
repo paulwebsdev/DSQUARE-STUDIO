@@ -54,6 +54,7 @@ export type SitePage = {
   slug: string
   isHomePage: boolean
   sections: SiteSection[]
+  customCode?: SiteCustomCode
 }
 
 export type SiteTheme = {
