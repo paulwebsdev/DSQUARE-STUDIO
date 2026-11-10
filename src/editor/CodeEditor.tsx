@@ -69,7 +69,7 @@ const pageFileName = (page: SitePage, files: Record<string, string>) => {
   return Object.keys(files).find(file => file === slug + '.html' || file.startsWith(slug + '-')) ?? Object.keys(files)[0]
 }
 
-export default function CodeEditor({ site, activePageId, onApply, onClose }: Props) {
+export default function CodeEditor({ site, activePageId, onApply, onProjectFilesChange, onClose }: Props) {
   const [scope, setScope] = useState<Scope>(`page:${activePageId}`)
   const [code, setCode] = useState<SiteCustomCode>(() => getCode(site, `page:${activePageId}`))
   const [savedCode, setSavedCode] = useState<SiteCustomCode>(() => getCode(site, `page:${activePageId}`))
