@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
-import { Code2, Eye, FileCode2, FileText, Play, Save, ShieldCheck, Smartphone, Monitor, RotateCcw, X, WandSparkles, AlertCircle, CheckCircle2, File, Files, Palette, MousePointerClick, EyeOff } from 'lucide-react'
+import { Code2, Eye, FileCode2, FileText, Play, Save, ShieldCheck, Smartphone, Monitor, RotateCcw, X, WandSparkles, AlertCircle, CheckCircle2, Files, Palette, MousePointerClick, EyeOff } from 'lucide-react'
 import { buildExportFiles } from './exportSite'
 import { createId, type SiteDocument, type SiteCustomCode, type SitePage } from './types'
 
