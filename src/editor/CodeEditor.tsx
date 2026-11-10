@@ -112,8 +112,9 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
   const insertSnippet = (snippet: SavedSnippet) => {
     setTab(snippet.tab)
     const area = editorRef.current
-    const start = area?.selectionStart ?? code[snippet.tab].length
-    const end = area?.selectionEnd ?? start
+    const useCursor = snippet.tab === tab
+    const start = useCursor ? area?.selectionStart ?? code[snippet.tab].length : code[snippet.tab].length
+    const end = useCursor ? area?.selectionEnd ?? start : start
     const source = code[snippet.tab]
     const before = source.slice(0, start)
     const after = source.slice(end)
