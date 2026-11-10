@@ -105,6 +105,36 @@ const templatePreviewImages: Record<string, string> = {
   construction: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=900&q=80',
   legal: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=900&q=80',
 }
+// Real category-specific preview photography keeps adjacent categories visually distinct in the template gallery.
+const categoryPreviewImages: Record<string, string[]> = {
+  'Blog / Magazine':['photo-1504711434969-e33886168f5c','photo-1495020689067-958852a7765e','photo-1505394033641-40c6ad1178d7'],
+  'Landing page':['photo-1460925895917-afdab8272e','photo-1551434678-e076c223a692','photo-1497366811353-6870744d04b2'],
+  Agency:['photo-1497366754035-f200968a6e72','photo-1497366216548-37526070297c','photo-1497366811353-6870744d04b2'],
+  Restaurant:['photo-1414235077428-338989a2e8c0','photo-1517248135467-4c7edcad34c4','photo-1555396273-367ea4eb4db5'],
+  Education:['photo-1509062522246-3755977927d7','photo-1503676260728-1c00da094a0b','photo-1427504494785-3a9ca7044f45'],
+  School:['photo-1503676260728-1c00da094a0b','photo-1509062522246-3755977927d7','photo-1427504494785-3a9ca7044f45'],
+  Community:['photo-1511632765486-a01980e01a18','photo-1529156069898-49953e39b3ac','photo-1517486808906-6ca8b3f04846'],
+  'Real Estate':['photo-1600607687939-ce8a6c25118c','photo-1600566753086-00f18fb6b3ea','photo-1600047509807-ba8f99d2cdde'],
+  Healthcare:['photo-1576091160399-112ba8d25d1d','photo-1559757175-0eb30cd8c063','photo-1584982751601-97dcc096659c'],
+  'Beauty & Wellness':['photo-1560750588-73207b1ef5b8','photo-1616394584738-fc6e612e71b9','photo-1522335789203-aabd1fc54bc9'],
+  'Hotel & Travel':['photo-1464822759023-fed622ff2c3b','photo-1566073771259-6a8506099945','photo-1510798831971-661eb04b3739'],
+  Finance:['photo-1454165804606-c3d57bc86b40','photo-1460925895917-afdab8272e','photo-1554224155-6726b3ff858f'],
+  'Technology / SaaS':['photo-1551434678-e076c223a692','photo-1519389950473-47ba0277781c','photo-1498050108023-c5249f4df085'],
+  'Non-profit':['photo-1531206715517-5c0ba140b2b8','photo-1469571486292-0ba58a3f068b','photo-1559027615-cd4628902d4a'],
+  Events:['photo-1492684223066-81342ee5ff30','photo-1506157786151-b8491531f063','photo-1511795409834-ef04bbd61622'],
+  Construction:['photo-1503387762-592deb58ef4e','photo-1504307651254-35680f356dfd','photo-1504917595217-d4dc5ebe6122'],
+  Legal:['photo-1589829545856-d10d557cf95f','photo-1450101499163-c8848c66ca85','photo-1505664194779-8beaceb93744'],
+  Automotive:['photo-1503376780353-7e6692767b70','photo-1492144534655-ae79c964c9d7','photo-1503736334956-4c8f8e92946d'],
+  'Fitness & Sports':['photo-1534438327276-14e5300c3a48','photo-1517836357463-d25dfeac3438','photo-1518611012118-696072aa579a'],
+  Wedding:['photo-1519741497674-611481863552','photo-1511285560929-80b456fea0bc','photo-1464366400600-7168b8af9bc3'],
+  'Pet Care':['photo-1552053831-71594a27632d','photo-1517849845537-4d257902454a','photo-1548199973-03cce0bbc9b3'],
+  'Music & Entertainment':['photo-1506157786151-b8491531f063','photo-1501386761578-eac5c94b800a','photo-1470229722913-7c0e2dbbafd3'],
+  'Personal Services':['photo-1497366754035-f200968a6e72','photo-1521737711867-e3b97375f902','photo-1521737604893-d14cc237f11d'],
+  Photography:['photo-1452587925148-ce544e77e70d','photo-1516035069371-29a1b244cc32','photo-1542038784456-1ea8e935640e'],
+  'Fashion & Apparel':['photo-1483985988355-763728e1935b','photo-1490481651871-ab68de25d43d','photo-1483985988355-763728e1935b'],
+  'Church & Ministry':['photo-1438032005730-c779502df39b','photo-1517486808906-6ca8b3f04846','photo-1511632765486-a01980e01a18'],
+  Agriculture:['photo-1500382017468-9049fed747ef','photo-1464226184884-fa280b87c399','photo-1500595830057-1c4b3f8b4e0f'],
+}
 const templates: SiteTemplate[] = categories.flatMap(category => {
   const profile = templateProfiles[category];
   const base = baseTemplates.find(item => item.id === profile.base)!;
@@ -117,7 +147,7 @@ const templates: SiteTemplate[] = categories.flatMap(category => {
     style: profile.styles[index] + ' · Premium',
     pages: category === 'School' ? ['Home','About','Academics','Admissions','Student Life','News','Contact'] : base.pages,
     gradient: previewGradients[(index + categories.indexOf(category)) % previewGradients.length],
-    previewImage: templatePreviewImages[profile.base],
+    previewImage: categoryPreviewImages[category]?.[index % (categoryPreviewImages[category]?.length ?? 1)] ? `https://images.unsplash.com/${categoryPreviewImages[category][index % categoryPreviewImages[category].length]}?auto=format&fit=crop&w=900&q=80` : templatePreviewImages[profile.base],
     featured: index < 2,
   }));
 });
