@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import { Code2, Eye, FileCode2, FileText, Play, Save, ShieldCheck, Smartphone, Monitor, RotateCcw, X, WandSparkles, Palette, MousePointerClick, EyeOff } from 'lucide-react'
 import { buildExportFiles } from './exportSite'
 import { createId, type SiteDocument, type SiteCustomCode, type SitePage } from './types'
@@ -41,6 +41,11 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
   const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop')
   const [ran, setRan] = useState(0)
   const [showCode, setShowCode] = useState(true)
+  const [findOpen, setFindOpen] = useState(false)
+  const [findText, setFindText] = useState('')
+  const [replaceText, setReplaceText] = useState('')
+  const [focusMode, setFocusMode] = useState(false)
+  const editorRef = useRef<HTMLTextAreaElement>(null)
   const [message, setMessage] = useState('Editing code for the selected page.')
   const current = code[tab]
   const isDirty = scope === 'new' || code.html !== savedCode.html || code.css !== savedCode.css || code.javascript !== savedCode.javascript
@@ -53,6 +58,30 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
     setMessage(scope === 'site' ? 'Changes apply across the entire website.' : scope === 'new' ? 'Create a new page and add your code.' : 'Editing code for ' + (site.pages.find(page => page.id === scope.slice(5))?.name ?? 'selected page') + '.')
   }, [scope, site, activePageId])
   const update = (value: string) => { setCode(previous => ({ ...previous, [tab]: value })); setMessage('Unsaved changes · preview updates as you type') }
+  const formatCode = () => {
+    const formatted = current.split('\n').map(line => line.trim()).join('\n').replace(/>\s*</g, '>\n<')
+    setCode(previous => ({ ...previous, [tab]: formatted }))
+    setMessage('Basic formatting applied · review before saving')
+  }
+  const replaceAll = () => {
+    if (!findText) return
+    update(current.split(findText).join(replaceText))
+    setFindOpen(false)
+    setMessage('Matching text replaced · save to apply')
+  }
+  const handleEditorKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Tab') {
+      event.preventDefault()
+      const target = event.currentTarget
+      const start = target.selectionStart
+      const end = target.selectionEnd
+      update(current.slice(0, start) + '  ' + current.slice(end))
+      requestAnimationFrame(() => { target.selectionStart = target.selectionEnd = start + 2 })
+    }
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') { event.preventDefault(); save() }
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'f') { event.preventDefault(); setFindOpen(true) }
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') { event.preventDefault(); setRan(value => value + 1); setMessage('Preview refreshed from the current website build') }
+  }
   const insertExample = (target: CodeTab) => {
     setTab(target)
     setCode(previous => ({ ...previous, [target]: examples[target] }))
@@ -97,11 +126,11 @@ export default function CodeEditor({ site, activePageId, onApply, onClose }: Pro
       <div className="code-toolbar-actions"><span className="code-save-status" aria-live="polite">{message}</span><button className="code-action secondary" onClick={()=>setShowCode(value=>!value)}><EyeOff size={14}/>{showCode?'Hide code':'Show code'}</button><button className="code-action secondary" onClick={reset}><RotateCcw size={14}/> Reset</button><button className="code-action primary" onClick={save} disabled={!isDirty}><Save size={14}/> {isDirty ? 'Save to website' : 'Saved'}</button><button className="code-action close" onClick={close} aria-label="Close code editor"><X size={16}/></button></div>
     </header>
     <div className="code-scope-bar"><label>Apply code to <select value={scope} onChange={event=>setScope(event.target.value as Scope)}><optgroup label="Existing pages">{site.pages.map(page=><option key={page.id} value={`page:${page.id}`}>{page.name}{page.isHomePage?' · Home':''}</option>)}</optgroup><optgroup label="Website-wide"><option value="site">Entire website · redesign all pages</option><option value="new">Create a new page</option></optgroup></select></label>{scope==='new'&&<label className="code-new-page-name">Page name <input value={pageName} onChange={event=>setPageName(event.target.value)} placeholder="e.g. Services"/></label>}<span>{scope==='site'?'HTML, CSS and JavaScript apply across every page.':scope==='new'?'Your new page will be added to the website and page navigation.':'Only this page will be changed; other pages stay untouched.'}</span></div>
-    <div className={'code-body '+(!showCode?'hide-editor':'')}>
+    <div className={'code-body '+(!showCode?'hide-editor ':'')+(focusMode?'code-focus-mode':'')}>
       {showCode&&<div className="code-editor-pane">
         <div className="code-tabs">{(['html','css','javascript'] as CodeTab[]).map(item=><button key={item} className={tab===item?'active':''} onClick={()=>setTab(item)}><FileCode2 size={14}/>{tabLabels[item]}<span>{(code[item]??'').trim()?'●':''}</span></button>)}</div>
-        <div className="code-editor-meta"><span><FileText size={13}/>{tab==='javascript'?'script.js':tab==='html'?'custom.html':'styles.css'}</span><span>{lineCount} lines</span></div>
-        <div className="code-input-wrap"><div className="code-line-numbers" aria-hidden="true">{Array.from({length:lineCount},(_,index)=><span key={index}>{index+1}</span>)}</div><textarea className="code-input" spellCheck={false} autoCapitalize="off" autoCorrect="off" autoComplete="off" aria-label={tab+' source code'} value={current} onChange={event=>update(event.target.value)} placeholder={'Write '+tabLabels[tab]+' here…'}/></div>
+        <div className="code-editor-meta"><span><FileText size={13}/>{tab==='javascript'?'script.js':tab==='html'?'custom.html':'styles.css'}</span><span>{lineCount} lines</span><div className="code-mini-actions"><button type="button" onClick={() => setFindOpen(value => !value)}>Find / replace</button><button type="button" onClick={formatCode}>Format</button><button type="button" onClick={() => setFocusMode(value => !value)}>{focusMode ? "Exit focus" : "Focus"}</button></div></div>{findOpen && <div className="code-search-row"><input aria-label="Find text" placeholder="Find…" value={findText} onChange={event => setFindText(event.target.value)}/><input aria-label="Replace text" placeholder="Replace with…" value={replaceText} onChange={event => setReplaceText(event.target.value)}/><button type="button" onClick={replaceAll}>Replace all</button></div>}
+        <div className="code-input-wrap"><div className="code-line-numbers" aria-hidden="true">{Array.from({length:lineCount},(_,index)=><span key={index}>{index+1}</span>)}</div><textarea ref={editorRef} onKeyDown={handleEditorKeyDown} className="code-input" spellCheck={false} autoCapitalize="off" autoCorrect="off" autoComplete="off" aria-label={tab+' source code'} value={current} onChange={event=>update(event.target.value)} placeholder={'Write '+tabLabels[tab]+' here…'}/></div>
         <div className="code-editor-foot"><ShieldCheck size={14}/> HTML adds content. CSS restyles existing sections. JavaScript changes content and interactions.</div>
         <div className="code-snippet-tools"><strong><WandSparkles size={14}/> Quick examples</strong><div><button onClick={()=>insertExample('css')}><Palette size={13}/> Restyle this website</button><button onClick={()=>insertExample('javascript')}><MousePointerClick size={13}/> Change existing content</button><button onClick={()=>insertExample('html')}><FileCode2 size={13}/> Add a new section</button></div><small>Examples replace code in the selected tab. Save to apply changes to the website.</small></div>
       </div>}
