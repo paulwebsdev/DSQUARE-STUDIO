@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { ChangeEvent, FormEvent, ReactNode } from 'react'
 import VisualEditor from './editor/VisualEditor'
+import FeatureWorkspace from './features/FeatureWorkspace'
 import { createSiteFromTemplate } from './editor/defaultSite'
 import {
   Activity, ArrowDownRight, ArrowRight, Bell, Blocks, BriefcaseBusiness, Edit3,
@@ -415,6 +416,7 @@ function App() {
         <nav className="side-nav" aria-label="Management navigation">
           <button className={`nav-item ${active === 'Clients' ? 'active' : ''}`} onClick={() => selectNav('Clients')}><BriefcaseBusiness size={18} /><span>Clients</span></button>
           <button className={`nav-item ${active === 'Publishing' ? 'active' : ''}`} onClick={() => selectNav('Publishing')}><Globe2 size={18} /><span>Publishing</span></button>
+          <button className={`nav-item ${active === 'Website tools' ? 'active' : ''}`} onClick={() => selectNav('Website tools')}><Blocks size={18} /><span>Website tools</span><span className="new-badge">10</span></button>
         </nav>
         <div className="sidebar-bottom"><div className="help-card"><div className="help-icon"><CircleHelp size={17} /></div><strong>Need a hand?</strong><p>Your creative workspace, one step at a time.</p><button onClick={() => selectNav('Help')}>Explore help <ArrowRight size={13} /></button></div><button className={`nav-item bottom-link ${active === 'Settings' ? 'active' : ''}`} onClick={() => selectNav('Settings')}><Settings2 size={18} /><span>Settings</span></button><div className="profile-row"><div className="profile-avatar">D</div><div className="profile-copy"><strong>DSQUARE</strong><span>Studio owner</span></div><button className="icon-button" aria-label="Profile options"><ChevronDown size={16} /></button></div></div>
       </aside>
@@ -422,7 +424,7 @@ function App() {
         {storageWarning && <div className="storage-warning" role="status"><span>{storageWarning}</span><button className="icon-button" aria-label="Dismiss storage warning" onClick={() => setStorageWarning('')}><X size={15} /></button></div>}
         <header className="topbar"><div className="topbar-left"><button className="icon-button mobile-menu" aria-label="Open navigation" onClick={() => setMenuOpen(true)}><Menu size={20} /></button><div className="breadcrumb">Workspace <span>/</span> <strong>{active}</strong></div></div><div className="topbar-actions"><label className="search-box"><Search size={16} /><input aria-label="Search projects and clients" placeholder="Search projects..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} /></label><button className="icon-button notification-button" aria-label="Notifications"><Bell size={18} /><i /></button><div className="top-avatar">D</div></div></header>
         <div className="page-content">
-          {active === 'AI website builder' ? <section className="ai-builder-page">
+          {active === 'Website tools' ? <FeatureWorkspace /> : active === 'AI website builder' ? <section className="ai-builder-page">
             <div className="ai-builder-intro"><div className="eyebrow"><span className="eyebrow-line" /> YOUR WEBSITE STARTS WITH AN IDEA</div><h1>Turn your brief into a <em>website draft.</em></h1><p>Describe the website you want. DSQUARE will prepare an editable starting project for you to refine in the visual editor.</p><div className="ai-builder-badge"><Sparkles size={14} /> Guided website generator · Provider connection pending</div></div>
             <form className="ai-builder-card" onSubmit={generateAiDraft}>
               <label className="form-label">What website should we create?<textarea required minLength={15} maxLength={3000} value={aiPrompt} onChange={e => setAiPrompt(e.target.value)} placeholder="Example: Create a premium website for a Lagos-based interior design company. Show our services, recent projects, customer reviews and a clear way to request a consultation." /></label>
