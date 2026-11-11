@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  Activity, Archive, ArrowDownToLine, ArrowUpFromLine, BadgeCheck, BarChart3,
-  Blocks, BookOpen, Check, ChevronRight, CirclePlus, Code2, Copy, CreditCard,
-  FileText, FolderOpen, Image as ImageIcon, Link2, Package, Plus, Search,
-  Settings2, ShieldCheck, ShoppingBag, Sparkles, Trash2, Upload, WandSparkles,
-  X
+  Activity, Archive, ArrowDownToLine, ArrowUpFromLine, BarChart3,
+  Blocks, BookOpen, Check, ChevronRight, CreditCard, FileText,
+  Image as ImageIcon, Link2, Package, Plus, Search, ShieldCheck,
+  ShoppingBag, Sparkles, Trash2, Upload, WandSparkles
 } from 'lucide-react'
 import './FeatureWorkspace.css'
 
@@ -56,7 +55,6 @@ export default function FeatureWorkspace() {
   const [notice,setNotice]=useState('')
   const [entryTitle,setEntryTitle]=useState('')
   const [entryBody,setEntryBody]=useState('')
-  const [assetFolder,setAssetFolder]=useState('All assets')
   const [blockName,setBlockName]=useState('')
   const [blockContent,setBlockContent]=useState('')
   const [productName,setProductName]=useState('')
@@ -65,7 +63,6 @@ export default function FeatureWorkspace() {
   const [formLabel,setFormLabel]=useState('')
   const [formType,setFormType]=useState('text')
   const [formPreview,setFormPreview]=useState(false)
-  const [submission,setSubmission]=useState<Record<string,string>>({})
   const [snapshotName,setSnapshotName]=useState('')
   useEffect(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{setNotice('Browser storage is full. Export your data and remove large media files.')}},[state])
   const active=tabs.find(item=>item.id===tab) ?? tabs[0]
