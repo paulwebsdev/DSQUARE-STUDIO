@@ -3,7 +3,7 @@ import type { FormEvent, MouseEvent, KeyboardEvent as ReactKeyboardEvent, Pointe
 import { ArrowLeft, Eye, Code2, Monitor, Tablet, Smartphone, Undo2, Redo2, Plus, Type, Image, MousePointer2, Layers3, Settings2, Trash2, Save, Sparkles, Download, X } from 'lucide-react'
 import JSZip from 'jszip'
 import { createStarterSite } from './defaultSite'
-import { loadStoredSite, saveStoredSite } from './persistence'
+import { localSiteDocumentRepository } from '../platform/localSiteRepository'
 import { buildExportFiles } from './exportSite'
 import type { DeviceMode, SiteDocument, SiteSection, StyleMap } from './types'
 import CodeEditor from './CodeEditor'
@@ -179,10 +179,10 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
   useEffect(() => {
     let active = true
     setStorageReady(false)
-    loadStoredSite(projectId).then(async stored => {
+    localSiteDocumentRepository.load(projectId).then(async result => {
       if (!active) return
-      if (stored) setSite(stored)
-      else await saveStoredSite(projectId, site)
+      if (result.ok && result.data) setSite(result.data.document)
+      else if (result.ok && !result.data) await localSiteDocumentRepository.save({ siteId: projectId, document: site })
       if (active) setStorageReady(true)
     })
     return () => { active = false }
@@ -192,7 +192,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
 
   useEffect(() => {
     if (!storageReady) return
-    const saveImmediately = () => { void saveStoredSite(projectId, site) }
+    const saveImmediately = () => { void localSiteDocumentRepository.save({ siteId: projectId, document: site }) }
     window.addEventListener('pagehide', saveImmediately)
     window.addEventListener('beforeunload', saveImmediately)
     return () => {
@@ -205,7 +205,7 @@ export default function VisualEditor({ onExit, projectId, projectName, category 
     if (!storageReady) return
     setSavedAt('Saving…')
     const timer = window.setTimeout(() => {
-      saveStoredSite(projectId, site).then(saved => setSavedAt(saved ? 'Saved on this device' : 'Could not save — check browser storage'))
+      localSiteDocumentRepository.save({ siteId: projectId, document: site }).then(result => setSavedAt(result.ok ? 'Saved on this device' : 'Could not save — check browser storage'))
     }, 250)
     return () => window.clearTimeout(timer)
   }, [site, projectId, storageReady])
