@@ -40,16 +40,19 @@ const tabs = [
   {id:'Versions',label:'Version Control',icon:Archive,desc:'Create and restore browser-local checkpoints.'},
 ]
 const uid=()=>globalThis.crypto?.randomUUID?.() ?? `tool-${Date.now()}-${Math.random().toString(36).slice(2)}`
-function loadState():ToolState {
-  try { const raw=localStorage.getItem(STORAGE_KEY); if(raw) return {...initial,...JSON.parse(raw)} as ToolState } catch {}
+function loadState(projectId:string):ToolState {
+  if (!projectId) return initial
+  try { const raw=localStorage.getItem(`${STORAGE_KEY}:${projectId}`); if(raw) return {...initial,...JSON.parse(raw)} as ToolState } catch {}
   return initial
 }
 function saveFile(name:string,content:string) {
   const blob=new Blob([content],{type:'application/json'})
   const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; a.click(); URL.revokeObjectURL(url)
 }
-export default function FeatureWorkspace() {
-  const [state,setState]=useState<ToolState>(loadState)
+type WorkspaceProject = { id:string; name:string }
+type Props = { projects:WorkspaceProject[]; projectId:string; projectName:string; onSelectProject:(id:string)=>void }
+export default function FeatureWorkspace({projects,projectId,projectName,onSelectProject}:Props) {
+  const [state,setState]=useState<ToolState>(()=>loadState(projectId))
   const [tab,setTab]=useState('CMS')
   const [query,setQuery]=useState('')
   const [notice,setNotice]=useState('')
@@ -64,7 +67,8 @@ export default function FeatureWorkspace() {
   const [formType,setFormType]=useState('text')
   const [formPreview,setFormPreview]=useState(false)
   const [snapshotName,setSnapshotName]=useState('')
-  useEffect(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{setNotice('Browser storage is full. Export your data and remove large media files.')}},[state])
+  useEffect(()=>{setState(loadState(projectId));setTab('CMS');setQuery('')},[projectId])
+  useEffect(()=>{if(!projectId)return;try{localStorage.setItem(`${STORAGE_KEY}:${projectId}`,JSON.stringify(state))}catch{setNotice('Browser storage is full. Export your data and remove large media files.')}},[state,projectId])
   const active=tabs.find(item=>item.id===tab) ?? tabs[0]
   const update=<K extends keyof ToolState>(key:K,value:ToolState[K])=>setState(current=>({...current,[key]:value}))
   const message=(value:string)=>{setNotice(value);window.setTimeout(()=>setNotice(''),3200)}
@@ -82,7 +86,7 @@ export default function FeatureWorkspace() {
   const importWorkspace=async(file:File)=>{try{const parsed=JSON.parse(await file.text()) as ToolState;if(!parsed||!Array.isArray(parsed.entries)||!Array.isArray(parsed.products))throw new Error('Invalid backup');setState({...initial,...parsed});message('Workspace backup imported.')}catch{message('That file is not a valid DSQUARE tools backup.')}}
   const remove=(key:'entries'|'assets'|'components'|'library'|'products',id:string)=>update(key,state[key].filter(item=>item.id!==id) as never)
   return <section className="feature-workspace">
-    <div className="feature-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> WEBSITE MANAGEMENT SUITE</div><h1>Website <em>tools.</em></h1><p>Ten connected workspaces for shaping, managing and improving every website you build.</p></div><div className="feature-heading-actions"><button className="secondary-button" onClick={exportWorkspace}><ArrowDownToLine size={15}/> Export workspace</button><label className="secondary-button feature-import"><ArrowUpFromLine size={15}/> Import backup<input type="file" accept="application/json,.json" onChange={e=>{if(e.target.files?.[0])void importWorkspace(e.target.files[0]);e.currentTarget.value=''}}/></label></div></div>
+    <div className="feature-heading"><div><div className="eyebrow"><span className="eyebrow-line"/> WEBSITE MANAGEMENT SUITE</div><h1>Website <em>tools.</em></h1><p>{projectId ? `Managing ${projectName}. These tools are scoped to this website.` : 'Select a website project to open its management tools.'}</p></div><div className="feature-heading-actions"><button className="secondary-button" onClick={exportWorkspace}><ArrowDownToLine size={15}/> Export workspace</button><label className="secondary-button feature-import"><ArrowUpFromLine size={15}/> Import backup<input type="file" accept="application/json,.json" onChange={e=>{if(e.target.files?.[0])void importWorkspace(e.target.files[0]);e.currentTarget.value=''}}/></label></div></div>
     <div className="feature-status"><span><span className="status-dot"/> Browser prototype</span><span>Data stays in this browser · Backend connection pending</span></div>
     <div className="feature-layout"><nav className="feature-tabs" aria-label="Website tools">{tabs.map(item=><button key={item.id} className={tab===item.id?'selected':''} onClick={()=>{setTab(item.id);setQuery('')}}><item.icon size={17}/><span>{item.label}</span><ChevronRight size={14}/></button>)}</nav>
     <div className="feature-panel"><div className="feature-panel-title"><div><span className="feature-kicker">DSQUARE WEBSITE TOOLS</span><h2>{active.label}</h2><p>{active.desc}</p></div><div className="feature-title-icon"><active.icon size={22}/></div></div>
@@ -97,7 +101,7 @@ export default function FeatureWorkspace() {
     {tab==='Integrations'&&<><div className="feature-info"><ShieldCheck size={16}/> Connection switches below are planning states only. No credentials are requested or stored here.</div><div className="feature-integration-list">{Object.entries(state.integrations).map(([name,connected])=><article key={name}><div className="feature-row-icon"><Link2 size={17}/></div><div><strong>{name}</strong><span>{connected?'Marked for connection':'Not configured'}</span></div><button className={connected?'secondary-button':'primary-button'} onClick={()=>update('integrations',{...state.integrations,[name]:!connected})}>{connected?'Undo setup':'Plan connection'}</button></article>)}</div><p className="feature-muted">Actual OAuth, API keys, webhook verification and secret storage will be implemented only after the secure backend is deployed.</p></>}
     {tab==='Library'&&<><BlockComposer name={blockName} setName={setBlockName} content={blockContent} setContent={setBlockContent} onAdd={()=>addBlock('library')} label="Save a reusable design" placeholder="Describe or paste a hero, pricing section, testimonial layout, or design pattern."/><div className="feature-list">{state.library.map(item=><article className="feature-row" key={item.id}><div className="feature-row-icon"><BookOpen size={17}/></div><div className="feature-row-main"><strong>{item.name}</strong><span>Reusable design · {item.category}</span><p>{item.content}</p></div><button className="icon-button" onClick={()=>remove('library',item.id)}><Trash2 size={15}/></button></article>)}</div>{!state.library.length&&<Empty text="Save your best sections and patterns to reuse across future projects."/>}</>}
     {tab==='Versions'&&<><div className="feature-commerce-note"><Archive size={18}/><div><strong>Local checkpoints</strong><span>Save a snapshot of this tools workspace and restore it later on this device. This does not version the full website document yet.</span></div></div><div className="feature-inline-form"><input value={snapshotName} onChange={e=>setSnapshotName(e.target.value)} placeholder="Checkpoint name (optional)"/><button className="primary-button" onClick={createSnapshot}><Plus size={15}/> Create checkpoint</button></div><div className="feature-list">{state.snapshots.map(item=><article className="feature-row" key={item.id}><div className="feature-row-icon"><Archive size={17}/></div><div className="feature-row-main"><strong>{item.name}</strong><span>{new Date(item.createdAt).toLocaleString()}</span><p>{(item.payload.length/1024).toFixed(1)} KB snapshot</p></div><button className="secondary-button" onClick={()=>restoreSnapshot(item)}>Restore</button></article>)}</div>{!state.snapshots.length&&<Empty text="Create a checkpoint before making a major change."/>}</>}
-    </div></div>
+    </div></div>}
   </section>
 }
 function BlockComposer({name,setName,content,setContent,onAdd,label,placeholder}:{name:string;setName:(v:string)=>void;content:string;setContent:(v:string)=>void;onAdd:()=>void;label:string;placeholder:string}) {
