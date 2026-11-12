@@ -67,7 +67,6 @@ export default function FeatureWorkspace({projects,projectId,projectName,onSelec
   const [formType,setFormType]=useState('text')
   const [formPreview,setFormPreview]=useState(false)
   const [snapshotName,setSnapshotName]=useState('')
-  useEffect(()=>{setState(loadState(projectId));setTab('CMS');setQuery('')},[projectId])
   useEffect(()=>{if(!projectId)return;try{localStorage.setItem(`${STORAGE_KEY}:${projectId}`,JSON.stringify(state))}catch{setNotice('Browser storage is full. Export your data and remove large media files.')}},[state,projectId])
   const active=tabs.find(item=>item.id===tab) ?? tabs[0]
   const update=<K extends keyof ToolState>(key:K,value:ToolState[K])=>setState(current=>({...current,[key]:value}))
